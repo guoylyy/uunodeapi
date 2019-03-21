@@ -8,7 +8,9 @@
     "knex": "./node_modules/.bin/knex",
     "mongoose": "./node_modules/.bin/migrate --config mongoose.migrate.json",
     "raml2html": "./node_modules/.bin/raml2html",
-    "migrate": "DEBUG=migrate node bin/migrate"
+    "migrate": "DEBUG=migrate node bin/migrate",
+    "sedit": "swagger_swagger_fileName=doc/swagger/swagger.yaml swagger project edit",
+    "sstart":"swagger_swagger_fileName=doc/swagger/swagger.yaml swagger project start"
   },
   "dependencies": {
     "amrToMp3": "^1.0.8",
@@ -22,6 +24,7 @@
     "debug": "^4.1.1",
     "express": "^4.16.4",
     "express-partials": "^0.3.0",
+    "swagger-express-mw": "^0.1.0",
     "form-urlencoded": "^3.0.0",
     "helmet": "^3.16.0",
     "htmlparser2": "^3.10.1",
@@ -50,6 +53,8 @@
   },
   "devDependencies": {
     "nodemon": "^1.18.10",
-    "raml2html": "4.0.5"
+    "raml2html": "4.0.5",
+    "should": "^7.1.0",
+    "supertest": "^1.0.0"
   }
 }

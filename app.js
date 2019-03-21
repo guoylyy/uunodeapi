@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
+var SwaggerExpress = require('swagger-express-mw');
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
@@ -15,6 +16,8 @@ const systemConfig = require('./config/config');
 logger.token('remote-addr', (req) => {
     return req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 });
+
+
 
 // 替换全局Promise
 global.Promise = require("bluebird");
@@ -104,6 +107,23 @@ app.use((err, req, res, next) => {
     winston.error('Server Error: %j', err);
 
     res.status(err.code || 500).json(err);
+});
+
+var config = {
+  appRoot: __dirname, // required config
+  swaggerFile: __dirname + '/doc/swagger/swagger.yaml'
+};
+
+SwaggerExpress.create(config, function(err, swaggerExpress) {
+  if (err) { throw err; }
+
+  // install middleware
+  swaggerExpress.register(app);
+  var port = process.env.PORT || 10010;
+  app.listen(port);
+  if (swaggerExpress.runner.swagger.paths['/hello']) {
+    console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
+  }
 });
 
 module.exports = app;
