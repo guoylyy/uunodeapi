@@ -1,0 +1,72 @@
+#!/usr/bin/env node
+'use strict';
+const _ = require('lodash');
+const debug = require('debug')('migrate');
+const Promise = require('bluebird');
+const fs = require('fs');
+const readFile = Promise.promisify(fs.readFile);
+
+let readJsonFile = (userDumpFile) => {
+  return readFile(userDumpFile, 'utf8')
+      .then((userListStr) => {
+        let userList = JSON.parse(userListStr).results;
+
+        debug('list size: %d', _.size(userList));
+
+        return userList;
+      })
+};
+
+// 获取用户输入参数
+let args = process.argv.slice(2);
+debug(args);
+// 如果参数为空，提醒用法
+if (_.isEmpty(args)) {
+  return console.log('usage: npm run migrate dumpPath')
+}
+
+let filePath = args[0];
+
+const userMigrate = require('../migrate_modules/data_migration/user.migration');
+const clazzAccountMigrate = require('../migrate_modules/data_migration/clazzAccount.migration');
+const userPayMigrate = require('../migrate_modules/data_migration/userPay.migration');
+
+let globalUserObjectIdMap;
+// readJsonFile(filePath + '/_User.json')
+//     .then((userList) => {
+//       debug('to save user size: %d', _.size(userList));
+//       return userMigrate(userList)
+//     })
+//     .then((userObjectIdMap) => {
+//       debug('user map size: %d', _.size(userObjectIdMap));
+//       globalUserObjectIdMap =  userObjectIdMap;
+//       return readJsonFile(filePath + '/ClazzAccount.json')
+//     })
+//     .then((clazzAccountList) => {
+//       debug('to save clazzAccount Size: %d', _.size(clazzAccountList));
+//       return clazzAccountMigrate(clazzAccountList, globalUserObjectIdMap)
+//     })
+//     .then((savedAccountSize) => {
+//       debug('saved clazzAccount Size: %d', _.size(savedAccountSize));
+//       return [];
+//     })
+//     .then(() => {
+//       process.exit(0);
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//       process.exit(1);
+//     });
+
+
+readJsonFile(filePath + '/UserPay.json')
+    .then((userPayList) => {
+      return userPayMigrate(userPayList);
+    })
+    .then(() => {
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error(error);
+      process.exit(1);
+    });
