@@ -80,12 +80,6 @@ if (isWebOpen === true) {
     app.use('/web', webAPIRouter);
 }
 
-const isOneOpen = _.get(systemConfig, 'MODULE_OPTIONS.one2oneModule.isOpen', false);
-if (isOneOpen === true) {
-    const oneAPIRouter = require('./service_modules/apis/one.router');
-    app.use('/one', oneAPIRouter);
-}
-
 const isWeappOneOpen = _.get(systemConfig, 'MODULE_OPTIONS.weappOneModule.isOpen', false);
 if (isWeappOneOpen === true) {
     const oneAPIRouter = require('./service_modules/apis/weapp.one.router');
@@ -96,12 +90,6 @@ const isAndroidSharkOpen = _.get(systemConfig, 'MODULE_OPTIONS.appSharkModule.is
 if (isAndroidSharkOpen === true) {
     const appSharkAPIRouter = require('./service_modules/apis/app.shark.router');
     app.use('/appShark', appSharkAPIRouter);
-}
-
-const isRobotSharkOpen = _.get(systemConfig, 'MODULE_OPTIONS.robotSharkModule.isOpen', false);
-if (isRobotSharkOpen === true) {
-    const robotSharkAPIRouter = require('./service_modules/apis/robot.router');
-    app.use('/robot', robotSharkAPIRouter);
 }
 
 // catch 404 and forward to error handler
