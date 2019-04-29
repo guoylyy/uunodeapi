@@ -1,11 +1,9 @@
 'use strict';
 
 const _ = require('lodash');
-const debug = require('debug')('controller');
 const winston = require('winston');
 const Promise = require('bluebird');
-const Joi = require("joi");
-
+const Joi = require('joi').extend(require('joi-date-extensions'));
 const joiCustomizeLanguage = require('../lib/joi.customized');
 const commonError = require('../services/model/common.error');
 

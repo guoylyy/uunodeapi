@@ -159,7 +159,6 @@ pub.update = (userItem) => {
 
   return userSchema.forge(pickedPrivacy)
       .save(null, {
-        transacting: true,
         method: 'update'
       })
       .then((userModel) => userSchema.forge({ id: userModel.id }).fetch())

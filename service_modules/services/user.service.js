@@ -14,7 +14,6 @@ const cacheWrapComponent = require('./component/cacheWrap.component');
 const encryptUtil = require('./util/encrypt.util');
 
 const userMapper = require('../dao/mysql_mapper/user.mapper');
-const userPassportMapper = require('../dao/mongodb_mapper/userPassport.mappper');
 
 const hashPasswordPromise = encryptUtil.getHashPasswordPromiseFunction(systemConfig.USER_OPTIONS.saltRounds);
 
@@ -340,49 +339,6 @@ pub.queryAllStudentNumberedUserList = () => {
   return userMapper.queryAll(
       {
         'studentNumber': { operator: 'is not', value: null }
-      });
-};
-
-/**
- * 根据userId获取用户护照信息
- *
- * @param userId
- * @returns {*}
- */
-pub.fetchUserPassportByUserId = (userId) => {
-  if (_.isNil(userId)) {
-    winston.error('根据userId获取用户护照信息失败，参数错误！！！userId: %s', userId);
-    return Promise.reject(commonError.PARAMETER_ERROR());
-  }
-
-  return userPassportMapper.fetchByUserId(userId);
-};
-
-/**
- * 根据userId更新用户护照信息
- *
- * @param userId
- * @param userPassportItem
- * @returns {*}
- */
-pub.updateUserPassportByUserId = (userId, userPassportItem) => {
-  if (_.isNil(userId) || !_.isPlainObject(userPassportItem)) {
-    winston.error('根据userId获取用户护照信息失败，参数错误！！！userId: %s, userPassportItem: %j', userId, userPassportItem);
-    return Promise.reject(commonError.PARAMETER_ERROR());
-  }
-
-  // 设置userId
-  userPassportItem.userId = userId;
-
-  return userPassportMapper.fetchByUserId(userId)
-      .then((dbPassportItem) => {
-        if (_.isNil(dbPassportItem)) {
-
-          return userPassportMapper.create(userPassportItem);
-        } else {
-
-          return userPassportMapper.updateById(dbPassportItem.id, userPassportItem);
-        }
       });
 };
 
