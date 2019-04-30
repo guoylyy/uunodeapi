@@ -8,6 +8,7 @@ const debug = require('debug')('service');
 
 const commonError = require('./model/common.error');
 const enumModel = require('./model/enum');
+const queryModel = require('./model/queryEnum');
 
 const userService = require('./user.service');
 const couponMapper = require('../dao/mysql_mapper/coupon.mapper');
@@ -33,28 +34,34 @@ pub.fetchMaxCoupon = (userId, clazzFee) => {
   return couponMapper.fetchCouponByParams({
     userId: userId,
     status: enumModel.couponStatusEnum.AVAILABLE.key,
-    expireDate: { operator: '>=', value: moment().format('YYYY-MM-DD HH:mm:ss') },
-    money: { operator: '<=', value: clazzFee }
+    expireDate: {operator: '>=', value: moment().format('YYYY-MM-DD HH:mm:ss')},
+    money: {operator: '<=', value: clazzFee}
   });
 };
 
 /**
- * 获取所有的 `AVAILABLE` 的 `未过期` 的用户id为 userId 的优惠券列表
+ * 获取所有的的用户id为 userId 的优惠券列表
+ *   - 参数status 可以@queryModel.couponStatusEnum获取
  * @param userId 待查询用户id
  * @returns {*}
  */
-pub.fetchAvailableCouponsList = (userId) => {
+pub.fetchAvailableCouponsList = (userId, status) => {
   if (_.isNil(userId)) {
     winston.error('获取优惠券列表失败，参数错误!!! userId: %s', userId);
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
-
+  let now = moment().format('YYYY-MM-DD HH:mm:ss');
+  let queryParams = {
+    userId: userId,
+    status: enumModel.couponStatusEnum.AVAILABLE.key,
+  };
+  if (status == queryModel.couponQueryStatusEnum.EXPIRED.key) {
+    queryParams['expireDate'] = {operator: '<=', value:now};
+  } else if (status == queryModel.couponQueryStatusEnum.AVAILABLE.key) {
+    queryParams['expireDate'] = {operator: '>=', value:now};
+  }
   return couponMapper.fetchAllCouponByParams(
-      {
-        userId: userId,
-        status: enumModel.couponStatusEnum.AVAILABLE.key,
-        expireDate: { operator: '>=', value: moment().format('YYYY-MM-DD HH:mm:ss') }
-      });
+      queryParams);
 };
 
 /**
@@ -92,7 +99,7 @@ pub.fetchCouponById = (couponId) => {
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
 
-  return couponMapper.fetchCouponByParams({ id: couponId })
+  return couponMapper.fetchCouponByParams({id: couponId})
 };
 
 /**
@@ -136,8 +143,8 @@ pub.createCoupon = (couponItem) => {
  *
  * @input: @userId, @expiredDate, @couponMoney
  */
-pub.createUserCoupon = (userId, expiredDate, couponMoney) =>{
-  if(_.isNil(userId) || _.isNil(expiredDate) || _.isNil(couponMoney)){
+pub.createUserCoupon = (userId, expiredDate, couponMoney) => {
+  if (_.isNil(userId) || _.isNil(expiredDate) || _.isNil(couponMoney)) {
     winston.error('创建优惠券失败，参数错误！！！userId: %j %j %d', userId, expiredDate, couponMoney);
   }
 

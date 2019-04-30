@@ -71,7 +71,6 @@ pub.create = (coinItem) => {
   debug('Ready to save: %j', coinItem);
   return userCoinSchema.forge(coinItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((result) => {

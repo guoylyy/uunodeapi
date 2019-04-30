@@ -103,7 +103,6 @@ pub.create = (withdrawItem) => {
   debug('Ready to save: %j', withdrawItem);
   return userWithdrawSchema.forge(withdrawItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((result) => {
@@ -128,7 +127,6 @@ pub.destroy = (withdrawId) => {
   debug('Ready to destroy: %d', withdrawId);
   return userWithdrawSchema.forge({ id: withdrawId })
       .destroy({
-        transacting: true
       })
       .then((result) => {
         debug(result);
@@ -182,7 +180,6 @@ pub.update = (withdrawItem) => {
 
   return userWithdrawSchema.forge(pickedWithdrawItem)
       .save(null, {
-        transacting: true,
         method: 'update'
       })
       .then((withdrawItem) => {

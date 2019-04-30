@@ -5,6 +5,7 @@ const debug = require('debug')('service');
 const winston = require('winston');
 const Promise = require('bluebird');
 const enumModel = require('../../service_modules/services/model/enum');
+const queryModel = require("../../service_modules/services/model/queryEnum");
 const ubandCardMapper = require('../dao/mysql_mapper/ubandCard.mapper');
 
 const pub = {};
@@ -24,9 +25,16 @@ pub.createUbandCard = (cardItem) =>{
 
 /**
  * 获取一个用户所有的卡片
+ *   - 根据 status 获取
  */
-pub.queryUserAvailableCard = (userId) => {
-    return ubandCardMapper.fetchAllByParam({'userId': userId, 'status': enumModel.ubandCardStatusEnum.AVAILABLE.key});
+pub.queryUserAvailableCard = (userId, status) => {
+   let queryParams = {
+     'userId':userId,
+   }
+   if(status != queryModel.ubandCardQueryStatusEnum.ALL.key){
+     queryParams['status'] = status;
+   }
+   return ubandCardMapper.fetchAllByParam(queryParams);
 };
 
 

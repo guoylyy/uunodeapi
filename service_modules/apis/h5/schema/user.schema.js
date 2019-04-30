@@ -92,6 +92,20 @@ pub.rankQuerySchema = Joi.object().keys({
 });
 
 /**
+ * 用户查询优惠券 query schema
+ */
+pub.couponQuerySchema = Joi.object().keys({
+  status: Joi.string()
+});
+
+/**
+ * 用户查询卡片 query schema
+ */
+pub.cardQuerySchema = Joi.object().keys({
+  status: Joi.string()
+});
+
+/**
  * 用户目标设置 schema
  */
 pub.targetUpdateSchema = Joi.object().keys({

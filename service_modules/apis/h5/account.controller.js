@@ -19,7 +19,6 @@ const jwtUtil = require('../util/jwt.util');
 const schemaValidator = require('../schema.validator');
 const commonSchema = require('../common.schema');
 const userSchema = require('./schema/user.schema');
-
 const userService = require('../../services/user.service');
 const clazzAccountService = require('../../services/clazzAccount.service');
 const couponService = require('../../services/coupon.service');
@@ -49,7 +48,7 @@ pub.auth = (req, res) => {
           return apiRender.renderError(res, commonError.UNAUTHORIZED_ERROR('用户名与密码不匹配'));
         }
 
-        const userObj = { id: userItem.id };
+        const userObj = {id: userItem.id};
         return jwtUtil.sign(userObj, systemConfig.jwt.secretKey, systemConfig.jwt.options)
             .then((token) => {
               res.set('X-Auth-Token', token);
@@ -72,7 +71,7 @@ pub.getUserBaseInfo = (req, res) => {
   schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
         //筛选需要的属性
-        let pickedUserInfo = _.pick(req.__CURRENT_USER, ['id', 'name', 'headImgUrl', 'sex', 'studentNumber', 'birthday','target']);
+        let pickedUserInfo = _.pick(req.__CURRENT_USER, ['id', 'name', 'headImgUrl', 'sex', 'studentNumber', 'birthday', 'target']);
 
         if (pickedUserInfo.birthday) {
           pickedUserInfo.birthday = moment(pickedUserInfo.birthday).format('YYYY-MM-DD');
@@ -286,9 +285,10 @@ pub.userWithdraw = (req, res) => {
  * @param res
  */
 pub.fetchCouponList = (req, res) => {
-  schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+  schemaValidator.validatePromise(userSchema.couponQuerySchema, req.query)
       .then((queryParams) => {
-        return couponService.fetchAvailableCouponsList(req.__CURRENT_USER.id);
+        let status = queryParams.status || 'ALL';
+        return couponService.fetchAvailableCouponsList(req.__CURRENT_USER.id, status);
       })
       .then((couponList) => {
         debug(couponList);
@@ -311,21 +311,22 @@ pub.fetchCouponList = (req, res) => {
  * @param res
  */
 pub.queryUserCards = (req, res) => {
-  schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+  schemaValidator.validatePromise(userSchema.cardQuerySchema, req.query)
       .then((queryParam) => {
         debug(req.__CURRENT_USER.id);
-        return ubandCardService.queryUserAvailableCard(req.__CURRENT_USER.id);
-  }).then((cardList) => {
-        let nList = _.map(cardList, (card) =>{
-          card.type = enumModel.getEnumByKey(card.type, enumModel.ubandCardTypeEnum);
-          card.status = enumModel.getEnumByKey(card.status, enumModel.ubandCardStatusEnum);
-          card.scope = enumModel.getEnumByKey(card.scope, enumModel.ubandCardScopeEnum);
+        let status = queryParam.status || 'ALL';
+        return ubandCardService.queryUserAvailableCard(req.__CURRENT_USER.id, status);
+      }).then((cardList) => {
+    let nList = _.map(cardList, (card) => {
+      card.type = enumModel.getEnumByKey(card.type, enumModel.ubandCardTypeEnum);
+      card.status = enumModel.getEnumByKey(card.status, enumModel.ubandCardStatusEnum);
+      card.scope = enumModel.getEnumByKey(card.scope, enumModel.ubandCardScopeEnum);
 
-          return card;
-        });
-        return apiRender.renderBaseResult(res, nList);
+      return card;
+    });
+    return apiRender.renderBaseResult(res, nList);
   })
-  .catch(req.__ERROR_HANDLER);
+      .catch(req.__ERROR_HANDLER);
 };
 
 
@@ -418,38 +419,38 @@ pub.queryUserRank = (req, res) => {
 
 /**
  * 获取用户目标列表
- * 
+ *
  * @param 无
  */
-pub.getUserStudyTarget = (req, res) =>{
+pub.getUserStudyTarget = (req, res) => {
   var list = ['成为东八区最努力的英语学习者', '过CATTI英语翻译考试', '雅思英语考试得高分',
-              '做东半球会流利说英语的崽', '去英语国家自助旅游一次', '被5000个英语单词',
-              '读10本英语书籍'];
-  return apiRender.renderBaseResult(res, {targets:list});
+    '做东半球会流利说英语的崽', '去英语国家自助旅游一次', '被5000个英语单词',
+    '读10本英语书籍'];
+  return apiRender.renderBaseResult(res, {targets: list});
 };
 
 /**
  * 设置用户目标
- * 
+ *
  * @param target String
  */
-pub.updateUserTarget = (req,res)=>{
+pub.updateUserTarget = (req, res) => {
   schemaValidator.validatePromise(userSchema.targetUpdateSchema, req.query)
-  .then((queryParam) => {
-      debug(req.__CURRENT_USER.id);
-      let target = queryParam.target;
-      if(target.includes('英语') || target.includes('英文')){
-        //更新用户目标字段
-        var userPrivacy = {};
-        userPrivacy.target = target;
-        return userService.updateUserItem(req.__CURRENT_USER.id, userPrivacy);
-      }else{
-        throw commonError.BIZ_FAIL_ERROR("目标必须含有「英文」或「英语」二字");
-      }
-  }).then((data) => {
-      return apiRender.renderSuccess(res);
+      .then((queryParam) => {
+        debug(req.__CURRENT_USER.id);
+        let target = queryParam.target;
+        if (target.includes('英语') || target.includes('英文')) {
+          //更新用户目标字段
+          var userPrivacy = {};
+          userPrivacy.target = target;
+          return userService.updateUserItem(req.__CURRENT_USER.id, userPrivacy);
+        } else {
+          throw commonError.BIZ_FAIL_ERROR("目标必须含有「英文」或「英语」二字");
+        }
+      }).then((data) => {
+    return apiRender.renderSuccess(res);
   })
-  .catch(req.__ERROR_HANDLER);
+      .catch(req.__ERROR_HANDLER);
 };
 
 module.exports = pub;
