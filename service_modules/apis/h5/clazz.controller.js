@@ -131,10 +131,10 @@ pub.fetchClazz = (req, res) => {
   const clazzItem = _.pick(
       currentClazz,
       ['id', 'name', 'description', 'banner', 'clazzType', 'author', 'status', 'startDate', 'endDate', 'taskCount']),
-      clazzConfig = _.pick(currentClazz.configuration, ['clazzType', 'taskCount','strategyLink']),
+      clazzConfig = _.pick(currentClazz.configuration, ['clazzType', 'taskCount', 'strategyLink']),
       clazzPriceList = clazzUtil.extractClazzPriceList(currentClazz);
 
-  debug('#clazzConfig',clazzConfig);
+  debug('#clazzConfig', clazzConfig);
 
   clazzConfig.clazzJoinType = clazzUtil.getClazzJoinType(clazzConfig.clazzType);
 
@@ -151,7 +151,7 @@ pub.fetchClazz = (req, res) => {
 
   schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
-        req.__MODULE_LOGGER(`获取课程${ currentClazz.id }详情`, queryParam);
+        req.__MODULE_LOGGER(`获取课程${currentClazz.id}详情`, queryParam);
 
         // 获取加入班级人员数据
         return clazzAccountService.countClazzJoinedUser(currentClazz.id);
@@ -172,7 +172,7 @@ pub.fetchClazz = (req, res) => {
 pub.fetchClazzStrategy = (req, res) => {
   schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
-        req.__MODULE_LOGGER(`获取课程${ req.__CURRENT_CLAZZ.id }攻略`, queryParam);
+        req.__MODULE_LOGGER(`获取课程${req.__CURRENT_CLAZZ.id}攻略`, queryParam);
 
         // 获取班级介绍
         return req.__CURRENT_CLAZZ_INTRODUCTION;
@@ -195,7 +195,7 @@ pub.fetchClazzIntroduction = (req, res) => {
       .then((queryParam) => {
         let currentClazzItem = req.__CURRENT_CLAZZ;
 
-        req.__MODULE_LOGGER(`获取课程${ currentClazzItem.id }简介`, queryParam);
+        req.__MODULE_LOGGER(`获取课程${currentClazzItem.id}简介`, queryParam);
 
         // todo: move to middleware
         // 自动加入
@@ -242,7 +242,7 @@ pub.fetchClazzPayway = (req, res) => {
 pub.fetchClazzPayment = (req, res) => {
   const currentClazzItem = req.__CURRENT_CLAZZ,
       userId = req.__CURRENT_USER.id;
-  debug('#currentClazzItem',currentClazzItem);
+  debug('#currentClazzItem', currentClazzItem);
 
   req.__MODULE_LOGGER('获取课程账单', currentClazzItem.id);
 
@@ -254,14 +254,14 @@ pub.fetchClazzPayment = (req, res) => {
             fetchAvailableCouponListPromise = couponService.fetchAvailableCouponsList(userId),
             fetchPromotionOfferPromise = _.get(currentClazzItem, ['configuration', 'promotionOffer', 'isPromotion'], true)
                 ? promotionService.fetchInviteePromotionOfferInfo(userId)
-                : Promise.resolve({ promoterUser: null, joinedClazzCount: 1 }); // 如果当前班级不处于推广计划中，则直接诶返回
+                : Promise.resolve({promoterUser: null, joinedClazzCount: 1}); // 如果当前班级不处于推广计划中，则直接诶返回
 
         return Promise.all([fetchCoinSumPromise, fetchAvailableCouponListPromise, fetchPromotionOfferPromise]);
       })
       .then(([coinCount, couponList, promotionOffer]) => {
-        debug('#couponList',coinCount);
-        debug('#couponList',couponList);
-        debug('#promotionOffer',promotionOffer);
+        debug('#couponList', coinCount);
+        debug('#couponList', couponList);
+        debug('#promotionOffer', promotionOffer);
 
         // 修正： 优币总额小于0的情况
         const coinSum = _.max([coinCount, 0]),
@@ -309,7 +309,7 @@ pub.fetchClazzPayment = (req, res) => {
 
         return apiRender.renderBaseResult(res, {
           clazz: apiUtil.pickClazzBasicInfo(currentClazzItem),
-          clazzConfiguration: _.pick(currentClazzItem,['configuration'],{}),                                         // 班级信息
+          clazzConfiguration: _.pick(currentClazzItem, ['configuration'], {}),                                         // 班级信息
           clazzAccount: _.pick(req.__CURRENT_CLAZZ_ACCOUNT, ['id', 'status', 'endDate'], null), // 班级账户信息
           priceList: clazzPriceList,                                                            // 账单列表
           promotionOffer: {
@@ -417,15 +417,24 @@ pub.createClazzExitItem = (req, res) => {
 
         // 查询班级
         const fetchClazzPromise = clazzService.fetchClazzById(clazzId);
+
+        // 查询可用的退班班级
+        const fetchAvailableExitPromise = clazzExitService.fetchAvailableExitByUserId(clazzId, userId);
+
         // 查询班级账户信息
         const fetchClazzAccountPromise = clazzAccountService.queryClazzAccountByClazzId(clazzId, userId);
 
-        return Promise.all([fetchClazzPromise, fetchClazzAccountPromise])
-            .then(([clazzItem, clazzAccountList]) => {
+        return Promise.all([fetchClazzPromise, fetchClazzAccountPromise, fetchAvailableExitPromise])
+            .then(([clazzItem, clazzAccountList, avaiableExits]) => {
               const clazzAccountItem = _.first(clazzAccountList);
+              const noRecord = _.isNil(_.first(avaiableExits));
 
               debug(clazzItem);
               debug(clazzAccountItem);
+
+              if (!noRecord) {
+                return Promise.reject(commonError.BIZ_FAIL_ERROR("已经提交过该班级的退班申请"));
+              }
 
               // 如果不存在
               if (_.isNil(clazzItem) || _.isNil(clazzAccountItem)) {
@@ -439,11 +448,13 @@ pub.createClazzExitItem = (req, res) => {
                 return Promise.reject(commonError.BIZ_FAIL_ERROR('当前状态不允许退班！'));
               }
 
+              // 查询是否有未审核的退班记录
+
 
               // 如果距离开班大于了3天，不允许退班
-              const openDate = moment(clazzItem['startDate']).add(2,'days').endOf('day');
+              const openDate = moment(clazzItem['startDate']).add(2, 'days').endOf('day');
               const now = moment();
-              if(openDate.diff(now) < 0){
+              if (openDate.diff(now) < 0) {
                 return Promise.reject(commonError.BIZ_FAIL_ERROR('开班三天后不允许退班！'));
               }
 

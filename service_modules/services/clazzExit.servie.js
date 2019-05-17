@@ -12,6 +12,14 @@ const clazzExitMapper = require('../dao/mysql_mapper/clazzExit.mapper');
 
 const pub = {};
 
+/**
+ * 查询班级的退班记录
+ * @param status
+ * @param clazzId
+ * @param pageNumber
+ * @param pageSize
+ * @return {*}
+ */
 pub.queryPagedClazzExitList = (status, clazzId, pageNumber = 1, pageSize = 10) => {
   const queryParam = {};
 
@@ -28,6 +36,15 @@ pub.queryPagedClazzExitList = (status, clazzId, pageNumber = 1, pageSize = 10) =
   return clazzExitMapper.queryPagedClazzExits(queryParam, pageNumber, pageSize);
 };
 
+/**
+ * 新建班级的退班
+ * @param userId
+ * @param clazzId
+ * @param clazzAccountId
+ * @param userCoins
+ * @param userReason
+ * @return {*}
+ */
 pub.createClazzExit = (userId, clazzId, clazzAccountId, userCoins, userReason = "") => {
   if (!_.isSafeInteger(userId) || _.isEmpty(clazzId) || !_.isSafeInteger(clazzAccountId)
       || !_.isSafeInteger(userCoins) || !_.isString(userReason)
@@ -58,6 +75,15 @@ pub.createClazzExit = (userId, clazzId, clazzAccountId, userCoins, userReason = 
   return clazzExitMapper.createClazzExit(clazzExitItem);
 };
 
+/**
+ * 更新班级的退班记录
+ * @param clazzExitId
+ * @param status
+ * @param userCoins
+ * @param userCoinId
+ * @param remark
+ * @return {*}
+ */
 pub.updateClazzExitById = (clazzExitId, status, userCoins, userCoinId, remark = "") => {
   if (!_.isSafeInteger(clazzExitId) || _.isNil(enumModel.getEnumByKey(status, enumModel.clazzExitStatusTypeEnum))
       || !_.isSafeInteger(userCoins) || !_.isString(remark)
@@ -86,13 +112,31 @@ pub.updateClazzExitById = (clazzExitId, status, userCoins, userCoinId, remark = 
   return clazzExitMapper.updateClazzExit(clazzExitItem);
 };
 
+/**
+ * 根据退班单号查询班级退班记录
+ * @param clazzExitId
+ * @return {*}
+ */
 pub.fetchClazzExitById = (clazzExitId) => {
   if (_.isNil(clazzExitId)) {
     winston.error('根据id获取退班记录，参数错误！！！ clazzExitId: %s', clazzExitId);
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
 
-  return clazzExitMapper.fetchClazzExitByParam({ id: clazzExitId });
+  return clazzExitMapper.fetchClazzExitByParam({id: clazzExitId});
 };
+
+/**
+ * 获取用户有效的退班记录
+ */
+pub.fetchAvailableExitByUserId = (clazzId, userId) => {
+  if (_.isNil(clazzId) || _.isNil((userId))) {
+    winston.error('根据id获取退班记录，参数错误！！！');
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return clazzExitMapper.fetchClazzExitByParam({
+    'userId': userId, 'clazzId': clazzId,
+    'status': {operator: '!=', value: enumModel.clazzExitStatusTypeEnum.REJECTED.key}})
+}
 
 module.exports = pub;
