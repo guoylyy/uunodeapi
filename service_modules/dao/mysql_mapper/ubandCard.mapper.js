@@ -81,7 +81,6 @@ pub.update = (cardItem) => {
 
   return ubandCardSchema.forge(pickedItem)
       .save(null, {
-        transacting: true,
         method: 'update'
       })
       .then((updatedCardItem) => {
@@ -103,7 +102,6 @@ pub.destroy = (cardId) => {
   debug('Ready to destroy: %d', cardId);
   return ubandCardSchema.forge({ id: cardId })
       .destroy({
-        transacting: true
       })
       .then((result) => {
         debug(result);

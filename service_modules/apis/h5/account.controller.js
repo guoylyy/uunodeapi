@@ -278,6 +278,40 @@ pub.userWithdraw = (req, res) => {
 };
 
 /**
+ * 用户取消提现
+ * @param req
+ * @param res
+ */
+pub.userCancelWithdraw = (req, res) => {
+  const userId = req.__CURRENT_USER.id;
+  const withdrawId = req.params.withdrawId;
+  schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
+      .then((queryItem) => {
+        req.__MODULE_LOGGER('取消提现', withdrawId);
+
+        return userWithdrawService.fetchUserWithdrawInfoById(withdrawId);
+      })
+      .then((withdrawItem) => {
+        if(_.isNil(withdrawItem)){
+          return Promise.reject(commonError.BIZ_FAIL_ERROR("不存在的提现记录"));
+        }
+        if(withdrawItem.status != enumModel.withdrawStatusEnum.WAITING.key){
+          return Promise.reject(commonError.BIZ_FAIL_ERROR("当前状态不能取消提现"));
+        }
+        if(withdrawItem.userId === userId){
+          return userWithdrawService.removeWithdrawRecordbyId(withdrawItem.id);
+        }else{
+          return Promise.reject(commonError.BIZ_FAIL_ERROR("不能取消别人的提款"));
+        }
+      })
+      .then(()=>{
+        return apiRender.renderSuccess(res);
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+
+/**
  * API: GET /account/coupons
  * 获取学员优惠券列表
  *

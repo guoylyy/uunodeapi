@@ -528,6 +528,18 @@ pub.updateClazzWeeklyUserCoinRecords = (clazzWithdrawId, userCoinIdList) => {
 };
 
 /**
+ * 删除提现记录
+ */
+pub.removeWithdrawRecordbyId = (userWithdrawId) =>{
+  if (_.isNil(userWithdrawId)) {
+    winston.error('提现ID参数错误！！！clazzWithdrawId: %s', userWithdrawId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return userWithdrawMapper.destroy(userWithdrawId);
+};
+
+
+/**
  * 根据id获取退款详情
  *
  * @param clazzWithdrawId

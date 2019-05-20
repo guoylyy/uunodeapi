@@ -34,6 +34,9 @@ pub.queryUserAvailableCard = (userId, status) => {
    if(status != queryModel.ubandCardQueryStatusEnum.ALL.key){
      queryParams['status'] = status;
    }
+   if(_.isNil(status)){
+     queryParams['status'] = queryModel.ubandCardQueryStatusEnum.AVAILABLE.key;
+   }
    return ubandCardMapper.fetchAllByParam(queryParams);
 };
 
