@@ -19,6 +19,7 @@ const wechatPromotion = require('../../lib/wechat.promotion');
 const clazzService = require('../../services/clazz.service');
 const clazzAccountService = require('../../services/clazzAccount.service');
 const userCoinService = require('../../services/userCoin.service');
+const userService = require('../../services/user.service');
 const couponService = require('../../services/coupon.service');
 const promotionService = require('../../services/promotion.service');
 const clazzExitService = require('../../services/clazzExit.servie');
@@ -449,7 +450,9 @@ pub.createClazzExitItem = (req, res) => {
               }
 
               // 查询是否有未审核的退班记录
-
+              if(_.size(avaiableExits) > 0){
+                return Promise.reject(commonError.BIZ_FAIL_ERROR('已存在退班班级！'));
+              }
 
               // 如果距离开班大于了3天，不允许退班
               const openDate = moment(clazzItem['startDate']).add(2, 'days').endOf('day');
@@ -482,5 +485,128 @@ pub.createClazzExitItem = (req, res) => {
       })
       .catch(req.__ERROR_HANDLER);
 };
+
+/**
+ * 获取用户的退班记录
+ * @param req
+ * @param res
+ */
+pub.getUserClazzExits = (req, res) => {
+  return schemaValidator.validatePromise(clazzSchema.clazzExitQuerySchema, req.query)
+      .then((queryStatus)=>{
+        //获取用户退班状态
+        debug(queryStatus);
+        const userId = req.__CURRENT_USER.id;
+        const status = queryStatus.status;
+        return clazzExitService.queryPagedUserExitList(status, userId, 1, 100);
+      })
+      .then((pagedClazzExit)=>{
+        const clazzExitList = pagedClazzExit.values;
+
+        return matchClazzExitWithClazzAndUser(clazzExitList)
+            .then((matchedClazzExitList) => {
+              pagedClazzExit.values = matchedClazzExitList;
+              return pagedClazzExit;
+            });
+      })
+      .then((pagedClazzExit) => {
+        debug(pagedClazzExit);
+        return apiRender.renderBaseResult(res, pagedClazzExit.values);
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 获取退班状态
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
+ */
+pub.getClazzExistById = (req, res) =>{
+  const exitId = req.params.exitId;
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
+      .then((queryParam)=>{
+        return clazzExitService.fetchClazzExitById(exitId);
+      })
+      .then((exitItems)=>{
+
+        if(_.size(exitItems) > 0){
+          let items = [exitItems];
+          return matchClazzExitWithClazzAndUser(items)
+              .then((matchedClazzExitList) => {
+                return matchedClazzExitList;
+              });
+        }else{
+          return Promise.reject(commonError.BIZ_FAIL_ERROR("不存在的退班记录"));
+        }
+      }).then((matchedItems)=>{
+        return apiRender.renderBaseResult(res,matchedItems);
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 取消退班
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
+ */
+pub.removeClazzExitById= (req,res)=>{
+  const userId = req.__CURRENT_USER.id,
+      clazzId = req.params.clazzId;
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
+      .then((queryParam)=>{
+        return clazzExitService.fetchAvailableExitByUserId(clazzId, userId);
+      })
+      .then((exitItem)=>{
+        if(exitItem){
+          let item = exitItem;
+          return clazzExitService.updateClazzExitById(item.id, enumModel.clazzExitStatusTypeEnum.REJECTED.key,
+              0,null,'User Cancel');
+        }else{
+          return Promise.reject(commonError.BIZ_FAIL_ERROR("该班级不存在的退班记录"));
+        }
+      }).then((item)=>{
+        return apiRender.renderSuccess(res);
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * Const methods
+ */
+
+const matchClazzExitWithClazzAndUser = (clazzExitList, pickClazzBasicInfo = apiUtil.pickClazzBasicInfo) => {
+  if (_.isEmpty(clazzExitList)) {
+    return Promise.resolve([]);
+  }
+
+  const clazzIdList = _.map(clazzExitList, 'clazzId'),
+      userIdList = _.map(clazzExitList, 'userId');
+
+  debug(clazzExitList);
+  debug(userIdList);
+
+  const queryUserListPromise = userService.queryUser(null, userIdList);
+  const queryClazzList = clazzService.queryClazzes(null, clazzIdList, null, null);
+
+  return Promise.all([queryUserListPromise, queryClazzList])
+      .then(([userList, clazzList]) => {
+        const userMap = _.keyBy(userList, 'id'),
+            clazzMap = _.keyBy(clazzList, 'id');
+
+        return _.map(
+            clazzExitList,
+            (clazzExit) => {
+              const pickedClazzExit = _.pick(clazzExit, ['id', 'status', 'applyDate']);
+              pickedClazzExit.clazzInfo = pickClazzBasicInfo(_.get(clazzMap, clazzExit.clazzId));
+              pickedClazzExit.userInfo = apiUtil.pickUserBasicInfo(_.get(userMap, clazzExit.userId));
+
+              return pickedClazzExit;
+            }
+        );
+      });
+};
+
 
 module.exports = pub;

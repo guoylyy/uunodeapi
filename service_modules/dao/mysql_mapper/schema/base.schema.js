@@ -86,7 +86,6 @@ pub.BaseBookshelfModel = bookshelf.Model.extend(
         try {
           return this.forge(item)
               .save(null, {
-                transacting: true,
                 method: 'insert'
               })
               .then((model) => {
@@ -109,7 +108,6 @@ pub.BaseBookshelfModel = bookshelf.Model.extend(
         try {
           return this.forge(item)
               .save(null, {
-                transacting: true,
                 method: 'update'
               })
               .then((model) => {
@@ -207,7 +205,6 @@ pub.BaseBookshelfModel = bookshelf.Model.extend(
         try {
           return this.forge({ id: itemId })
               .destroy({
-                transacting: true
               })
               .then((result) => {
                 debug(result);

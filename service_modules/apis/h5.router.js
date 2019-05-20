@@ -225,8 +225,9 @@ const guideController = require('./h5/guide.controller');
 router.get('/guide/chats', guideController.fetchInteractiveChatList);
 
 router.post('/clazzExit', clazzApis.createClazzExitItem);
-
-
+router.get('/clazzExit/list', clazzApis.getUserClazzExits);
+router.get('/clazzExit/:exitId', clazzApis.getClazzExistById);
+router.delete('/clazzExit/:clazzId', clazzApis.removeClazzExitById);
 
 
 //导出module

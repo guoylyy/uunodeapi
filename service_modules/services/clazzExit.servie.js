@@ -37,6 +37,25 @@ pub.queryPagedClazzExitList = (status, clazzId, pageNumber = 1, pageSize = 10) =
 };
 
 /**
+ * 获取用户的退班记录
+ */
+pub.queryPagedUserExitList = (status, userId, pageNumber = 1, pageSize = 10) => {
+  const queryParam = {};
+
+  if (!_.isNil(enumModel.getEnumByKey(status, enumModel.clazzExitStatusTypeEnum))) {
+    queryParam.status = status;
+  }
+
+  if (!_.isNil(userId)) {
+    queryParam.userId = userId;
+  }
+
+  debug(queryParam);
+
+  return clazzExitMapper.queryPagedClazzExits(queryParam, pageNumber, pageSize);
+};
+
+/**
  * 新建班级的退班
  * @param userId
  * @param clazzId
