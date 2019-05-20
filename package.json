@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "NODE_ENV=development nodemon --inspect-brk ./bin/www",
+    "dev": "NODE_ENV=development nodemon --inspect ./bin/www",
     "knex": "./node_modules/.bin/knex",
     "mongoose": "./node_modules/.bin/migrate --config mongoose.migrate.json",
     "raml2html": "./node_modules/.bin/raml2html",
