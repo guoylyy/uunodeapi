@@ -186,7 +186,6 @@ pub.create = (userItem) => {
 
   return userSchema.forge(pickedUserItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((userModel) => {

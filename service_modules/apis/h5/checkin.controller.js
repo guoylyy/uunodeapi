@@ -376,4 +376,23 @@ pub.createClazzCheckin = (req, res) => {
       .catch(req.__ERROR_HANDLER);
 };
 
+
+/**
+ * TODO:
+ *  获取打卡的统计信息
+ * @param req
+ * @param res
+ */
+pub.getCheckinSumdata = (req, res) =>{
+
+  let sumData = {
+    'checkinNum': 23,
+    'joinNum': 24,
+    'backMoney': 138
+  };
+
+  return apiRender.renderBaseResult(res, sumData);
+
+};
+
 module.exports = pub;

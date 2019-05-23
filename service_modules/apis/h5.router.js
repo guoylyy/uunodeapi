@@ -131,6 +131,7 @@ const checkinApis = require('./h5/checkin.controller');
 router.get('/clazz/:clazzId/checkins', middleware.markCanCheckin, checkinApis.queryCheckinList);
 router.get('/clazz/:clazzId/checkin', middleware.markCanCheckin, checkinApis.queryCheckinStatus);
 router.post('/clazz/:clazzId/checkin', middleware.markCanCheckin, checkinApis.createClazzCheckin);
+router.get('/clazz/:clazzId/checkin/sum', checkinApis.getCheckinSumdata);
 
 /***********************************************************************************************************************
  * 定义req.__CURRENT_CHECKIN
