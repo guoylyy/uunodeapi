@@ -280,6 +280,37 @@ pub.userWithdraw = (req, res) => {
 };
 
 /**
+ * 获取用户提现实体数据
+ * @param req
+ * @param res
+ */
+pub.getUserWithdraw = (req, res) => {
+  const userId = req.__CURRENT_USER.id;
+  const withdrawId = req.params.withdrawId;
+
+  schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
+      .then(() => {
+        req.__MODULE_LOGGER('获取提现', withdrawId);
+        return userWithdrawService.fetchUserWithdrawInfoById(withdrawId)
+      })
+      .then((withdrawItem) => {
+        if (_.isNil(withdrawItem)) {
+          return Promise.reject(commonError.BIZ_FAIL_ERROR("不存在的提现记录"));
+        }
+        if (withdrawItem.userId === userId) {
+
+          let item = _.pick(withdrawItem,['id','verifiedRemark','applyMoney','verifiedMoney','status','verifiedDate','applyDate']);
+
+          return apiRender.renderBaseResult(res, item);
+        } else {
+          return Promise.reject(commonError.BIZ_FAIL_ERROR("不是本人的提款"));
+        }
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+
+/**
  * 用户取消提现
  * @param req
  * @param res
@@ -294,19 +325,19 @@ pub.userCancelWithdraw = (req, res) => {
         return userWithdrawService.fetchUserWithdrawInfoById(withdrawId);
       })
       .then((withdrawItem) => {
-        if(_.isNil(withdrawItem)){
+        if (_.isNil(withdrawItem)) {
           return Promise.reject(commonError.BIZ_FAIL_ERROR("不存在的提现记录"));
         }
-        if(withdrawItem.status != enumModel.withdrawStatusEnum.WAITING.key){
+        if (withdrawItem.status != enumModel.withdrawStatusEnum.WAITING.key) {
           return Promise.reject(commonError.BIZ_FAIL_ERROR("当前状态不能取消提现"));
         }
-        if(withdrawItem.userId === userId){
+        if (withdrawItem.userId === userId) {
           return userWithdrawService.removeWithdrawRecordbyId(withdrawItem.id);
-        }else{
+        } else {
           return Promise.reject(commonError.BIZ_FAIL_ERROR("不能取消别人的提款"));
         }
       })
-      .then(()=>{
+      .then(() => {
         return apiRender.renderSuccess(res);
       })
       .catch(req.__ERROR_HANDLER);
@@ -345,21 +376,21 @@ pub.fetchCouponList = (req, res) => {
  * @param req
  * @param res
  */
-pub.fetchCoupon = (req, res) =>{
+pub.fetchCoupon = (req, res) => {
   let couponId = req.params.couponId;
   schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
-      .then(()=>{
-        if(_.isNil(couponId)){
+      .then(() => {
+        if (_.isNil(couponId)) {
           throw commonError.PARAMETER_ERROR("参数错误");
-        }else{
+        } else {
           return couponService.fetchCouponById(couponId);
         }
       })
-      .then((coupon) =>{
-        if(!_.isNil(coupon)) {
-          let obj = _.pick(coupon,  ['id', 'name', 'money', 'expireDate']);
+      .then((coupon) => {
+        if (!_.isNil(coupon)) {
+          let obj = _.pick(coupon, ['id', 'name', 'money', 'expireDate']);
           apiRender.renderBaseResult(res, obj);
-        }else{
+        } else {
           throw commonError.BIZ_FAIL_ERROR("没有找到优惠券");
         }
       })

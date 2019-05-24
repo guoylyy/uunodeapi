@@ -84,6 +84,7 @@ router.get('/account/coupons', accountApis.fetchCouponList);
 router.get('/account/coupon/:couponId', accountApis.fetchCoupon);
 router.get('/account/withdraws', accountApis.queryUserWithdraws);
 router.post('/account/withdraw', accountApis.userWithdraw);
+router.get('/account/withdraw/:withdrawId', accountApis.getUserWithdraw);
 router.delete('/account/withdraw/:withdrawId', accountApis.userCancelWithdraw);
 router.get('/account/rank', accountApis.queryUserRank);
 router.get('/account/card', accountApis.queryUserCards);
