@@ -1990,6 +1990,10 @@ const advTypeEnum = {
   'TEACHER': {
     key: 'TEACHER',
     name: '教师'
+  },
+  'FAVOR':{
+    key: 'FAVOR',
+    name: '福利'
   }
 };
 
