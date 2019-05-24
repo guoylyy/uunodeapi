@@ -23,6 +23,7 @@ const userService = require('../../services/user.service');
 const couponService = require('../../services/coupon.service');
 const promotionService = require('../../services/promotion.service');
 const clazzExitService = require('../../services/clazzExit.servie');
+const advService = require('../../services/advEntity.service');
 
 const enumModel = require('../../services/model/enum');
 const commonError = require('../../services/model/common.error');
@@ -450,7 +451,7 @@ pub.createClazzExitItem = (req, res) => {
               }
 
               // 查询是否有未审核的退班记录
-              if(_.size(avaiableExits) > 0){
+              if (_.size(avaiableExits) > 0) {
                 return Promise.reject(commonError.BIZ_FAIL_ERROR('已存在退班班级！'));
               }
 
@@ -493,14 +494,14 @@ pub.createClazzExitItem = (req, res) => {
  */
 pub.getUserClazzExits = (req, res) => {
   return schemaValidator.validatePromise(clazzSchema.clazzExitQuerySchema, req.query)
-      .then((queryStatus)=>{
+      .then((queryStatus) => {
         //获取用户退班状态
         debug(queryStatus);
         const userId = req.__CURRENT_USER.id;
         const status = queryStatus.status;
         return clazzExitService.queryPagedUserExitList(status, userId, 1, 100);
       })
-      .then((pagedClazzExit)=>{
+      .then((pagedClazzExit) => {
         const clazzExitList = pagedClazzExit.values;
 
         return matchClazzExitWithClazzAndUser(clazzExitList)
@@ -522,25 +523,25 @@ pub.getUserClazzExits = (req, res) => {
  * @param res
  * @return {Bluebird<void>}
  */
-pub.getClazzExistById = (req, res) =>{
+pub.getClazzExistById = (req, res) => {
   const exitId = req.params.exitId;
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
-      .then((queryParam)=>{
+      .then((queryParam) => {
         return clazzExitService.fetchClazzExitById(exitId);
       })
-      .then((exitItems)=>{
+      .then((exitItems) => {
 
-        if(_.size(exitItems) > 0){
+        if (_.size(exitItems) > 0) {
           let items = [exitItems];
           return matchClazzExitWithClazzAndUser(items)
               .then((matchedClazzExitList) => {
                 return matchedClazzExitList;
               });
-        }else{
+        } else {
           return Promise.reject(commonError.BIZ_FAIL_ERROR("不存在的退班记录"));
         }
-      }).then((matchedItems)=>{
-        return apiRender.renderBaseResult(res,matchedItems);
+      }).then((matchedItems) => {
+        return apiRender.renderBaseResult(res, matchedItems);
       })
       .catch(req.__ERROR_HANDLER);
 };
@@ -551,26 +552,41 @@ pub.getClazzExistById = (req, res) =>{
  * @param res
  * @return {Bluebird<void>}
  */
-pub.removeClazzExitById= (req,res)=>{
+pub.removeClazzExitById = (req, res) => {
   const userId = req.__CURRENT_USER.id,
       clazzId = req.params.clazzId;
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
-      .then((queryParam)=>{
+      .then((queryParam) => {
         return clazzExitService.fetchAvailableExitByUserId(clazzId, userId);
       })
-      .then((exitItem)=>{
-        if(exitItem){
+      .then((exitItem) => {
+        if (exitItem) {
           let item = exitItem;
           return clazzExitService.updateClazzExitById(item.id, enumModel.clazzExitStatusTypeEnum.REJECTED.key,
-              0,null,'User Cancel');
-        }else{
+              0, null, 'User Cancel');
+        } else {
           return Promise.reject(commonError.BIZ_FAIL_ERROR("该班级不存在的退班记录"));
         }
-      }).then((item)=>{
+      }).then((item) => {
         return apiRender.renderSuccess(res);
       })
       .catch(req.__ERROR_HANDLER);
 };
+/**
+ * 获取首页的广告列表
+ * @param req
+ */
+pub.queryAdvList = (req, res) => {
+  return schemaValidator.validatePromise(clazzSchema.advQuerySchema, req.query)
+      .then((queryParams) => {
+        return advService.queryOpenAdv(queryParams.type);
+      })
+      .then((advList)=>{
+        return apiRender.renderBaseResult(res, advList);
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
 
 /**
  * Const methods

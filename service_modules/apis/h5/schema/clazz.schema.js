@@ -146,5 +146,12 @@ pub.clazzExitQuerySchema = Joi.object().keys({
   status: Joi.string().trim().max(255).required()
 });
 
+/**
+ * 目前
+ */
+pub.advQuerySchema = Joi.object().keys({
+  type: Joi.string().valid(_.keys(enumModel.advTypeEnum)).required(),
+});
+
 
 module.exports = pub;

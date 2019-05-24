@@ -1974,6 +1974,26 @@ const userRankTypeEnum = {
   }
 };
 
+const advTypeEnum = {
+  'BANNER': {
+    key: 'BANNER',
+    name: '头图'
+  },
+  'COURSE': {
+    key: 'COURSE',
+    name: '课程'
+  },
+  'ADVITISE': {
+    key: 'ADVITISE',
+    name: '广告'
+  },
+  'TEACHER': {
+    key: 'TEACHER',
+    name: '教师'
+  }
+};
+
+
 // functions
 exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
   if (EnumObj[key]) {
@@ -1982,6 +2002,9 @@ exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
 
   return null;
 };
+
+//update at 2019-05-24
+exports.advTypeEnum = advTypeEnum;
 
 //update at 2018-10-21
 exports.shareTypeEnum = shareTypeEnum;

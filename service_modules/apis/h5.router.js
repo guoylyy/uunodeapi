@@ -91,11 +91,12 @@ router.get('/account/card', accountApis.queryUserCards);
 // 用户目标设定
 router.post('/account/target', accountApis.updateUserTarget);
 
-
+// 报名相关API
 // 课程相关API
 const clazzApis = require('./h5/clazz.controller');
 
 router.get('/clazzes', clazzApis.queryClazzList);
+router.get('/advs', clazzApis.queryAdvList);
 
 /***********************************************************************************************************************
  * 定义req.__CURRENT_CLAZZ
