@@ -76,6 +76,8 @@ pub.getUserBaseInfo = (req, res) => {
         if (pickedUserInfo.birthday) {
           pickedUserInfo.birthday = moment(pickedUserInfo.birthday).format('YYYY-MM-DD');
         }
+        //TODO: 获取邀请码
+        pickedUserInfo['invitationCode'] = 'XSUEIR';
 
         return apiRender.renderBaseResult(res, pickedUserInfo);
       })
@@ -330,12 +332,40 @@ pub.fetchCouponList = (req, res) => {
           //re-construct the structure
           coupon.name = coupon.remark || "";
 
-          return _.pick(coupon, ['name', 'money', 'expireDate']);
+          return _.pick(coupon, ['id', 'name', 'money', 'expireDate']);
         });
 
         return apiRender.renderBaseResult(res, pickedCouponList);
       })
       .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 获取优惠券详情列表
+ * @param req
+ * @param res
+ */
+pub.fetchCoupon = (req, res) =>{
+  let couponId = req.params.couponId;
+  schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then(()=>{
+        if(_.isNil(couponId)){
+          throw commonError.PARAMETER_ERROR("参数错误");
+        }else{
+          return couponService.fetchCouponById(couponId);
+        }
+      })
+      .then((coupon) =>{
+        if(!_.isNil(coupon)) {
+          let obj = _.pick(coupon,  ['id', 'name', 'money', 'expireDate']);
+          apiRender.renderBaseResult(res, obj);
+        }else{
+          throw commonError.BIZ_FAIL_ERROR("没有找到优惠券");
+        }
+      })
+      .catch(req.__ERROR_HANDLER);
+
+  couponService.fetchCouponById()
 };
 
 /**

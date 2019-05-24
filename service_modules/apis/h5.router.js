@@ -81,6 +81,7 @@ router.put('/account/password', accountApis.updatePassword);
 router.get('/account/coins', accountApis.fetchCoins);
 router.get('/account/coinSum', accountApis.calculateUserCoinSum);
 router.get('/account/coupons', accountApis.fetchCouponList);
+router.get('/account/coupon/:couponId', accountApis.fetchCoupon);
 router.get('/account/withdraws', accountApis.queryUserWithdraws);
 router.post('/account/withdraw', accountApis.userWithdraw);
 router.delete('/account/withdraw/:withdrawId', accountApis.userCancelWithdraw);
