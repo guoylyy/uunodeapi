@@ -21,7 +21,7 @@ pub.pickClazzBasicInfo = (clazzItem, currentClazzAccount) => {
     return null;
   }
 
-  const pickedClazzItem = _.pick(clazzItem, ['id', 'name', 'clazzType', 'description', 'banner']);
+  const pickedClazzItem = _.pick(clazzItem, ['id', 'name', 'clazzType', 'description', 'banner', 'startDate', 'endDate']);
 
   if (_.isPlainObject(currentClazzAccount)) {
     pickedClazzItem.clazzJoinStatus = _.get(currentClazzAccount, 'status', null);
