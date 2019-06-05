@@ -20,6 +20,7 @@ const apiRender = require('../render/api.render');
 const checkinService = require('../../services/checkin.service');
 const clazzAccountService = require('../../services/clazzAccount.service');
 const ubandCardService = require('../../services/ubandCard.service');
+const userFileService = require('../../services/userFile.service');
 
 /**
  * 调整日期到用户时区
@@ -127,7 +128,7 @@ pub.updateCheckinItem = (req, res) => {
       .then((checkinFiles) => {
         debug(checkinFiles);
 
-        req.__MODULE_LOGGER(`更新打卡${ req.__CURRENT_CHECKIN.id }`, checkinFiles);
+        req.__MODULE_LOGGER(`更新打卡${req.__CURRENT_CHECKIN.id}`, checkinFiles);
 
         return checkinService.updateCheckinFiles(req.__CURRENT_CHECKIN, checkinFiles)
       })
@@ -146,7 +147,7 @@ pub.updateCheckinItem = (req, res) => {
 pub.deleteCheckin = (req, res) => {
   schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
-        req.__MODULE_LOGGER(`取消打卡${ req.__CURRENT_CHECKIN.id }`, queryParam);
+        req.__MODULE_LOGGER(`取消打卡${req.__CURRENT_CHECKIN.id}`, queryParam);
 
         const checkinStatus = _.get(req.__CURRENT_CHECKIN, 'status', enumModel.checkinStatusEnum.ABNORMAL.key);
         if (checkinStatus !== enumModel.checkinStatusEnum.NORMAL.key) {
@@ -212,7 +213,7 @@ pub.queryCheckinStatus = (req, res) => {
       })
       .then(([checkinItem, latestCheckinItem, cardItems]) => {
         const clazzItem = req.__CURRENT_CLAZZ,
-          hasCheckin = !_.isNil(latestCheckinItem);
+            hasCheckin = !_.isNil(latestCheckinItem);
 
         const pickClazzItem = _.pick(req.__CURRENT_CLAZZ, ['id', 'name']),
             clazzStartEndDate = clazzUtil.calculateClazzStartEndDate(
@@ -305,7 +306,7 @@ pub.createClazzCheckin = (req, res) => {
 
         let ubandCardPromise = ubandCardService.queryUserAvailableCard(userItem.id);
 
-        if(globalIsCreateCheckin){
+        if (globalIsCreateCheckin) {
           ubandCardPromise = Promise.resolve(req.__CURRENT_CLAZZ_ACCOUNT);
         }
         const checkinListPromise = checkinService.queryCheckinList(userItem.id, clazzItem.id, startDate, endDate);
@@ -334,7 +335,7 @@ pub.createClazzCheckin = (req, res) => {
           // 补打卡，修正时间为当天开始时间
           globalCheckinItem.date = moment(globalCheckinItem.date).startOf('day').toDate();
 
-          if(_.isNil(cardItems) || cardItems.length == 0){
+          if (_.isNil(cardItems) || cardItems.length == 0) {
             return Promise.reject(commonError.PARAMETER_ERROR('你没有足够的复活卡，无法补打卡'));
           }
           // 补打卡，记录次数
@@ -383,7 +384,7 @@ pub.createClazzCheckin = (req, res) => {
  * @param req
  * @param res
  */
-pub.getCheckinSumdata = (req, res) =>{
+pub.getCheckinSumdata = (req, res) => {
 
   let sumData = {
     'checkinNum': 23,
@@ -393,6 +394,23 @@ pub.getCheckinSumdata = (req, res) =>{
 
   return apiRender.renderBaseResult(res, sumData);
 
+};
+
+/**
+ * 删除用户打卡所用文件信息
+ * @param req
+ * @param res
+ */
+pub.removeCheckinFile = (req, res) => {
+  let fileId = req.params.fileId;
+  schemaValidator.validatePromise(commonSchema.emptySchema, {})
+      .then(() => {
+        return userFileService.deleteUserFileItem(fileId);
+      })
+      .then(() => {
+        return apiRender.renderSuccess(res);
+      })
+      .catch(req.__ERROR_HANDLER);
 };
 
 module.exports = pub;

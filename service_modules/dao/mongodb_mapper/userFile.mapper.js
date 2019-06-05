@@ -47,6 +47,14 @@ pub.fetchById = (userFileId) => {
 };
 
 /**
+ * 删除用户上传的文件记录
+ * @param userFileId
+ */
+pub.deleteById = (userFileId) => {
+  return userFileSchema.destroyItem(userFileId);
+};
+
+/**
  * 根据id更新用户文件信息
  *
  * @param userFileId

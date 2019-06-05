@@ -122,4 +122,16 @@ pub.updateUserFileItem = (userFileId, userFileItem) => {
   return userFileMapper.updateById(userFileId, userFileItem);
 };
 
+/**
+ * 销毁用户上传文件记录
+ * @param userFileId
+ */
+pub.deleteUserFileItem = (userFileId) =>{
+  if (_.isNil(userFileId) ) {
+    winston.error('根据id更新用户文件失败，参数错误！！！userFileId: %s', userFileId );
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return userFileMapper.deleteById(userFileId);
+};
+
 module.exports = pub;

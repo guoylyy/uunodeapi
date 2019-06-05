@@ -128,13 +128,17 @@ router.post('/clazz/:clazzId/task/:taskId/reply', clazzTaskApis.createTaskReply)
 router.post('/clazz/:clazzId/task/:taskId/share', clazzTaskApis.createTaskShare);
 router.get('/clazz/:clazzId/taskShare', clazzTaskApis.queryUserTaskShare);
 
-
 // 打卡相关API
 const checkinApis = require('./h5/checkin.controller');
+//删除用户上传的文件
+router.delete('/clazzfile/:fileId', checkinApis.removeCheckinFile);
+
 router.get('/clazz/:clazzId/checkins', middleware.markCanCheckin, checkinApis.queryCheckinList);
 router.get('/clazz/:clazzId/checkin', middleware.markCanCheckin, checkinApis.queryCheckinStatus);
 router.post('/clazz/:clazzId/checkin', middleware.markCanCheckin, checkinApis.createClazzCheckin);
 router.get('/clazz/:clazzId/checkin/sum', checkinApis.getCheckinSumdata);
+
+
 
 /***********************************************************************************************************************
  * 定义req.__CURRENT_CHECKIN
