@@ -65,7 +65,6 @@ pub.create = (userPay) => {
   debug('Ready to save: %j', userPay);
   return userPaySchema.forge(userPay)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((result) => {
@@ -95,7 +94,6 @@ pub.update = (userPay) => {
   debug('Ready to update: %j', userPay);
   return userPaySchema.forge(pickedUserPay)
       .save(null, {
-        transacting: true,
         method: 'update'
       })
       .then((result) => {
