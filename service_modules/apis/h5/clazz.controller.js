@@ -199,7 +199,6 @@ pub.fetchClazzIntroduction = (req, res) => {
 
         req.__MODULE_LOGGER(`获取课程${currentClazzItem.id}简介`, queryParam);
 
-        // todo: move to middleware
         // 自动加入
         if (_.isNil(req.__CURRENT_CLAZZ_ACCOUNT)) {
           clazzAccountService.userJoinClazz(req.__CURRENT_USER, currentClazzItem)
@@ -210,7 +209,14 @@ pub.fetchClazzIntroduction = (req, res) => {
       })
       .then((introductionItem) => {
         let introduction = _.pick(introductionItem, 'introduction');
-
+        let st = req.__CURRENT_CLAZZ_ACCOUNT.status;
+        if( st == enumModel.clazzJoinStatusEnum.CLOSE.key ||
+            st ==  enumModel.clazzJoinStatusEnum.PROCESSING.key ||
+            st == enumModel.clazzJoinStatusEnum.WAITENTER.key){
+          introduction['hasJoin'] = true;
+        }else{
+          introduction['hasJoin'] = false;
+        }
         return apiRender.renderBaseResult(res, introduction);
       })
       .catch(req.__ERROR_HANDLER);
