@@ -297,7 +297,7 @@ pub.sendCheckinAlertMsg = (user, clazz, remark) => {
         keyword2: user.name,
         remark: `您在${ clazz.name }的打卡记录已经被修改，请进入查看。么么哒～${ remarkStr }`
       },
-      systemConfig.BASE_URL + '/study#/studyList?id=' + clazz.id,,
+      systemConfig.BASE_URL + '/study#/studyList?id=' + clazz.id,
       null,
       clazz.id,
       user.id)
