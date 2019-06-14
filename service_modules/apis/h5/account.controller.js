@@ -7,6 +7,7 @@ const _ = require('lodash');
 const debug = require('debug')('controller');
 const Promise = require('bluebird');
 const moment = require('moment');
+const winston = require('winston');
 
 const systemConfig = require('../../../config/config');
 const enumModel = require('../../services/model/enum');
@@ -15,6 +16,8 @@ const apiRender = require('../render/api.render');
 
 const apiUtil = require('./../util/api.util');
 const jwtUtil = require('../util/jwt.util');
+
+const wechatPromotion = require('../../lib/wechat.promotion');
 
 const schemaValidator = require('../schema.validator');
 const commonSchema = require('../common.schema');
@@ -26,6 +29,7 @@ const userCoinSerivice = require('../../services/userCoin.service');
 const userWithdrawService = require('../../services/userWithdraw.service');
 const userRankService = require('../../services/userRank.service');
 const ubandCardService = require('../../services/ubandCard.service');
+const promotionService = require('../../services/promotion.service');
 
 const pub = {};
 
@@ -68,17 +72,27 @@ pub.auth = (req, res) => {
  * @returns {*}
  */
 pub.getUserBaseInfo = (req, res) => {
+  let pickedUserInfo  = {};
+  let currentUserId = req.__CURRENT_USER.id;
   schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
         //筛选需要的属性
-        let pickedUserInfo = _.pick(req.__CURRENT_USER, ['id', 'name', 'headImgUrl', 'sex', 'studentNumber', 'birthday', 'target']);
-
+        pickedUserInfo = _.pick(req.__CURRENT_USER, ['id', 'name', 'headImgUrl', 'sex', 'studentNumber', 'birthday', 'target']);
         if (pickedUserInfo.birthday) {
           pickedUserInfo.birthday = moment(pickedUserInfo.birthday).format('YYYY-MM-DD');
         }
-        //TODO: 获取邀请码
-        pickedUserInfo['invitationCode'] = 'XSUEIR';
-
+        return promotionService.fetchPromotionUserByUserId(currentUserId);
+      }).then((promotionUser)=>{
+          debug(promotionUser);
+          if (!_.isNil(promotionUser)) {
+            pickedUserInfo['invitationCode'] = promotionUser;
+            return {"key":promotionUser.key};
+          }
+          return promotionService.createPromotionUser(currentUserId, JSON.stringify({"code":"11"}));
+      }).then((promotionUserItem)=>{
+        if(!_.isNil(promotionUserItem)){
+          pickedUserInfo['invitationCode'] = promotionUserItem.key;
+        }
         return apiRender.renderBaseResult(res, pickedUserInfo);
       })
       .catch(req.__ERROR_HANDLER);
