@@ -36,7 +36,6 @@ pub.create = (wechatTicketItem) => {
   debug('Ready to save: %j', wechatTicketItem);
   return wechatTicketSchema.forge(wechatTicketItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((wechatTicketItem) => {

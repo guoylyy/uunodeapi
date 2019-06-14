@@ -85,7 +85,6 @@ pub.update = (couponItem) => {
 
   return couponSchema.forge(pickeCouponItem)
       .save(null, {
-        transacting: true,
         method: 'update'
       })
       .then((couponItem) => {
@@ -110,7 +109,6 @@ pub.create = (couponItem) => {
   debug('Ready to save: %j', couponItem);
   return couponSchema.forge(couponItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((result) => {
@@ -167,7 +165,6 @@ pub.destroy = (couponId) => {
   debug('Ready to destroy: %d', couponId);
   return couponSchema.forge({ id: couponId })
       .destroy({
-        transacting: true
       })
       .then((result) => {
         debug(result);

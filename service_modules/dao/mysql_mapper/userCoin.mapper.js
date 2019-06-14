@@ -97,7 +97,7 @@ pub.destroyByBizId = (bizId) => {
       (query) => {
         query.where('bizId', bizId)
       })
-      .destroy({ transacting: true })
+      .destroy({})
       .then((result) => {
         debug(result);
 

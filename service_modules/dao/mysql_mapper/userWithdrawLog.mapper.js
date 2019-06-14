@@ -29,7 +29,6 @@ pub.create = (withdrawLogItem) => {
   debug('Ready to save: %j', withdrawLogItem);
   return userWithdrawLogSchema.forge(withdrawLogItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((withdrawLogItem) => {

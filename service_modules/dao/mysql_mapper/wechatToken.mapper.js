@@ -36,7 +36,6 @@ pub.create = (wechatTokenItem) => {
   debug('Ready to save: %j', wechatTokenItem);
   return wechatTokenSchema.forge(wechatTokenItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((wechatTokenItem) => {

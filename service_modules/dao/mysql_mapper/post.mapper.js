@@ -131,7 +131,6 @@ pub.create = (postItem) => {
 
   return postSchema.forge(postItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((postItem) => {
@@ -182,7 +181,6 @@ pub.update = (postItem) => {
 
   return postSchema.forge(pickedPostItem)
       .save(null, {
-        transacting: true,
         method: 'update'
       })
       .then((postItem) => {
@@ -206,7 +204,6 @@ pub.destroy = (postId) => {
   debug('Ready to destroy: %d', postId);
   return postSchema.forge({ id: postId })
       .destroy({
-        transacting: true
       })
       .then((result) => {
         debug(result);

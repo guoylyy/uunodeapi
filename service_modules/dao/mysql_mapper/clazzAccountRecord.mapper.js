@@ -47,7 +47,6 @@ pub.create = (clazzAccountRecordItem) => {
 
   return clazzAccountRecordSchema.forge(clazzAccountRecordItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((clazzAccountRecordSchema) => {
@@ -74,7 +73,6 @@ pub.update = (clazzAccountRecordItem) => {
 
   return clazzAccountRecordSchema.forge(pickeClazzAccountRecordItem)
       .save(null, {
-        transacting: true,
         method: 'update'
       })
       .then((clazzAccountItem) => {

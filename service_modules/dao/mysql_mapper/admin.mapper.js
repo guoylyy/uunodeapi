@@ -89,7 +89,6 @@ pub.create = (adminItem) => {
 
   return adminSchema.forge(adminItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((adminModel) => {
@@ -115,7 +114,6 @@ pub.update = (adminItem) => {
 
   return adminSchema.forge(pickedAdminItem)
       .save(null, {
-        transacting: true,
         method: 'update'
       })
       .then((adminModel) => {

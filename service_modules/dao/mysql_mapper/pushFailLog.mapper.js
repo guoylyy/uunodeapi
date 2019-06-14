@@ -87,7 +87,6 @@ pub.create = (pushFailLogItem) => {
 
   return pushFailLogSchema.forge(pushFailLogItem)
       .save(null, {
-        transacting: true,
         method: 'insert'
       })
       .then((pushFailLogItem) => {
