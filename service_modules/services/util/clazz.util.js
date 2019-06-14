@@ -243,6 +243,10 @@ pub.getClazzMainPageUrl = (clazzId) => {
  * @returns {boolean}
  */
 pub.checkDateIsWithinClazzRange = (checkDate, clazzAccountRecordList) => {
+  if(clazzAccountRecordList.length === 1 && clazzAccountRecordList[0].startDate === null &&
+      clazzAccountRecordList[0].startDate === null){
+    return true;
+  }
   for (const clazzAccountRecord of clazzAccountRecordList) {
     if (moment(checkDate).isBetween(
             clazzAccountRecord.startDate,

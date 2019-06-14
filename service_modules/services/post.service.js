@@ -59,7 +59,7 @@ pub.fetchUserClazzPostList = (clazzItem, clazzAccountItem) => {
         clazzId: clazzId,
         targetDate: { operator: '<=', value: nowMoment.toDate() }
       }),
-      queryClazzAccountRecordListPromise = clazzType === enumModel.clazzTypeEnum.LONG_TERM.key
+      queryClazzAccountRecordListPromise = (clazzType === enumModel.clazzTypeEnum.LONG_TERM.key)
           ? clazzAccountRecordMapper.queryClazzAccountRecordList({ clazzAccountId: clazzAccountItem.id })
           : Promise.resolve([{ startDate: null, endDate: null }]);
 
