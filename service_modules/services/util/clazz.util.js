@@ -197,10 +197,10 @@ pub.getClazzJoinType = (clazzType) => {
 
 /**
  * 课程任务url生成器
- *
  * @type {Function}
  */
-const compiledTaskUrlTemplate = _.template(systemConfig.BASE_URL + '/course/${ courseId }/task/${ taskId }?postId=${ postId }');
+// const compiledTaskUrlTemplate = _.template(systemConfig.BASE_URL + '/course/${ courseId }/task/${ taskId }?postId=${ postId }');
+const compiledTaskUrlTemplate = _.template(systemConfig.BASE_URL + '/study#/studyDetail?classId=${ courseId }&taskId=${ taskId }');
 
 /**
  * 获取课程任务推文链接
@@ -220,10 +220,9 @@ pub.getClazzTaskUrl = (clazzId, taskId, postId) => {
 
 /**
  * 班级主页Url template
- *
  * @type {Function}
  */
-const compiledClazzDetailUrlTemplate = _.template(systemConfig.BASE_URL + '/course/detail/${ clazzId }');
+const compiledClazzDetailUrlTemplate = _.template(systemConfig.BASE_URL + '/study#/studyList?id=${ clazzId }');
 
 /**
  * 获取clazzId所对应的班级主页

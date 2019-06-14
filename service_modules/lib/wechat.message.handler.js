@@ -56,6 +56,7 @@ const supportedDomains = _.keys(systemConfig.CHECKIN_SUPPORT_DOMAIN);
 
 /**
  * 补打卡自动回复处理
+ *
  * @param account
  * @param baseResult
  */
@@ -97,7 +98,7 @@ let addCheckinAutoReplyHandler = (account, baseResult) => {
                    *    1)  课程名称  超链接地址
                    */
                   // todo 打卡链接更新
-                  return content + (index + 1) + ") : " + clazzItem.name + "\t<a href='" + systemConfig.BASE_URL + "/weh5/course/" + clazzItem.id + "/addCheckin'>补打卡点我</a>\n";
+                  return content + (index + 1) + ") : " + clazzItem.name + "\t<a href='" + systemConfig.BASE_URL + "/study#/studyList?id=" + clazzItem.id + "'>补打卡点我</a>\n";
                 },
                 ''
             )

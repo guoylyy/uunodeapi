@@ -174,6 +174,8 @@ let pub = {};
 /**
  * 发送加入班级成功消息
  *
+ *  TODO: 修改加入班级成功消息
+ *
  * @param user
  * @param clazz
  * @returns {Promise.<T>|Promise}
@@ -186,7 +188,7 @@ pub.sendJoinSuccessMsg = (user, clazz) => {
         keyword1: clazz.name,
         keyword2: user.name
       },
-      systemConfig.BASE_URL + '/course/detail/' + clazz.id,
+      systemConfig.BASE_URL + '/study#/studyList?id=' + clazz.id,
       null,
       clazz.id,
       user.id)
@@ -197,7 +199,7 @@ pub.sendJoinSuccessMsg = (user, clazz) => {
 
 /**
  * 发送回复消息
- *
+ * TODO:删除这个消息，这个功能目前下线了
  * @param user
  * @param clazz
  */
@@ -236,7 +238,7 @@ pub.sendGambicoinChangeMsg = (user, coin, remainCoin, bizType) => {
         'keyword3': moment().format('YYYY-MM-DD'),
         'keyword4': remainCoin + ''
       },
-      `${ systemConfig.BASE_URL }/me/coin`,
+      `${ systemConfig.BASE_URL }/mine#/myCoin`,
       null,
       null,
       user.id)
@@ -247,6 +249,7 @@ pub.sendGambicoinChangeMsg = (user, coin, remainCoin, bizType) => {
 
 /**
  * 发送退款模版消息
+ *
  *
  * @param  {[type]} user   [description]
  * @param  {[type]} title  [description]
@@ -264,7 +267,7 @@ pub.sendPaybackMsg = (user, title, remark, money, clazzId) => {
         'keyword2': money + '元',
         'remark': remark
       },
-      `${ systemConfig.BASE_URL }/me/coin?page=withdraw`,
+      `${ systemConfig.BASE_URL }/mine#/myCoin`,
       null,
       clazzId,
       user.id)
@@ -275,6 +278,8 @@ pub.sendPaybackMsg = (user, title, remark, money, clazzId) => {
 
 /**
  * 发送打卡记录修改模板消息
+ *
+ * TODO:修改
  *
  * @param user
  * @param clazz
@@ -292,7 +297,7 @@ pub.sendCheckinAlertMsg = (user, clazz, remark) => {
         keyword2: user.name,
         remark: `您在${ clazz.name }的打卡记录已经被修改，请进入查看。么么哒～${ remarkStr }`
       },
-      `${ systemConfig.BASE_URL }/course/detail/${ clazz.id }?isCheckin=1`,
+      systemConfig.BASE_URL + '/study#/studyList?id=' + clazz.id,,
       null,
       clazz.id,
       user.id)
@@ -326,7 +331,7 @@ pub.sendCouponAlertMsg = (user, content) => {
         keyword2: user.name,
         remark: content
       },
-      `${ systemConfig.BASE_URL }/me/ticket`,
+      `${ systemConfig.BASE_URL }/mine#/coupon`,
       null,
       '',
       user.id)
@@ -353,7 +358,7 @@ pub.sendUbandCardAlertMsg = (user, content) => {
         keyword2: user.name,
         remark: content
       },
-      `${ systemConfig.BASE_URL }/me/ticket`,
+      `${ systemConfig.BASE_URL }/mine#/resurrection`,
       null,
       '',
       user.id)
@@ -365,6 +370,8 @@ pub.sendUbandCardAlertMsg = (user, content) => {
 
 /**
  * 发送回复消息跳转至小程序
+ *
+ * TODO:这个方法要删除掉
  *
  * @param clazz
  * @param receiver
