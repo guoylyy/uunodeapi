@@ -51,10 +51,10 @@ pub.qiniuCallbackHandler = (req, res) => {
   debug(body);
   debug(auth);
 
-  if (!qiniuComponent.isCallbackValid(systemConfig.MNG_BASE_QINIU_CALLBACK_URL, body, auth)) {
-    winston.error("回调验证失败");
-    return apiRender.renderParameterError(res, '验证回调失败');
-  }
+  //if (!qiniuComponent.isCallbackValid(systemConfig.MNG_BASE_QINIU_CALLBACK_URL, body, auth)) {
+  //  winston.error("回调验证失败");
+  //  return apiRender.renderParameterError(res, '验证回调失败');
+  //}
 
   let attach = {
     name: body.name,
