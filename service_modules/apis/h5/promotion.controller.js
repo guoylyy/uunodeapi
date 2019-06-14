@@ -271,14 +271,14 @@ pub.fetchPromotionOfferInfoByKey = (req, res) => {
         const promotionUserItemId = _.get(promotionUser, 'userId', null);
         // 如果为推广用户本身，则忽略之
         if (promotionUserItemId === req.__CURRENT_USER.id) {
-          return apiRender.renderError(res,
+          return apiRender.renderResult(res,
               {
                 code:400,
                 message:'不能用自己的推广码'
               }
           )
         }else if(_.isNil(promotionUserItemId)){
-          return apiRender.renderError(res,
+          return apiRender.renderResult(res,
               {
                 code:400,
                 message:'不存在的推广码'

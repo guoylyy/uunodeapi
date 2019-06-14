@@ -106,5 +106,6 @@ exports.renderNotFound = renderNotFound;
 exports.renderParameterError = renderParameterError;
 exports.renderBizFail = renderBizFail;
 exports.renderSuccess = renderSuccess;
+exports.renderResult = renderResult;
 exports.renderBaseResult = renderBaseResult;
 exports.renderPageResult = renderPageResult;
