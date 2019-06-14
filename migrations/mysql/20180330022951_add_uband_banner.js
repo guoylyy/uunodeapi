@@ -12,7 +12,7 @@ exports.up = function(knex, Promise) {
   `createdAt` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   `updatedAt` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=784 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=784 DEFAULT CHARSET=utf8;
    */
   }));
 };
