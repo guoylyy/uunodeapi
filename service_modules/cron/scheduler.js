@@ -279,7 +279,7 @@ schedule.scheduleJob(
  */
 schedule.scheduleJob(
     'student number generator',
-    '*/2 * * * *', // 每2分钟生成
+    '*/1 * * * *', // 每2分钟生成
     scheduleTask.generateStudentNumber
 );
 
