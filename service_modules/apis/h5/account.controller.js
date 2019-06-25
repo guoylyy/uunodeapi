@@ -90,8 +90,21 @@ pub.getUserBaseInfo = (req, res) => {
           }
           return promotionService.createPromotionUser(currentUserId, JSON.stringify({"code":"11"}));
       }).then((promotionUserItem)=>{
+
         if(!_.isNil(promotionUserItem)){
           pickedUserInfo['invitationCode'] = promotionUserItem.key;
+        }
+        winston.log('StudentNumber', pickedUserInfo.studentNumber);
+        if(_.isNil(pickedUserInfo.studentNumber) || pickedUserInfo.studentNumber.length == 0){
+          //用户没有学号，开始生成
+          winston.log('用户没有学号，开始生成!');
+          return userService.syncUserStudentNumber(pickedUserInfo.id);
+        }else{
+          return promotionUserItem;
+        }
+      }).then((userObject)=>{
+        if(!_.isNil(userObject.studentNumber)){
+          pickedUserInfo['studentNumber'] = userObject.studentNumber;
         }
         return apiRender.renderBaseResult(res, pickedUserInfo);
       })

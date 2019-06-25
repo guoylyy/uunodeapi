@@ -17,6 +17,8 @@ const userMapper = require('../dao/mysql_mapper/user.mapper');
 
 const hashPasswordPromise = encryptUtil.getHashPasswordPromiseFunction(systemConfig.USER_OPTIONS.saltRounds);
 
+const wechatCustomMessage = require('../lib/wechat.custom.message');
+
 // user redis存储前缀
 const REDIS_KEY_PREFIX = `USER`;
 
@@ -77,6 +79,32 @@ const concreteUserQueryParam = (queryParam, searchType, keyword, status) => {
 };
 
 const pub = {};
+
+/**
+ *  为用户生成学号
+ *
+ *  1. 首先获取当前最大学号，构造学号生成函数
+ *  2. 查询学员列表
+ *  3. 保存生成的学号
+ */
+pub.syncUserStudentNumber = (userId) =>{
+  var userObject = {};
+  return pub.fetchById(userId)
+      .then((userObj) =>{
+          winston.log('Student:', userObj);
+          userObject = userObj;
+          return pub.fetchMaxStudentNumber();
+      }).then((nextStudentNumber)=>{
+          let studentNumber = nextStudentNumber;
+          try {
+            wechatCustomMessage.sendCustomMessage(wechatCustomMessage.makeCustomMessage(userObject.openId,
+                "TEXT", { content: `亲爱的新笃友，你的学号是${ studentNumber }，欢迎加入Uband友班。` }));
+          }catch(e){
+
+          }
+          return pub.updateUserItem(userId, {'studentNumber':studentNumber});
+      });
+};
 
 /**
  * 根据unionId获取用户数据
