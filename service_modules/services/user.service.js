@@ -12,6 +12,7 @@ const enumModel = require('./model/enum');
 const cacheWrapComponent = require('./component/cacheWrap.component');
 
 const encryptUtil = require('./util/encrypt.util');
+const accountUtil = require('../services/util/account.util');
 
 const userMapper = require('../dao/mysql_mapper/user.mapper');
 
@@ -30,14 +31,14 @@ const saveUserInCache = (userItem) => {
     return null;
   }
 
-  cacheWrapComponent.set(`${ REDIS_KEY_PREFIX }_ID_${ userItem.id }`, userItem);
-  cacheWrapComponent.set(`${ REDIS_KEY_PREFIX }_UNIONID_${ userItem.unionid }`, userItem);
-  cacheWrapComponent.set(`${ REDIS_KEY_PREFIX }_OPENID_${ userItem.openId }`, userItem);
+  cacheWrapComponent.set(`${REDIS_KEY_PREFIX}_ID_${userItem.id}`, userItem);
+  cacheWrapComponent.set(`${REDIS_KEY_PREFIX}_UNIONID_${userItem.unionid}`, userItem);
+  cacheWrapComponent.set(`${REDIS_KEY_PREFIX}_OPENID_${userItem.openId}`, userItem);
 
   const studentNumber = userItem.studentNumber;
 
   if (!_.isNil(studentNumber)) {
-    cacheWrapComponent.set(`${ REDIS_KEY_PREFIX }_STUDENT_NUMBER_${ studentNumber }`, userItem);
+    cacheWrapComponent.set(`${REDIS_KEY_PREFIX}_STUDENT_NUMBER_${studentNumber}`, userItem);
   }
 
   return userItem;
@@ -55,7 +56,7 @@ const saveUserInCache = (userItem) => {
 const concreteUserQueryParam = (queryParam, searchType, keyword, status) => {
   let keywordLikeOperator = {
     operator: 'LIKE',
-    value: keyword ? `%${ keyword }%` : ''
+    value: keyword ? `%${keyword}%` : ''
   };
 
   debug(keywordLikeOperator);
@@ -87,22 +88,23 @@ const pub = {};
  *  2. 查询学员列表
  *  3. 保存生成的学号
  */
-pub.syncUserStudentNumber = (userId) =>{
+pub.syncUserStudentNumber = (userId) => {
   var userObject = {};
   return pub.fetchById(userId)
-      .then((userObj) =>{
-          winston.log('Student:', userObj);
-          userObject = userObj;
-          return pub.fetchMaxStudentNumber();
-      }).then((nextStudentNumber)=>{
-          let studentNumber = nextStudentNumber;
-          try {
-            wechatCustomMessage.sendCustomMessage(wechatCustomMessage.makeCustomMessage(userObject.openId,
-                "TEXT", { content: `亲爱的新笃友，你的学号是${ studentNumber }，欢迎加入Uband友班。` }));
-          }catch(e){
-
-          }
-          return pub.updateUserItem(userId, {'studentNumber':studentNumber});
+      .then((userObj) => {
+        winston.log('Student:', userObj);
+        userObject = userObj;
+        return pub.fetchMaxStudentNumber();
+      }).then((maxStudentNumber) => {
+        return accountUtil.calculateNextStudentNumber(maxStudentNumber);
+      }).then((nextStudentNumber) => {
+        let studentNumber = nextStudentNumber();
+        try {
+          wechatCustomMessage.sendCustomMessage(wechatCustomMessage.makeCustomMessage(userObject.openId,
+              "TEXT", {content: `亲爱的新笃友，你的学号是${studentNumber}，欢迎加入Uband友班。`}));
+        } catch (e) {
+        }
+        return pub.updateUserItem(userId, {'studentNumber': studentNumber});
       });
 };
 
@@ -113,9 +115,9 @@ pub.syncUserStudentNumber = (userId) =>{
  * @returns {Promise}
  */
 pub.fetchByUnionid = (unionId) => {
-  const fetchUserByUnionId = (unionId) => userMapper.fetchByParam({ unionid: unionId });
+  const fetchUserByUnionId = (unionId) => userMapper.fetchByParam({unionid: unionId});
 
-  return cacheWrapComponent.wrap(`${ REDIS_KEY_PREFIX }_UNIONID`, fetchUserByUnionId, unionId)
+  return cacheWrapComponent.wrap(`${REDIS_KEY_PREFIX}_UNIONID`, fetchUserByUnionId, unionId)
       .then(saveUserInCache);
 };
 
@@ -125,9 +127,9 @@ pub.fetchByUnionid = (unionId) => {
  * @returns {Promise}
  */
 pub.fetchById = (userId) => {
-  const fetchById = (userId) => userMapper.fetchByParam({ id: userId });
+  const fetchById = (userId) => userMapper.fetchByParam({id: userId});
 
-  return cacheWrapComponent.wrap(`${ REDIS_KEY_PREFIX }_ID`, fetchById, userId)
+  return cacheWrapComponent.wrap(`${REDIS_KEY_PREFIX}_ID`, fetchById, userId)
       .then(saveUserInCache);
 };
 
@@ -138,16 +140,16 @@ pub.fetchById = (userId) => {
  * @returns {Promise}
  */
 pub.fetchByOpenId = (openId) => {
-  const fetchByOpenId = (openId) => userMapper.fetchByParam({ openId: openId });
+  const fetchByOpenId = (openId) => userMapper.fetchByParam({openId: openId});
 
-  return cacheWrapComponent.wrap(`${ REDIS_KEY_PREFIX }_OPENID`, fetchByOpenId, openId)
+  return cacheWrapComponent.wrap(`${REDIS_KEY_PREFIX}_OPENID`, fetchByOpenId, openId)
       .then(saveUserInCache);
 };
 
 pub.fetchByStudentNumber = (studentNumber) => {
-  const fetchByStudentNumber = (studentNumber) => userMapper.fetchByParam({ studentNumber: studentNumber });
+  const fetchByStudentNumber = (studentNumber) => userMapper.fetchByParam({studentNumber: studentNumber});
 
-  return cacheWrapComponent.wrap(`${ REDIS_KEY_PREFIX }_STUDENT_NUMBER`, fetchByStudentNumber, studentNumber)
+  return cacheWrapComponent.wrap(`${REDIS_KEY_PREFIX}_STUDENT_NUMBER`, fetchByStudentNumber, studentNumber)
       .then(saveUserInCache);
 };
 
@@ -251,7 +253,7 @@ pub.setUserPassword = (userItem, oldPassword, password) => {
         return hashPasswordPromise(password);
       })
       .then((hashedPassword) => {
-        return userMapper.update({ id: userItem.id, saltHashedPassword: hashedPassword });
+        return userMapper.update({id: userItem.id, saltHashedPassword: hashedPassword});
       })
       .then((updatedUserItem) => {
         debug(updatedUserItem);
@@ -348,9 +350,9 @@ pub.queryUserBySearchType = (searchType, keyword, status) => {
 pub.fetchMaxStudentNumber = () => {
   // 选择非 'V' 开头的最大学号
   return userMapper.fetchByParam(
-      { 'studentNumber': { operator: 'not like', value: 'V%' } },
+      {'studentNumber': {operator: 'not like', value: 'V%'}},
       '-studentNumber'
-      )
+  )
       .then((userItem) => {
         debug(userItem);
 
@@ -366,7 +368,7 @@ pub.fetchMaxStudentNumber = () => {
 pub.queryAllStudentNumberedUserList = () => {
   return userMapper.queryAll(
       {
-        'studentNumber': { operator: 'is not', value: null }
+        'studentNumber': {operator: 'is not', value: null}
       });
 };
 
