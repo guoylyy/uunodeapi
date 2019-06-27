@@ -146,6 +146,11 @@ pub.fetchByOpenId = (openId) => {
       .then(saveUserInCache);
 };
 
+/**
+ * 通过学号查询用户对象
+ * @param studentNumber
+ * @return {Promise|Bluebird<any>|*|Bluebird<R | never>|PromiseLike<T | never>|Promise<T | never>}
+ */
 pub.fetchByStudentNumber = (studentNumber) => {
   const fetchByStudentNumber = (studentNumber) => userMapper.fetchByParam({studentNumber: studentNumber});
 

@@ -11,7 +11,10 @@ const clazzSchema = require('./schema/clazz.schema');
 const commonSchema = require('../common.schema');
 
 const clazzTaskService = require('../../services/clazzTask.service');
+const userService = require('../../services/user.service');
 const materialService = require('../../services/materialLibray.service');
+
+const wechatCustomMessage = require('../../lib/wechat.custom.message');
 
 const taskUtil = require('../../services/util/task.util');
 
@@ -207,6 +210,30 @@ pub.deleteClazzTask = (req, res) => {
       .then((taskItem) => {
         debug(taskItem);
 
+        return apiRender.renderSuccess(res);
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 预览任务
+ * @param req
+ * @param res
+ */
+pub.previewTask = (req, res) =>{
+  schemaValidator.validatePromise(clazzSchema.previewTaskSchema, req.query)
+      .then((queryParam) =>{
+        let studentNumber =  queryParam.studentNumber;
+        return userService.fetchByStudentNumber(studentNumber);
+      }).then((userObject)=>{
+        if(_.isNil(userObject)){
+          return apiRender.renderError(res, commonError.NOT_FOUND_ERROR("没有找到要推送的人"));
+        }
+        let link = `http://wechat.gambition.cn/study#/studyDetail?classId=${req.__CURRENT_CLAZZ.id}&taskId=${req.__CURRENT_CLAZZ_TASK.id}`;
+        let postStr = `亲爱的,点击此处打开预览链接预览链接: ${link} 请点击查看推文`;
+
+        wechatCustomMessage.sendCustomMessage(wechatCustomMessage.makeCustomMessage(userObject.openId,
+            "TEXT", {content: postStr}))
         return apiRender.renderSuccess(res);
       })
       .catch(req.__ERROR_HANDLER);

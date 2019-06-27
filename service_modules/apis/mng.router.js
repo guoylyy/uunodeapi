@@ -112,6 +112,7 @@ router.post('/clazz/:clazzId/task', clazzTaskController.createClazzTask);
 router.use('/clazz/:clazzId/task/:taskId', middleware.preloadTaskItem);
 
 router.get('/clazz/:clazzId/task/:taskId', clazzTaskController.fetchClazzTask);
+router.get('/clazz/:clazzId/task/:taskId/preview', clazzTaskController.previewTask);
 router.put('/clazz/:clazzId/task/:taskId', clazzTaskController.updateClazzTask);
 router.delete('/clazz/:clazzId/task/:taskId', clazzTaskController.deleteClazzTask);
 

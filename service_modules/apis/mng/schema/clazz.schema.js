@@ -219,6 +219,14 @@ pub.feedbackReplyQuerySchema = Joi.object().keys({
   pageSize: Joi.number().integer().min(0).default(1024)
 });
 
+
+/**
+ * 推送 query schema
+ */
+pub.previewTaskSchema = Joi.object().keys({
+  studentNumber: Joi.string()
+});
+
 /**
  * 新建笃师一对一回复body schema
  *
