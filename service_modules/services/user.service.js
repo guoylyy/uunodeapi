@@ -82,33 +82,6 @@ const concreteUserQueryParam = (queryParam, searchType, keyword, status) => {
 const pub = {};
 
 /**
- *  为用户生成学号
- *
- *  1. 首先获取当前最大学号，构造学号生成函数
- *  2. 查询学员列表
- *  3. 保存生成的学号
- */
-pub.syncUserStudentNumber = (userId) => {
-  var userObject = {};
-  return pub.fetchById(userId)
-      .then((userObj) => {
-        winston.log('Student:', userObj);
-        userObject = userObj;
-        return pub.fetchMaxStudentNumber();
-      }).then((maxStudentNumber) => {
-        return accountUtil.calculateNextStudentNumber(maxStudentNumber);
-      }).then((nextStudentNumber) => {
-        let studentNumber = nextStudentNumber();
-        try {
-          wechatCustomMessage.sendCustomMessage(wechatCustomMessage.makeCustomMessage(userObject.openId,
-              "TEXT", {content: `亲爱的新笃友，你的学号是${studentNumber}，欢迎加入Uband友班。`}));
-        } catch (e) {
-        }
-        return pub.updateUserItem(userId, {'studentNumber': studentNumber});
-      });
-};
-
-/**
  * 根据unionId获取用户数据
  *
  * @param unionId
@@ -192,6 +165,7 @@ pub.updateUserItem = (userId, userItem) => {
         return updatedUserItem;
       });
 };
+
 
 /**
  * 查询学号或姓名like keyword且在userIds中的用户列表
@@ -393,5 +367,33 @@ pub.registerUserItem = (userItem) => {
         return createdUserItem;
       });
 };
+
+/**
+ *  为用户生成学号
+ *
+ *  1. 首先获取当前最大学号，构造学号生成函数
+ *  2. 查询学员列表
+ *  3. 保存生成的学号
+ */
+pub.syncUserStudentNumber = (userId) => {
+  var userObject = {};
+  return pub.fetchById(userId)
+      .then((userObj) => {
+        winston.log('Student:', userObj);
+        userObject = userObj;
+        return pub.fetchMaxStudentNumber();
+      }).then((maxStudentNumber) => {
+        return accountUtil.calculateNextStudentNumber(maxStudentNumber);
+      }).then((nextStudentNumber) => {
+        let studentNumber = nextStudentNumber();
+        try {
+          wechatCustomMessage.sendCustomMessage(wechatCustomMessage.makeCustomMessage(userObject.openId,
+              "TEXT", {content: `亲爱的新笃友，你的学号是${studentNumber}，欢迎加入Uband友班。`}));
+        } catch (e) {
+        }
+        return pub.updateUserItem(userId, {'studentNumber': studentNumber});
+      });
+};
+
 
 module.exports = pub;
