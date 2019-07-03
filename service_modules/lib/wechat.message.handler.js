@@ -17,7 +17,7 @@ const userFileService = require('../services/userFile.service');
 
 const wechatMessageClazzActivityHandler = require('./wechat.message.clazz.activity.handler');
 
-const URL_REGEX = /^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/i;
+const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/;
 const JOINED_STATUS_LIST = [enumModel.clazzJoinStatusEnum.PROCESSING.key, enumModel.clazzJoinStatusEnum.WAITENTER.key];
 
 const SIGNATURE = "Uband ";
@@ -165,6 +165,7 @@ let recentActivityAutoReplyHandler = (baseResult) => {
 let linkCheckinHandler = (key, baseResult, openId, loginInfo) => {
   if (URL_REGEX.test(key)) {
     // 链接校验
+    let key = URL_REGEX.exec(key)[0];
     for (let i = 0, length = supportedDomains.length; i < length; ++i) {
       let spDomain = supportedDomains[i];
 
