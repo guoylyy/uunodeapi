@@ -307,16 +307,6 @@ pub.queryPagedUsers = (pageNumber = 1, pageSize = 10, searchType, keyword, statu
   return userMapper.queryPageUsers(queryParam, pageNumber, pageSize);
 };
 
-/**
- * 重载分页用户方法
- * @param pageNumber
- * @param pageSize
- * @param params
- * @return {Promise<TResult>|Promise}
- */
-pub.queryPagedUsers = (pageNumber = 1, pageSize = 10, params) =>{
-  return userMapper.queryPageUsers(params, pageNumber, pageSize);
-};
 
 /**
  * 根据关键词查询用户列表

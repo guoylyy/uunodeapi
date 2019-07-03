@@ -294,6 +294,8 @@ pub.searchPagedClazzAccounts = (clazzId, joinStatusList, keyword, pageNumber, pa
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
 
+  winston.info('查询班级用户分页列表！！！ clazzId: %s, joinStatusList: %s, keyword: %s', clazzId, joinStatusList, keyword);
+
   pageNumber = pageNumber || 1;
   pageSize = pageSize || 10;
 
