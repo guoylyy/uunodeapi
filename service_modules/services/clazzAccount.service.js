@@ -18,7 +18,7 @@ const userMapper = require('../dao/mysql_mapper/user.mapper');
 const clazzAccountRecordMapper = require('../dao/mysql_mapper/clazzAccountRecord.mapper');
 
 const concreteQueryParam = (clazzId, joinStatusList, excludeUserIds) => {
-  let quryParam = { clazzId: clazzId };
+  let quryParam = {clazzId: clazzId};
   let statusList = [];
   // 处理状态列表
   _.forEach(joinStatusList, (joinStatus) => {
@@ -31,7 +31,7 @@ const concreteQueryParam = (clazzId, joinStatusList, excludeUserIds) => {
   }
 
   if (_.isArray(excludeUserIds)) {
-    quryParam.userId = { operator: 'not in', value: excludeUserIds }
+    quryParam.userId = {operator: 'not in', value: excludeUserIds}
   }
   return quryParam;
 };
@@ -77,7 +77,7 @@ pub.countClazzJoinedUser = (clazzId) => {
 /**
  * 计算一组班级加入班级的人数
  */
-pub.countClazzsJoinedUserByGroup = (clazzIds) =>{
+pub.countClazzsJoinedUserByGroup = (clazzIds) => {
   return clazzAccountMapper.countClazzAccountsByGroup({
     clazzId: clazzIds,
     status: [enumModel.clazzJoinStatusEnum.PROCESSING.key, enumModel.clazzJoinStatusEnum.WAITENTER.key, enumModel.clazzJoinStatusEnum.CLOSE.key]
@@ -94,7 +94,7 @@ pub.countClazzsJoinedUserByGroup = (clazzIds) =>{
 pub.queryUserClazzByStatus = (userItem, status, isCheckinable) => {
   let globalClazzAccountList;
   // 1. 获取userId用户加入的所有处于status状态的clazzAccount
-  return clazzAccountMapper.queryClazzAccounts({ userId: userItem.id, status: status })
+  return clazzAccountMapper.queryClazzAccounts({userId: userItem.id, status: status})
       .then((clazzAccountList) => {
         globalClazzAccountList = clazzAccountList;
         debug(globalClazzAccountList);
@@ -105,7 +105,7 @@ pub.queryUserClazzByStatus = (userItem, status, isCheckinable) => {
         debug(clazzIds);
 
         // 3. 获取用户班级数据
-        const queryClazzListPromise = clazzMapper.query({ _id: clazzIds });
+        const queryClazzListPromise = clazzMapper.query({_id: clazzIds});
 
         let queryCheckinListPromise;
         if (isCheckinable === true) {
@@ -117,7 +117,7 @@ pub.queryUserClazzByStatus = (userItem, status, isCheckinable) => {
           queryCheckinListPromise = checkinMapper.queryCheckinList({
             clazz: clazzIds,
             userId: userItem.id,
-            checkinTime: { $gte: todayStartDate, $lte: todayEndDate }
+            checkinTime: {$gte: todayStartDate, $lte: todayEndDate}
           });
         } else {
           queryCheckinListPromise = Promise.resolve([]);
@@ -274,7 +274,7 @@ pub.fetchClazzAccountById = (clazzAccountId) => {
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
 
-  return clazzAccountMapper.fetchByParam({ id: clazzAccountId });
+  return clazzAccountMapper.fetchByParam({id: clazzAccountId});
 };
 
 /**
@@ -315,7 +315,7 @@ pub.searchPagedClazzAccounts = (clazzId, joinStatusList, keyword, pageNumber, pa
       })
       .then((userIds) => {
         debug(userIds);
-        return userMapper.queryPageUsers({ id: userIds, keyword: keyword }, pageNumber, pageSize);
+        return userMapper.queryPageUsers({id: userIds, keyword: keyword}, pageNumber, pageSize);
       })
       .then((pagedResult) => {
         pagedResult.values = _.map(pagedResult.values, (userItem) => {
@@ -359,7 +359,11 @@ pub.searchClazzUsers = (clazzId, joinStatusList, keyword, excludeUserIds) => {
           globalUserIdAccountMap[clazzAccount.userId] = clazzAccount;
         });
         // return userService.queryUser(keyword, userIds);
-        return userMapper.queryAll({'keyword':keyword, id: userIds});
+        if (_.isString(keyword) && keyword !== '') {
+          return userMapper.queryAll({'keyword': keyword, id: userIds});
+        } else {
+          return userMapper.queryAll({id: userIds});
+        }
       })
       .then((userList) => {
         _.forEach(userList, (userItem) => {
@@ -382,7 +386,7 @@ pub.queryClazzAccountRecords = (clazzAccountItem) => {
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
 
-  return clazzAccountRecordMapper.queryClazzAccountRecordList({ clazzAccountId: clazzAccountItem.id });
+  return clazzAccountRecordMapper.queryClazzAccountRecordList({clazzAccountId: clazzAccountItem.id});
 };
 
 /**
@@ -485,7 +489,7 @@ pub.countUserJoinedPromotionClazzes = (userId) => {
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
 
-  return clazzAccountMapper.queryClazzAccounts({ userId: userId })
+  return clazzAccountMapper.queryClazzAccounts({userId: userId})
       .then((clazzAccountList) => {
         debug(clazzAccountList);
 
@@ -502,7 +506,7 @@ pub.countUserJoinedPromotionClazzes = (userId) => {
 
         debug(clazzIdList);
 
-        return clazzMapper.query({ _id: clazzIdList });
+        return clazzMapper.query({_id: clazzIdList});
       })
       .then((clazzList) => {
         debug(clazzList);
@@ -579,8 +583,8 @@ pub.updateClazzAccountAndRelatedRecords = (clazzAccount, currentClazz) => {
         updateClazzAccountRecordsPromise = _.isNil(userId)
             ? Promise.resolve([])
             : clazzAccountRecordMapper.queryClazzAccountRecordList({
-                  clazzId: currentClazz.id
-                })
+              clazzId: currentClazz.id
+            })
                 .the((clazzRecordList) => {
                   const updateClazzRecordPromiseList = _.map(clazzRecordList, (clazzRecordItem) => {
                     return clazzAccountRecordMapper.update({
