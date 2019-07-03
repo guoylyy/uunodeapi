@@ -165,12 +165,12 @@ let recentActivityAutoReplyHandler = (baseResult) => {
 let linkCheckinHandler = (key, baseResult, openId, loginInfo) => {
   if (URL_REGEX.test(key)) {
     // 链接校验
-    let key = URL_REGEX.exec(key)[0];
+    var link = URL_REGEX.exec(key)[0];
     for (let i = 0, length = supportedDomains.length; i < length; ++i) {
       let spDomain = supportedDomains[i];
 
       // 找到了打卡项
-      if (key.indexOf(spDomain) > 0) {
+      if (link.indexOf(spDomain) > 0) {
         let userFile = {
           openId: openId,
           hasCheckined: false,
@@ -178,7 +178,7 @@ let linkCheckinHandler = (key, baseResult, openId, loginInfo) => {
           upTime: new Date(),
           fileType: 'weblink',
           format: 'text',
-          fileUrl: key,
+          fileUrl: link,
           fileKey: getFileKey()
         };
 
