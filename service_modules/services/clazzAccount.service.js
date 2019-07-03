@@ -11,8 +11,6 @@ const clazzUtil = require('./util/clazz.util');
 const commonError = require('./model/common.error');
 const enumModel = require('./model/enum');
 
-const userService = require('./user.service');
-
 const clazzAccountMapper = require('../dao/mysql_mapper/clazzAccount.mapper');
 const clazzMapper = require('../dao/mongodb_mapper/clazz.mapper');
 const checkinMapper = require('../dao/mongodb_mapper/checkin.mapper');
@@ -360,8 +358,8 @@ pub.searchClazzUsers = (clazzId, joinStatusList, keyword, excludeUserIds) => {
           userIds.push(clazzAccount.userId);
           globalUserIdAccountMap[clazzAccount.userId] = clazzAccount;
         });
-
-        return userService.queryUser(keyword, userIds);
+        // return userService.queryUser(keyword, userIds);
+        return userMapper.queryAll({'keyword':keyword, id: userIds});
       })
       .then((userList) => {
         _.forEach(userList, (userItem) => {
