@@ -12,6 +12,8 @@ const userService = require('../services/user.service');
 const wechatTokenService = require('../services/wechatToken.service');
 const userBindService = require('../services/userBind.service');
 
+const userMapper = require('../dao/mysql_mapper/user.mapper');
+
 let compiledAuthUrlTemplate = _.template('https://open.weixin.qq.com/connect/oauth2/authorize?appid=${ appid }&redirect_uri=${ redirectUri }&response_type=code&scope=${ scope }&state=${ state }#wechat_redirect');
 /**
  * 获取微信授权的跳转地址
@@ -309,7 +311,7 @@ pub.requestUserItemByAuthCode = (appid, appSecret, authCode, userBindType, targe
         unionId = results[2];
 
         // 根据unionId获取用户信息
-        return userService.fetchByUnionid(unionId);
+        return userMapper.fetchByParam({unionid: unionId});
       })
       .then((userItem) => {
         debug(userItem);
