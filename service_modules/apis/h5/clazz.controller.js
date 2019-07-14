@@ -209,10 +209,11 @@ pub.fetchClazzIntroduction = (req, res) => {
       })
       .then((introductionItem) => {
         let introduction = _.pick(introductionItem, 'introduction');
-        let st = req.__CURRENT_CLAZZ_ACCOUNT.status;
-        if( st == enumModel.clazzJoinStatusEnum.CLOSE.key ||
-            st ==  enumModel.clazzJoinStatusEnum.PROCESSING.key ||
-            st == enumModel.clazzJoinStatusEnum.WAITENTER.key){
+        if(_.isNil(req.__CURRENT_CLAZZ_ACCOUNT)){
+          introduction['hasJoin'] = false;
+        } else if( req.__CURRENT_CLAZZ_ACCOUNT.status == enumModel.clazzJoinStatusEnum.CLOSE.key ||
+            req.__CURRENT_CLAZZ_ACCOUNT.status ==  enumModel.clazzJoinStatusEnum.PROCESSING.key ||
+            req.__CURRENT_CLAZZ_ACCOUNT.status == enumModel.clazzJoinStatusEnum.WAITENTER.key){
           introduction['hasJoin'] = true;
         }else{
           introduction['hasJoin'] = false;
