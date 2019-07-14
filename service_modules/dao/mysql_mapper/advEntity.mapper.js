@@ -12,7 +12,7 @@ const queryUtil = require('../util/queryUtil');
 const advEntitySchema = require('./schema/advEntity.schema');
 
 const advCollection = bookshelf.Collection.extend({model: advEntitySchema});
-const defaultSelectColumns = ['id', 'image', 'title', 'type', 'redirectKey', 'redirectLink',
+const defaultSelectColumns = ['id', 'image', 'title', 'type', 'price', 'description', 'redirectKey', 'redirectLink',
   'isOpen', 'createdAt', 'updatedAt'];
 
 let pub = {};
