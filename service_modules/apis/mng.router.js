@@ -1,20 +1,18 @@
 'use strict';
 
 /**
- * mng API 的路由
+ * MNG API 的路由
+ *
+ *  * 友班大管理系统的配置
+ *
  */
 const router = require('express').Router();
-
 const middleware = require('./mng.middleware');
-
 const bodyParser = require('body-parser');
-
 router.use(middleware.basicErrorHandler);
 
 const adminController = require('./mng/admin.controller');
 router.post('/auth', adminController.auth);
-
-// 七牛回调处理
 const qiniuController = require('./mng/qiniu.controller');
 router.post('/qiniu/callback', bodyParser.urlencoded({ extended: false }), qiniuController.qiniuCallbackHandler);
 
@@ -40,9 +38,12 @@ router.get('/clazzes', clazzController.fetchClazzList);
 
 
 /***********************************************************************************************************************
- * 1. 预装载班级
- * 2. 检查班级权限
- * todo 接口层级的控制
+ * 提供给友班教师使用的相关功能
+ * 	- 招生
+ * 	- 财务
+ * 	- 账目
+ * 	- 报销
+ *  - 
  **********************************************************************************************************************/
 router.use('/clazz/:clazzId', middleware.preloadClazzItem, middleware.checkClazzPermission);
 
@@ -169,6 +170,7 @@ router.get('/clazz/:clazzId/play/:playId', clazzPlayController.fetchClazzPlay);
 router.put('/clazz/:clazzId/play/:playId', clazzPlayController.updateClazzPlay);
 router.delete('/clazz/:clazzId/play/:playId', clazzPlayController.deleteClazzPlay);
 
+//用户积分相关服务
 const userScoreService = require('./mng/userScore.controller');
 router.put('/clazz/:clazzId/userScore/:userScoreId', middleware.preloadClazzUserScoreItem, userScoreService.updateClazzScoreRecord);
 
@@ -178,7 +180,7 @@ router.get('/user/:userId/coupon',userController.queryUserCoupon);
 router.post('/user/:userId/coupon',userController.createUserCoupon);
 // router.delete('/user/:userId/coupon/:couponId',userController.removeUserCoupon);
 
-
+// 用户卡券
 router.get('/user/:userId/userCard', userController.queryUserCard);
 router.post('/user/:userId/userCard', userController.createUserCard);
 // router.delete('/user/:userId/userCard/:cardId',userController.removeUserCoupon);
@@ -190,8 +192,7 @@ router.post('/qiniu', qiniuController.fetchQiniuUploadToken);
 const userFileController = require('./mng/userFile.controller');
 router.put('/userFile/:userFileId', userFileController.downloadFromWechat);
 
-
-// 获取教师列表
+// 教师列表 - 小助手和管理员获取
 const clazzTeacherController = require('./mng/clazzTeacher.controller');
 router.get('/clazzTeachers', clazzTeacherController.fetchPagedTeacherList);
 
@@ -200,5 +201,25 @@ const activityController = require('./mng/clazzActivity.controller');
 router.post('/activity/room', activityController.matchUnmatchActivityAccountList);
 router.put('/activity/room', activityController.dismissQuietGroupAndRematch);
 router.get('/activity/account/statistics', activityController.queryUnmatchActivityAccountStatistics);
+
+/***********************************************************************************************************************
+ * 管理员相关功能接口
+ *  - 提供管理员相关基础功能
+ *  - TODO: 财务查看的功能
+ *  - TODO: 推广辅助工具
+ *  
+ **********************************************************************************************************************/
+//0. 账户管理
+
+//1. 用户管理
+
+//2. 班级管理
+
+//2.1 退班管理
+
+//3. 优惠券管理
+
+//4. 财务管理
+
 
 module.exports = router;
