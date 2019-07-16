@@ -158,16 +158,6 @@ router.get('/clazz/:clazzId/feedbackMaterial/:materialId', clazzFeedbackMaterial
 router.put('/clazz/:clazzId/feedbackMaterial/:materialId', clazzFeedbackMaterialController.updateClazzFeedbackMaterial);
 router.delete('/clazz/:clazzId/feedbackMaterial/:materialId', clazzFeedbackMaterialController.deleteClazzFeedbackMaterial);
 
-const clazzPlayController = require('./mng/clazzPlay.controller');
-router.get('/clazz/:clazzId/plays', clazzPlayController.queryClazzPlayList);
-router.post('/clazz/:clazzId/play', clazzPlayController.createClazzPlay);
-
-router.use('/clazz/:clazzId/play/:playId', middleware.preloadClazzPlay);
-
-router.get('/clazz/:clazzId/play/:playId', clazzPlayController.fetchClazzPlay);
-router.put('/clazz/:clazzId/play/:playId', clazzPlayController.updateClazzPlay);
-router.delete('/clazz/:clazzId/play/:playId', clazzPlayController.deleteClazzPlay);
-
 //用户积分相关服务
 const userScoreService = require('./mng/userScore.controller');
 router.put('/clazz/:clazzId/userScore/:userScoreId', middleware.preloadClazzUserScoreItem, userScoreService.updateClazzScoreRecord);
@@ -194,11 +184,6 @@ router.put('/userFile/:userFileId', userFileController.downloadFromWechat);
 const clazzTeacherController = require('./mng/clazzTeacher.controller');
 router.get('/clazzTeachers', clazzTeacherController.fetchPagedTeacherList);
 
-// 班级活动管理
-const activityController = require('./mng/clazzActivity.controller');
-router.post('/activity/room', activityController.matchUnmatchActivityAccountList);
-router.put('/activity/room', activityController.dismissQuietGroupAndRematch);
-router.get('/activity/account/statistics', activityController.queryUnmatchActivityAccountStatistics);
 
 /***********************************************************************************************************************
  * 管理员相关功能接口
@@ -287,11 +272,11 @@ router.post('/admin/openCourse', openCourseController.createOpenCourse);
 
 //6.管理员配置
 const adminManageController = require('./admin/admin.controller');
-router.post('/admin/adminitrator', adminManageController.createAdmin);
-router.get('/admin/adminitrators', adminManageController.fetchPagedAdmins);
-router.use('/admin/adminitrator/:adminId', adminMiddleware.preloadAdminItem);
-router.get('/admin/adminitrator/:adminId/clazzes', adminManageController.fetchAdminPermittedClazzList);
-router.put('/admin/adminitrator/:adminId/clazzes', adminManageController.resetAdminClazzPermission);
+router.post('/admin/administrator', adminManageController.createAdmin);
+router.get('/admin/administrators', adminManageController.fetchPagedAdmins);
+router.use('/admin/administrator/:adminId', adminMiddleware.preloadAdminItem);
+router.get('/admin/administrator/:adminId/clazzes', adminManageController.fetchAdminPermittedClazzList);
+router.put('/admin/administrator/:adminId/clazzes', adminManageController.resetAdminClazzPermission);
 
 //7.推广管理
 const promotionController = require('./admin/promotion.controller');

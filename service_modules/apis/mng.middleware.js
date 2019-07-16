@@ -555,4 +555,36 @@ pub.preloadClazzExitItem = (req, res, next) => {
       .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 预装载学员条目
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
+pub.preloadUserItem = (req, res, next) => {
+  let userId = req.params.userId;
+
+  debug(userId);
+
+  userService.fetchById(userId)
+      .then((userItem) => {
+        debug(userItem);
+
+        if (_.isNil(userItem)) {
+          winston.error('用户 %s 不存在！！！', userId);
+          return apiRender.renderNotFound(res);
+        }
+
+        // 当前学员
+        req.__CURRENT_USER_ITEM = userItem;
+
+        next();
+
+        // 返回null，避免bluebird报not returned from promise警告
+        return null;
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
 module.exports = pub;
