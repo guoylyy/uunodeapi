@@ -27,9 +27,12 @@ const clazzFeedbackService = require('../services/clazzFeedback.service');
 const clazzFeedbackMaterialService = require('../services/clazzFeedbackMaterial.service');
 const clazzPlayService = require('../services/clazzRolePlay.service');
 const userScoreService = require('../services/userScore.service');
+const userService = require('../services/user.service');
+const couponService = require('../services/coupon.service');
+const userWithdrawService = require('../services/userWithdraw.service');
+const clazzExitService = require('../services/clazzExit.servie');
 
 const enumModel = require('../services/model/enum');
-const commonError = require('../services/model/common.error');
 
 const pub = {};
 
@@ -396,6 +399,155 @@ pub.preloadClazzUserScoreItem = (req, res, next) => {
 
         req.__CURRENT_CLAZZ_USER_SCORE = userScoreItem;
 
+        next();
+        // 返回null，避免bluebird报not returned from promise警告
+        return null;
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 预加载管理员条目
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
+pub.preloadAdminItem = (req, res, next) => {
+  const adminId = req.params.adminId;
+
+  return adminService.fetchAdminById(adminId)
+      .then((adminItem) => {
+        debug(adminItem);
+
+        if (_.isNil(adminItem)) {
+          return apiRender.renderNotFound(res);
+        }
+
+        // 设置当前要操作的管理员帐号
+        req.__CURRENT_TARGET_ADMIN_ITEM = adminItem;
+
+        next();
+        // 返回null，避免bluebird报not returned from promise警告
+        return null;
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 预装载退款用户信息
+ *    必须在 preloadWitdrawItem 之后使用
+ * @param req
+ * @param res
+ * @param next
+ */
+pub.preloadWithdrawUserItem = (req, res, next) => {
+  userService.fetchById(req.__CURRENT_USER_WITHDRAW_ITEM.userId)
+      .then((userItem) => {
+        debug(userItem);
+
+        req.__CURRENT_USER_WITHDRAW_USER_ITEM = userItem;
+
+        next();
+        // 返回null，避免bluebird报not returned from promise警告
+        return null;
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 预装载用户提现信息，如果不存在，则报404错误
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
+pub.preloadWitdrawItem = (req, res, next) => {
+  const withdrawId = req.params.withdrawId;
+
+  debug(withdrawId);
+
+  schemaValidator.validatePromise(commonSchema.mysqlIdSchema, withdrawId)
+      .then((withdrawId) => {
+        return userWithdrawService.fetchUserWithdrawInfoById(withdrawId);
+      })
+      .then((withdrawIdItem) => {
+        debug(withdrawIdItem);
+
+        // 如果用户退款存在，则报NOT FOUND
+        if (_.isNil(withdrawIdItem)) {
+          winston.error('用户退款 %s 不存在！！！', withdrawId);
+          return apiRender.renderNotFound(res);
+        }
+
+        req.__CURRENT_USER_WITHDRAW_ITEM = withdrawIdItem;
+
+        next();
+        // 返回null，避免bluebird报not returned from promise警告
+        return null;
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 预装载优惠券信息，如果不存在，则报404错误
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
+pub.preloadCouponItem = (req, res, next) => {
+  const couponId = req.params.couponId;
+
+  debug(couponId);
+
+  schemaValidator.validatePromise(commonSchema.mysqlIdSchema, couponId)
+      .then((couponId) => {
+        return couponService.fetchCouponById(couponId);
+      })
+      .then((couponItem) => {
+        debug(couponItem);
+
+        // 如果优惠券不存在，则报NOT FOUND
+        if (_.isNil(couponItem)) {
+          winston.error('优惠券 %s 不存在！！！', couponId);
+          return apiRender.renderNotFound(res);
+        }
+
+        req.__CURRENT_COUPON_ITEM = couponItem;
+
+        next();
+        // 返回null，避免bluebird报not returned from promise警告
+        return null;
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 预加载退班申请
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise|Promise.<T>}
+ */
+pub.preloadClazzExitItem = (req, res, next) => {
+  const clazzExitId = req.params.clazzExitId;
+
+  debug(clazzExitId);
+
+  return schemaValidator.validatePromise(commonSchema.mysqlIdSchema, clazzExitId)
+      .then((clazzExitId) => {
+        return clazzExitService.fetchClazzExitById(clazzExitId);
+      })
+      .then((clazzExitItem) => {
+        debug(clazzExitItem);
+
+        if (_.isNil(clazzExitItem)) {
+          return apiRender.renderNotFound(res);
+        }
+
+        req.__CURRENT_CLAZZ_EXIT_ITEM = clazzExitItem;
         next();
         // 返回null，避免bluebird报not returned from promise警告
         return null;
