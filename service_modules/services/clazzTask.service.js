@@ -8,6 +8,8 @@ const debug = require('debug')('service');
 
 const commonError = require('./model/common.error');
 
+const cacheWrapComponent = require('./component/cacheWrap.component');
+
 const userService = require('./user.service');
 const materialService = require('./materialLibray.service');
 
@@ -18,6 +20,32 @@ const clazzTaskShareClickMapper = require('../dao/mongodb_mapper/clazzTaskShareC
 const postMapper = require('../dao/mysql_mapper/post.mapper');
 
 const pub = {};
+
+const REDIS_KEY_PREFIX = `CLAZZ_TASK`;
+
+// 存储班级数据到缓存
+const saveUserInCache = (clazzTask) => {
+  debug(clazzTask);
+
+  if (_.isNil(clazzTask) || _.isNil(clazzTask._id)) {
+    return clazzTask;
+  }
+
+  cacheWrapComponent.set(`${REDIS_KEY_PREFIX}_TASK_${clazzTask._id}`, clazzTask);
+  return clazzTask;
+};
+
+/**
+ * 从缓存中获取任务
+ * @param taskId
+ * @param clazzId
+ */
+pub.fetchClazzTaskByIdFromCache = (taskId, clazzId) => {
+  const fetch = (taskId, clazzId) => pub.fetchClazzTaskById(taskId, clazzId);
+  return cacheWrapComponent.wrap(`${REDIS_KEY_PREFIX}_TASK`, fetch, taskId)
+      .then(saveUserInCache);
+};
+
 
 /**
  * 根据id获取任务详情
@@ -61,6 +89,7 @@ pub.fetchClazzTaskById = (taskId, clazzId) => {
       });
 };
 
+
 /**
  * 根据任务id获取反馈列表
  * 反馈列表已填充用户信息，且分为两层结构
@@ -75,7 +104,7 @@ pub.fetchRepliesByTaskId = (taskId) => {
   }
 
   let clazzReplies, rootReplies = [];
-  return clazzTaskReplyMapper.queryReplyList({ clazzTask: taskId })
+  return clazzTaskReplyMapper.queryReplyList({clazzTask: taskId})
       .then((replyList) => {
         debug(replyList);
 
@@ -189,37 +218,40 @@ pub.createClazzTaskShareLog = (item) => {
 /**
  * 查询课程分享记录
  */
-pub.queryClazzTaskShareLog= (clazzId, userId) => {
-  if(_.isNil(clazzId) || _.isNil(userId)){
+pub.queryClazzTaskShareLog = (clazzId, userId) => {
+  if (_.isNil(clazzId) || _.isNil(userId)) {
     winston.error('获取了错误的查询参数')
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
-  return clazzTaskShareMapper.queryShares({'clazzId':clazzId, 'userId':userId});
+  return clazzTaskShareMapper.queryShares({'clazzId': clazzId, 'userId': userId});
 }
 
 /**
  * count某一天的课程分享记录
  */
-pub.countDateClazzTaskShareLog = (clazzId, userId, dt) =>{
-  if(_.isNil(clazzId) || _.isNil(userId) || _.isNil(dt)){
+pub.countDateClazzTaskShareLog = (clazzId, userId, dt) => {
+  if (_.isNil(clazzId) || _.isNil(userId) || _.isNil(dt)) {
     winston.error('获取了错误的查询参数')
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
   let startDt = (new moment(dt)).startOf('date').toDate();
   let endDt = (new moment(dt)).endOf('date').toDate();
-  return clazzTaskShareMapper.countShares({'clazzId':clazzId, 'userId':userId, 'shareDate':{$gt:startDt, $lt:endDt}});
+  return clazzTaskShareMapper.countShares({
+    'clazzId': clazzId,
+    'userId': userId,
+    'shareDate': {$gt: startDt, $lt: endDt}
+  });
 };
 
 
 /**
  * 记录分享点击
  */
-pub.createShareClick= (item) => {
-  try{
+pub.createShareClick = (item) => {
+  try {
     return clazzTaskShareClickMapper.create(item);
-  }
-  catch(e){
-    console.log('error',e);
+  } catch (e) {
+    console.log('error', e);
   }
 };
 
@@ -241,7 +273,7 @@ pub.listPagedClazzTasks = (clazzId, pageNumber, pageSize, title) => {
   pageNumber = pageNumber || 1;
   pageSize = pageSize || 10;
 
-  let queryParam = { clazz: clazzId };
+  let queryParam = {clazz: clazzId};
   if (title && title !== '') {
     queryParam.title = new RegExp(title);
   }
@@ -261,7 +293,7 @@ pub.listClazzTasks = (clazzId) => {
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
 
-  return clazzTaskMapper.queryClazzTaskList({ clazz: clazzId });
+  return clazzTaskMapper.queryClazzTaskList({clazz: clazzId});
 };
 
 /**
@@ -330,7 +362,7 @@ pub.fetchLatestClazzTask = (clazzId) => {
   postMapper.fetchPostByParams(
       {
         clazzId: clazzId,
-        targetDate: { operator: '<=', value: newDate() }
+        targetDate: {operator: '<=', value: newDate()}
       })
       .then((postItem) => {
         // todo 增加参数校验
@@ -359,7 +391,7 @@ pub.queryAllClazzTaskList = (clazzIds) => {
     return Promise.resolve([]);
   }
 
-  return clazzTaskMapper.queryClazzTaskList({ _id: clazzIds });
+  return clazzTaskMapper.queryClazzTaskList({_id: clazzIds});
 };
 
 module.exports = pub;

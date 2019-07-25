@@ -10,7 +10,30 @@ const enumModel = require('../../services/model/enum');
 
 const systemConfigService = require('../../services/systemConfig.service');
 
+const wordService = require('../../services/word.service');
 const pub = {};
+
+/**
+ * 获取单词和解释
+ * @param req
+ * @param res
+ */
+pub.queryWord = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.wordQuerySchema, req.query)
+      .then((queryParam) => {
+        console.log(queryParam);
+        return wordService.queryWord(queryParam.word);
+      })
+      .then((words) => {
+        if(words.length > 0){
+          return apiRender.renderBaseResult(res, words[0]);
+        }else{
+          return apiRender.renderNotFound(res);
+        }
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
 
 /**
  * 获取app版本信息

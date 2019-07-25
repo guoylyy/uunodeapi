@@ -249,6 +249,7 @@ router.get('/admin/coupon/:couponId', couponManageController.fetchCouponItem);
 router.put('/admin/coupon/:couponId', couponManageController.updateCouponItem);
 router.delete('/admin/coupon/:couponId', couponManageController.deleteCouponItem);
 
+
 //4. 财务管理
 // 退款管理
 const withdrawController = require('./admin/withdraw.controller');
@@ -281,5 +282,8 @@ router.put('/admin/administrator/:adminId/clazzes', adminManageController.resetA
 //7.推广管理
 const promotionController = require('./admin/promotion.controller');
 router.get('/admin/promotion/incomes', promotionController.queryPromototionIncomeList);
+
+//8.用户卡片管理
+
 
 module.exports = router;
