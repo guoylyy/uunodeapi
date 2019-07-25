@@ -21,8 +21,9 @@ const pub = {};
 pub.queryWord = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.wordQuerySchema, req.query)
       .then((queryParam) => {
-        console.log(queryParam);
-        return wordService.queryWord(queryParam.word);
+        console.log(queryParam); // Log to db
+        let word = queryParam.word.trimLeft().trimRight().toLowerCase();
+        return wordService.queryWord(word);
       })
       .then((words) => {
         if(words.length > 0){
