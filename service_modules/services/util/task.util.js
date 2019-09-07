@@ -17,7 +17,7 @@ const pub = {};
  * @param nodeElement
  */
 pub.clearNodeClazzAndStyle = (nodeElement) => {
-  return nodeElement.replace(/class\s*=\s*"[^"]*"/g, "").replace(/style\s*=\s*"[^"]*"/g, "");
+  return nodeElement;//nodeElement.replace(/class\s*=\s*"[^"]*"/g, "").replace(/style\s*=\s*"[^"]*"/g, "");
 };
 
 /**
