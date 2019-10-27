@@ -21,10 +21,14 @@ pub.pickClazzBasicInfo = (clazzItem, currentClazzAccount) => {
     return null;
   }
 
-  const pickedClazzItem = _.pick(clazzItem, ['id', 'name', 'clazzType', 'description', 'banner', 'startDate', 'endDate']);
+  const pickedClazzItem = _.pick(clazzItem, ['id', 'name', 'clazzType', 'description', 'banner', 'smallBanner', 'startDate', 'endDate']);
 
   if (_.isPlainObject(currentClazzAccount)) {
     pickedClazzItem.clazzJoinStatus = _.get(currentClazzAccount, 'status', null);
+  }
+
+  if (_.isNil(pickedClazzItem.smallBanner)){
+    pickedClazzItem.smallBanner = "";
   }
 
   return pickedClazzItem;

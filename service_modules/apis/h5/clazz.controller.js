@@ -132,7 +132,7 @@ pub.fetchClazz = (req, res) => {
 
   const clazzItem = _.pick(
       currentClazz,
-      ['id', 'name', 'description', 'banner', 'clazzType', 'author', 'status', 'startDate', 'endDate', 'taskCount']),
+      ['id', 'name', 'description', 'banner', 'smallBanner', 'clazzType', 'author', 'status', 'startDate', 'endDate', 'taskCount']),
       clazzConfig = _.pick(currentClazz.configuration, ['clazzType', 'taskCount', 'strategyLink']),
       clazzPriceList = clazzUtil.extractClazzPriceList(currentClazz);
 
