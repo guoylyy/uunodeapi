@@ -1,18 +1,19 @@
 'use strict';
-
 /**
  * MNG API 的路由
- *
  *  * 友班大管理系统的配置
- *
+ *  * @Date 2019-07-31 超级管理员、助教、教师系统融为一体
  */
+
 const router = require('express').Router();
 const middleware = require('./mng.middleware');
 const bodyParser = require('body-parser');
 router.use(middleware.basicErrorHandler);
 
+//管理员登录接口
 const adminController = require('./mng/admin.controller');
 router.post('/auth', adminController.auth);
+
 const qiniuController = require('./mng/qiniu.controller');
 router.post('/qiniu/callback', bodyParser.urlencoded({ extended: false }), qiniuController.qiniuCallbackHandler);
 
@@ -21,7 +22,6 @@ router.post('/qiniu/callback', bodyParser.urlencoded({ extended: false }), qiniu
  * 之后的接口都需要登录
  **********************************************************************************************************************/
 router.use(middleware.parseAuthToken);
-
 // 检查token是否有效
 router.get('/auth', adminController.checkAuth);
 
@@ -158,16 +158,6 @@ router.get('/clazz/:clazzId/feedbackMaterial/:materialId', clazzFeedbackMaterial
 router.put('/clazz/:clazzId/feedbackMaterial/:materialId', clazzFeedbackMaterialController.updateClazzFeedbackMaterial);
 router.delete('/clazz/:clazzId/feedbackMaterial/:materialId', clazzFeedbackMaterialController.deleteClazzFeedbackMaterial);
 
-const clazzPlayController = require('./mng/clazzPlay.controller');
-router.get('/clazz/:clazzId/plays', clazzPlayController.queryClazzPlayList);
-router.post('/clazz/:clazzId/play', clazzPlayController.createClazzPlay);
-
-router.use('/clazz/:clazzId/play/:playId', middleware.preloadClazzPlay);
-
-router.get('/clazz/:clazzId/play/:playId', clazzPlayController.fetchClazzPlay);
-router.put('/clazz/:clazzId/play/:playId', clazzPlayController.updateClazzPlay);
-router.delete('/clazz/:clazzId/play/:playId', clazzPlayController.deleteClazzPlay);
-
 //用户积分相关服务
 const userScoreService = require('./mng/userScore.controller');
 router.put('/clazz/:clazzId/userScore/:userScoreId', middleware.preloadClazzUserScoreItem, userScoreService.updateClazzScoreRecord);
@@ -194,30 +184,106 @@ router.put('/userFile/:userFileId', userFileController.downloadFromWechat);
 const clazzTeacherController = require('./mng/clazzTeacher.controller');
 router.get('/clazzTeachers', clazzTeacherController.fetchPagedTeacherList);
 
-// 班级活动管理
-const activityController = require('./mng/clazzActivity.controller');
-router.post('/activity/room', activityController.matchUnmatchActivityAccountList);
-router.put('/activity/room', activityController.dismissQuietGroupAndRematch);
-router.get('/activity/account/statistics', activityController.queryUnmatchActivityAccountStatistics);
 
 /***********************************************************************************************************************
  * 管理员相关功能接口
  *  - 提供管理员相关基础功能
- *  - TODO: 财务查看的功能
- *  - TODO: 推广辅助工具（链接生成，优惠码）
- *  
+ *
  **********************************************************************************************************************/
+const adminMiddleware =  middleware;//require('./admin.middleware');
 //0. 账户管理
-
 //1. 用户管理
+const userManageController = require('./admin/user.controller');
+router.get('/admin/users', userManageController.queryPagedUserList);
+router.put('/admin/users', userManageController.syncUserList);
+
+/***********************************************************************************************************************
+ * 定义req.__CURRENT_USER_ITEM, 获取操作的学员信息
+ ***********************************************************************************************************************/
+router.use('/admin/user/:userId', adminMiddleware.preloadUserItem);
+router.get('/admin/user/:userId', userManageController.fetchUserDetailInfo);
+router.get('/admin/user/:userId/coins', userManageController.queryUserCoinList);
+router.post('/admin/user/:userId/coin', userManageController.createUserCoinItem);
+router.post('/admin/user/:userId/coupon', userManageController.createUserCoupon);
+router.get('/admin/user/:userId/payments', userManageController.queryUserPayList);
+
 
 //2. 班级管理
+const clazzManageController = require('./admin/clazz.controller');
+router.get('/admin/clazzes', clazzManageController.queryClazzes);
+router.post('/admin/clazz', clazzManageController.createClazzItem);
+
+/***********************************************************************************************************************
+ * 定义req.__CURRENT_CLAZZ，获取当前班级信息
+ ***********************************************************************************************************************/
+router.use('/admin/clazz/:clazzId', adminMiddleware.preloadClazzItem);
+
+router.get('/admin/clazz/:clazzId', clazzManageController.fetchClazzItem);
+router.put('/admin/clazz/:clazzId', clazzManageController.updateClazzItemBasicInfo);
+router.get('/admin/clazz/:clazzId/configuration', clazzManageController.fetchClazzConfiguration);
+router.put('/admin/clazz/:clazzId/configuration', clazzManageController.updateClazzConfiguration);
+router.get('/admin/clazz/:clazzId/introduction', clazzManageController.fetchClazzIntroductionItem);
+router.put('/admin/clazz/:clazzId/introduction', clazzManageController.updateClazzIntroductionItem);
+
+router.get('/admin/clazz/:clazzId/students', clazzManageController.queryStudentList);
+
+const clazzNotificationController = require('./admin/clazzNotification.controller');
+router.get('/admin/clazz/:clazzId/notifications', clazzNotificationController.queryPagedClazzNotifications);
+router.post('/admin/clazz/:clazzId/notification', clazzNotificationController.createClazzNotification);
+router.get('/admin/clazz/:clazzId/notification/:notificationId', clazzNotificationController.fetchClazzNotificationItem);
 
 //2.1 退班管理
+router.get('/admin/clazzExits', clazzManageController.queryPagedClazzExitList);
+router.get('/admin/clazzExit/:clazzExitId', adminMiddleware.preloadClazzExitItem, clazzManageController.fetchClazzExitItem);
+router.put('/admin/clazzExit/:clazzExitId', adminMiddleware.preloadClazzExitItem, clazzManageController.updateClazzExit);
+
 
 //3. 优惠券管理
+const couponManageController = require('./admin/coupon.controller');
+router.get('/admin/coupons', couponManageController.queryPagedCouponList);
+/***********************************************************************************************************************
+ * 定义req.__CURRENT_COUPON_ITEM，获取当前优惠券信息
+ ***********************************************************************************************************************/
+router.use('/admin/coupon/:couponId', adminMiddleware.preloadCouponItem);
+router.get('/admin/coupon/:couponId', couponManageController.fetchCouponItem);
+router.put('/admin/coupon/:couponId', couponManageController.updateCouponItem);
+router.delete('/admin/coupon/:couponId', couponManageController.deleteCouponItem);
+
 
 //4. 财务管理
+// 退款管理
+const withdrawController = require('./admin/withdraw.controller');
+router.get('/admin/clazz/:clazzId/withdraws', withdrawController.queryClazzAllWeeklyWithdraws);
+router.get('/admin/clazz/:clazzId/withdraw', withdrawController.queryClazzWeeklyWithdraw);
+router.post('/admin/clazz/:clazzId/withdraw', withdrawController.withdrawClazzWeekly);
+router.get('/admin/clazz/:clazzId/withdraw/:withdrawId', withdrawController.fetchClazzWithdrawDetail);
+router.get('/admin/withdraws', withdrawController.queryPagedWithdrawList);
+/***********************************************************************************************************************
+ * 定义req.__CURRENT_USER_WITHDRAW_ITEM，获取当前用户退款信息
+ ***********************************************************************************************************************/
+router.use('/admin/withdraw/:withdrawId', adminMiddleware.preloadWitdrawItem);
+
+router.get('/admin/withdraw/:withdrawId', adminMiddleware.preloadWithdrawUserItem, withdrawController.fetchWithdrawDetails);
+router.put('/admin/withdraw/:withdrawId', adminMiddleware.preloadWithdrawUserItem, withdrawController.handleUserWithdraw);
+router.get('/admin/withdraw/:withdrawId/state', withdrawController.requestWithdrawState);
+
+//5.开班接口
+const openCourseController = require('./admin/openCourse.controller');
+router.post('/admin/openCourse', openCourseController.createOpenCourse);
+
+//6.管理员配置
+const adminManageController = require('./admin/admin.controller');
+router.post('/admin/administrator', adminManageController.createAdmin);
+router.get('/admin/administrators', adminManageController.fetchPagedAdmins);
+router.use('/admin/administrator/:adminId', adminMiddleware.preloadAdminItem);
+router.get('/admin/administrator/:adminId/clazzes', adminManageController.fetchAdminPermittedClazzList);
+router.put('/admin/administrator/:adminId/clazzes', adminManageController.resetAdminClazzPermission);
+
+//7.推广管理
+const promotionController = require('./admin/promotion.controller');
+router.get('/admin/promotion/incomes', promotionController.queryPromototionIncomeList);
+
+//8.用户卡片管理
 
 
 module.exports = router;

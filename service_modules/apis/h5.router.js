@@ -15,6 +15,7 @@ router.use(middleware.basicErrorHandler);
 
 const commonController = require("./h5/common.controller");
 router.get('/app', commonController.fetchAppVersion);
+router.get('/word', commonController.queryWord);
 
 const accountApis = require('./h5/account.controller');
 

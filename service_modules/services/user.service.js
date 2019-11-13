@@ -95,7 +95,7 @@ pub.fetchByUnionid = (unionId) => {
 };
 
 /**
- * 根据usrId获取用户信息
+ * 根据userId获取用户信息
  * @param userId
  * @returns {Promise}
  */

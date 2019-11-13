@@ -73,7 +73,7 @@ pub.fetchClazzTaskItem = (req, res) => {
       .then((queryParam) => {
         debug(taskId);
 
-        const fetchTaskPromise = clazzTaskService.fetchClazzTaskById(taskId, clazzId);
+        const fetchTaskPromise = clazzTaskService.fetchClazzTaskByIdFromCache(taskId, clazzId);
         let fetchPostPromise;
 
         if (_.isNil(queryParam.postId)) {

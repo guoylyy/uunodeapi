@@ -25,7 +25,7 @@ function renderError(res, error) {
  * @param res
  */
 function renderNotFound(res) {
-  return renderError(res, commonError.NOT_FOUND_ERROR());
+  return renderError(res, commonError.NOT_FOUND_ERROR("对象不存在"));
 }
 
 /**
