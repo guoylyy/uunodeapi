@@ -207,6 +207,35 @@ pub.fetchClazzLuckyCheckins = (req, res) => {
       .catch(req.__ERROR_HANDLER);
 };
 
+
+/**
+ *  获取打卡的统计信息
+ * @param req
+ * @param res
+ */
+pub.getCheckinSumdata = (req, res) => {
+  debug(req.__CURRENT_CLAZZ_ACCOUNT);
+  schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then((queryParam) => {
+        req.__MODULE_LOGGER(`获取课程${req.__CURRENT_CLAZZ.id}打卡记录`, queryParam);
+
+        return checkinService.listCheckins(req.__CURRENT_CLAZZ, req.__CURRENT_CLAZZ_ACCOUNT);
+      })
+      .then((result) => {
+        // result.clazz = apiUtil.pickClazzBasicInfo(req.__CURRENT_CLAZZ);
+        // render数据
+        let sumData = {};
+        sumData['checkinNum'] = result.scoreSum;
+        sumData['joinNum'] = result.openDays;
+        sumData['backMoney'] = '0';
+        return apiRender.renderBaseResult(res, sumData);
+      })
+      .catch(req.__ERROR_HANDLER); // 错误处理
+
+};
+
+
+
 pub.fetchClazzLuckyCheckinItem = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {

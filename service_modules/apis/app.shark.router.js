@@ -75,6 +75,7 @@ if (_.get(systemConfig, ['APP_RELEASE_CONFIG', 'isAudit'], true) === true) {
 router.get('/account', accountApis.getUserBaseInfo);
 router.put('/account', accountApis.updateUserInfo);
 router.get('/account/auth', accountApis.checkAuth);
+router.delete('/account/auth', accountApis.checkAuth); //TODO:登出方法
 
 const h5AccountApis = require('./h5/account.controller');
 
@@ -155,6 +156,7 @@ router.get('/clazz/:clazzId/luckyCheckin/:luckyCheckinId/checkin/:checkinId', mi
 
 router.get('/clazz/:clazzId/checkin', h5MiddleWare.markCanCheckin, h5CheckinApis.queryCheckinStatus);
 router.post('/clazz/:clazzId/checkin', h5MiddleWare.markCanCheckin, h5CheckinApis.createClazzCheckin);
+router.get('/clazz/:clazzId/checkin/sum', checkinApis.getCheckinSumdata);
 
 /***********************************************************************************************************************
  * 定义req.__CURRENT_CHECKIN
