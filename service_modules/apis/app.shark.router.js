@@ -40,7 +40,7 @@ const basicApis = require('./app.shark/basic.controller');
 router.get('/version', basicApis.fetchAppVersion);
 router.get('/system', basicApis.fetchIsAudit);
 
-// const accountRegisterApi = require('./app.shark/account.register.controller');
+const accountRegisterApi = require('./app.shark/account.register.controller');
 // router.post('/account/phoneNumber/sms', accountRegisterApi.sendRegisterCode);
 // router.put('/account/phoneNumber/sms', accountRegisterApi.checkRegisterCode);
 // router.post('/account/phoneNumber', accountRegisterApi.initAccountByPhonenumber);

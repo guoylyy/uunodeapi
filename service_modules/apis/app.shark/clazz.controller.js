@@ -168,7 +168,7 @@ pub.fetchClazzIntroduction = (req, res) => {
             currentClazzItem,
             ['id', 'name', 'description', 'banner', 'clazzType', 'author', 'status', 'taskCount']
             ),
-            clazzConfig = _.pick(currentClazzItem.configuration, ['clazzType', 'taskCount']),
+            clazzConfig = _.pick(currentClazzItem.configuration, ['clazzType', 'taskCount', 'robot']),
             clazzPriceList = clazzUtil.extractClazzPriceList(currentClazzItem);
 
         debug(clazzItem);

@@ -53,7 +53,12 @@ let clazzSchema = new Schema({
     }],
     discount: { type: Number, required: false },
     clazzType: [{ type: String, enum: clazzJoinTypeEnum, required: true }],
-    teacherOpenIds: [{ type: String, required: false }]
+    teacherOpenIds: [{ type: String, required: false }],
+    robot: {
+      name: {type: String, required: false},
+      wechat:{type: String, required: false},
+      cipher:{type: String, required: false}
+    }
   },
   isShow: { type: Boolean, default: true },
   isHot: { type: Boolean, default: false }
