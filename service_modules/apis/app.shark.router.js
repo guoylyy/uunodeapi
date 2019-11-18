@@ -26,30 +26,32 @@ if (global.IS_DEVLOPMENT_ENVIRONMENT) {
 }
 
 const accountLoginApi = require('./app.shark/account.login.api');
-router.post('/wechat/auth', accountLoginApi.authWechatLogin);
-router.post('/phoneNumber/auth', accountLoginApi.authPhonenumberLogin);
+router.post('/wechat/auth', accountLoginApi.authWechatLogin); //微信登录
+router.post('/phoneNumber/auth', accountLoginApi.authPhonenumberLogin); //手机号登录
 
-const paymentCallback = require('./app.shark/payment.callback.controller');
-router.post('/wechat/payCallback', commonMiddleware.wechatXmlParser, paymentCallback.wechatPaymentCallbackHandler);
-router.post('/alipay/callback', bodyParser.urlencoded({ extended: false }), paymentCallback.alipayPaymentHandler);
+// const paymentCallback = require('./app.shark/payment.callback.controller');
+// router.post('/wechat/payCallback', commonMiddleware.wechatXmlParser, paymentCallback.wechatPaymentCallbackHandler);
+// router.post('/alipay/callback', bodyParser.urlencoded({ extended: false }), paymentCallback.alipayPaymentHandler);
 
 const qiniuApis = require('./app.shark/qiniu.controller');
 router.post('/qiniu/callback', bodyParser.urlencoded({ extended: false }), qiniuApis.qiniuCallbackHandler);
 
-
 const basicApis = require('./app.shark/basic.controller');
 router.get('/version', basicApis.fetchAppVersion);
-
 router.get('/system', basicApis.fetchIsAudit);
 
-const accountRegisterApi = require('./app.shark/account.register.controller');
-router.post('/account/phoneNumber/sms', accountRegisterApi.sendRegisterCode);
-router.put('/account/phoneNumber/sms', accountRegisterApi.checkRegisterCode);
-router.post('/account/phoneNumber', accountRegisterApi.initAccountByPhonenumber);
+// const accountRegisterApi = require('./app.shark/account.register.controller');
+// router.post('/account/phoneNumber/sms', accountRegisterApi.sendRegisterCode);
+// router.put('/account/phoneNumber/sms', accountRegisterApi.checkRegisterCode);
+// router.post('/account/phoneNumber', accountRegisterApi.initAccountByPhonenumber);
 
-router.post('/account/password/sms', accountRegisterApi.sendResetPasswordCode);
-router.put('/account/password/sms', accountRegisterApi.checkRestPasswordCode);
-router.put('/account/password', accountRegisterApi.resetAccountPassword);
+// router.post('/account/password/sms', accountRegisterApi.sendResetPasswordCode);
+// router.put('/account/password/sms', accountRegisterApi.checkRestPasswordCode);
+// router.put('/account/password', accountRegisterApi.resetAccountPassword);
+
+// 获取用户单词本的接口
+
+
 
 /***********************************************************************************************************************
  * 解析x-auth-token，获取用户信息
