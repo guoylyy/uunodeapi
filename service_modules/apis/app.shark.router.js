@@ -132,7 +132,8 @@ router.get('/clazz/:clazzId/task/:taskId', clazzTaskApis.fetchClazzTaskItem);
 
 // 打卡相关API
 const checkinApis = require('./app.shark/clazzCheckin.controller');
-router.get('/clazz/:clazzId/checkins', h5MiddleWare.markCanCheckin, checkinApis.queryCheckinList);
+router.get('/clazz/:clazzId/own_checkins', h5MiddleWare.markCanCheckin, checkinApis.queryCheckinList);
+router.get('/clazz/:clazzId/checkins', checkinApis.queryClazzCheckins);
 router.get('/clazz/:clazzId/checkins/trend', checkinApis.queryCheckinTrend);
 
 router.get('/clazz/:clazzId/luckyCheckins', checkinApis.fetchClazzLuckyCheckins);

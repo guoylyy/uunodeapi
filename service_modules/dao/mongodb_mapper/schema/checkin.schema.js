@@ -33,6 +33,8 @@ let checkinSchema = new Schema({
   userScoreIds: [
     { type: Number }
   ],
+  isPublic: {type: Boolean, required:true, default: false},
+  title: {type: String, required: false, default: ""},
   userScore: { type: Number },
   checkinTime: { type: Date, required: true, default: Date.now },
   remark: String

@@ -109,6 +109,61 @@ pub.queryCheckinList = (req, res) => {
       .catch(req.__ERROR_HANDLER); // 错误处理
 };
 
+
+/**
+ * 分页获取用户打卡动态（班级）
+ */
+
+pub.queryClazzCheckins = (req, res) =>{
+  const currentClazzItem = req.__CURRENT_CLAZZ;
+  const currentClazzId = currentClazzItem.id;
+  return schemaValidator.validatePromise(clazzSchema.clazzCheckinsSchema, req.query)
+      .then((queryParam) => {
+        req.__MODULE_LOGGER(`获取课程${req.__CURRENT_CLAZZ.id}打卡记录`, queryParam);
+        // render数据
+        return checkinService.fetchClazzCheckinPagedList(currentClazzId, null, queryParam.pageNumber, queryParam.pageSize);
+      })
+      .then((pagedResult) => {
+        const pagedCheckinList = pagedResult.values;
+        debug(pagedCheckinList);
+        const userIdList = _.map(pagedCheckinList, 'user.id');
+
+        const clazzBeginDate = moment(currentClazzItem.startDate).startOf('day').toDate(),
+            todayEndDate = moment().endOf('day').toDate();
+
+        return checkinService.queryCheckinList(userIdList, currentClazzId, clazzBeginDate, todayEndDate)
+            .then((checkinList) => {
+              const userCheckinCountMap = _.chain(checkinList)
+                  .groupBy('userId')
+                  .reduce(
+                      (prev, userCheckinList, userId) => {
+                        prev[userId] = _.size(userCheckinList);
+                        return prev;
+                      },
+                      {}
+                  )
+                  .value();
+
+              const pickedPagedCheckinList = _.map(pagedCheckinList, (checkinItem) => {
+                const pickedCheckin = apiUtil.pickCheckinInfo(checkinItem, currentClazzItem.configuration.endHour);
+
+                const checkinUser = _.get(pickedCheckin, ['userInfo']);
+                if (!_.isNil(checkinUser)) {
+                  checkinUser.checkinCount = _.get(userCheckinCountMap, checkinUser.id, 0);
+
+                  pickedCheckin.userInfo = checkinUser;
+                }
+
+                return pickedCheckin;
+              });
+
+              return apiRender.renderPageResult(res, pickedPagedCheckinList, pagedResult.itemSize, pagedResult.pageSize, pagedResult.pageNumber);
+            });
+
+      })
+      .catch(req.__ERROR_HANDLER); // 错误处理
+};
+
 /**
  * 查询当天打卡动态
  *

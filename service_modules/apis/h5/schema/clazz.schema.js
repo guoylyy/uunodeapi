@@ -38,11 +38,15 @@ pub.queryCheckinStatusSchema = Joi.object().keys({
 
 /**
  * 创建打卡body schema
+ * TODO:课程H5页面修改后会有问题，从长计议
  * @type {*}
  */
 pub.createCheckinBodySchema = Joi.object().keys({
   date: Joi.date().format('YYYY-MM-DD').max('now').default(() => new Date(), 'current date'),
-  fileIds: Joi.array().items(commonSchema.mongoIdSchema.required()).required()
+  fileIds: Joi.array().items(commonSchema.mongoIdSchema.required()).required(),
+  remark: Joi.string().default(""),
+  title: Joi.string().default(""),
+  isPublic: Joi.bool().default(false)
 });
 
 /**

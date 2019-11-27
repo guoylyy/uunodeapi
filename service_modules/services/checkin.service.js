@@ -302,6 +302,9 @@ pub.createClazzCheckinItem = (userId, clazzId, checkinItem) => {
           status: enumModel.checkinStatusEnum.NORMAL.key,
           checkinFiles: { fileKeys: checkinFileKeys },
           clazz: clazzId,
+          isPublic: checkinItem.isPublic,
+          remark: checkinItem.remark,
+          title: checkinItem.title,
           score: 1, // todo 设置为系统设置
           userId: userId,
           checkinTime: checkinItem.date
@@ -363,7 +366,7 @@ pub.queryCheckinList = (userId, clazzId, startDate, endDate, idList) => {
  * @returns {Promise.<boolean>}
  */
 const pagedQueryParamValidator = (clazzId, date, pageNumber, pageSize) => {
-  const isQueryParamValid = !_.isNil(clazzId) && _.isDate(date) && _.isSafeInteger(pageNumber) && _.isSafeInteger(pageSize);
+  const isQueryParamValid = !_.isNil(clazzId) && (_.isNil(date) || _.isDate(date)) && _.isSafeInteger(pageNumber) && _.isSafeInteger(pageSize);
 
   return Promise.resolve(isQueryParamValid);
 };
@@ -439,15 +442,21 @@ pub.fetchClazzCheckinPagedList = (clazzId, queryDate, pageNumber, pageSize) => {
           return Promise.reject(commonError.PARAMETER_ERROR());
         }
 
-        const queryDateMoment = moment(queryDate);
-
-        const queryParam = {
-          clazz: clazzId,
-          checkinTime: {
-            $gte: queryDateMoment.startOf('day').toDate(),
-            $lte: queryDateMoment.endOf('day').toDate()
-          }
-        };
+        let queryParam = {};
+        if(queryDate != null){
+          let queryDateMoment = moment(queryDate);
+          queryParam = {
+            clazz: clazzId,
+            checkinTime: {
+              $gte: queryDateMoment.startOf('day').toDate(),
+              $lte: queryDateMoment.endOf('day').toDate()
+            }
+          };
+        }else{
+          queryParam = {
+            clazz: clazzId
+          };
+        }
 
         // 禅勋班级打卡列表
         return checkinMapper.queryPageCheckinList(queryParam, pageNumber, pageSize);

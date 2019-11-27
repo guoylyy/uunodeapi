@@ -49,6 +49,9 @@ pub.clazzTaskQuerySchema = Joi.object().keys({
   postId: commonSchema.mysqlIdSchema,
 });
 
+
+pub.clazzCheckinsSchema = pagedSchema;
+
 pub.checkinTrendPagedQuerySchema = pagedSchema;
 
 pub.clazzLuckyCheckinQuerySchema = Joi.object().keys({
