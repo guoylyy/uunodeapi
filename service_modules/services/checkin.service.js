@@ -571,4 +571,20 @@ pub.queryClazzUncheckinUserList = (clazzId, queryDate, keyword) => {
       });
 };
 
+
+/**
+ * 获取用户打卡的天数
+ */
+pub.getUserCheckinDays = (userId) =>{
+  if (_.isNil(userId)) {
+    winston.error('参数错误！！！ userId: %s', userId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return checkinMapper.sumCheckinDay(userId)
+      .then((result)=>{
+        debug(result);
+        return result[0].count;
+      });
+};
+
 module.exports = pub;

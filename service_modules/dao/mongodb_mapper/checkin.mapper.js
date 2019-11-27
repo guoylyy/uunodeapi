@@ -12,8 +12,8 @@ const mongoUtil = require('../util/mongoUtil');
 const pub = {};
 
 const QUERY_SAFE_PARAM_LIST = ['clazz', '_id', 'userId', 'checkinTime'];
-const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn(['id', 'checkinTime', 'status', 'userId','remark', 'isPublic','title', 'score', 'clazz', 'checkinFiles.fileKeys', 'userScoreId']);
-const QUERY_SORT_BY = queryUtil.disposeSortBy([{ column: 'checkinTime', isDescending: true }]);
+const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn(['id', 'checkinTime', 'status', 'userId', 'remark', 'isPublic', 'title', 'score', 'clazz', 'checkinFiles.fileKeys', 'userScoreId']);
+const QUERY_SORT_BY = queryUtil.disposeSortBy([{column: 'checkinTime', isDescending: true}]);
 
 /**
  * 分页获取打卡列表
@@ -79,6 +79,16 @@ pub.destroy = (chckinId) => {
  */
 pub.create = (checkinItem) => {
   return checkinSchema.createItem(checkinItem);
+};
+
+/**
+ * 统计单个用户的打卡天数
+ */
+pub.sumCheckinDay = (userId) => {
+  return checkinSchema.aggregate([{$match: {'userId': userId}},
+    {$project: {checkinTime: {$substr: ["$checkinTime", 0, 10]}}},
+    {$group: {_id: "$checkinTime"}},
+    {$group: {_id: null, count: {$sum: 1}}}]);
 };
 
 module.exports = pub;

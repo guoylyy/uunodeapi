@@ -102,6 +102,7 @@ router.post('/account/ubandCoin', ubandCoinApis.paidIapProduct);
 router.delete('/account/ubandCoin', ubandCoinApis.paidClazzItem);
 
 const clazzApis = require('./app.shark/clazz.controller');
+const checkinApis = require('./app.shark/clazzCheckin.controller');
 
 router.get('/advertise/banners', clazzApis.getAppActiveBanner);
 router.get('/advertise/hostClazzes', clazzApis.getHotClazzList);
@@ -110,6 +111,7 @@ router.get('/advertise/hostClazzes', clazzApis.getHotClazzList);
 // @如果是开放的课程需要加入的人数
 // @如果是非开放的课程，不用计算
 router.get('/clazzes', clazzApis.queryClazzList);
+router.get('/clazzes/checkin_days', checkinApis.getUserCheckinDays);
 /***********************************************************************************************************************
  * 定义req.__CURRENT_CLAZZ
  **********************************************************************************************************************/
@@ -131,7 +133,6 @@ router.get('/clazz/:clazzId/tasks', clazzTaskApis.queryClazzTaskList);
 router.get('/clazz/:clazzId/task/:taskId', clazzTaskApis.fetchClazzTaskItem);
 
 // 打卡相关API
-const checkinApis = require('./app.shark/clazzCheckin.controller');
 router.get('/clazz/:clazzId/own_checkins', h5MiddleWare.markCanCheckin, checkinApis.queryCheckinList);
 router.get('/clazz/:clazzId/checkins', checkinApis.queryClazzCheckins);
 router.get('/clazz/:clazzId/checkins/trend', checkinApis.queryCheckinTrend);

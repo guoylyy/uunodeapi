@@ -114,7 +114,7 @@ pub.queryCheckinList = (req, res) => {
  * 分页获取用户打卡动态（班级）
  */
 
-pub.queryClazzCheckins = (req, res) =>{
+pub.queryClazzCheckins = (req, res) => {
   const currentClazzItem = req.__CURRENT_CLAZZ;
   const currentClazzId = currentClazzItem.id;
   return schemaValidator.validatePromise(clazzSchema.clazzCheckinsSchema, req.query)
@@ -290,7 +290,12 @@ pub.getCheckinSumdata = (req, res) => {
 };
 
 
-
+/**
+ *
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
+ */
 pub.fetchClazzLuckyCheckinItem = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
@@ -303,6 +308,25 @@ pub.fetchClazzLuckyCheckinItem = (req, res) => {
         checkinItem.userFiles = checkinItem.userFiles.filter(item => item.hasCheckined);
 
         return apiRender.renderBaseResult(res, checkinItem);
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 获取用户打卡的天数
+ * @param req
+ * @param res
+ */
+pub.getUserCheckinDays = (req, res) => {
+  const userId = req.__CURRENT_USER.id;
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then((queryParam) => {
+        req.__MODULE_LOGGER(`获取用户${userId}打卡天数`, queryParam);
+
+        return checkinService.getUserCheckinDays(userId);
+      })
+      .then((number) => {
+        return apiRender.renderBaseResult(res, {'checkinDays':number});
       })
       .catch(req.__ERROR_HANDLER);
 };
