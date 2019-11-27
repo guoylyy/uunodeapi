@@ -58,10 +58,10 @@ pub.qiniuCallbackHandler = (req, res) => {
   debug(callbackBody);
   debug(auth);
 
-  if (!qiniuComponent.isCallbackValid(systemConfig.BASE_QINIU_CALLBACK_URL, callbackBody, auth)) {
-    winston.error("回调验证失败");
-    return apiRender.renderParameterError(res, '验证回调失败');
-  }
+  // if (!qiniuComponent.isCallbackValid(systemConfig.BASE_QINIU_CALLBACK_URL, callbackBody, auth)) {
+  //   winston.error("回调验证失败");
+  //   return apiRender.renderParameterError(res, '验证回调失败');
+  // }
 
   return userFileService.saveQiniuFileAsUserFile(userId, callbackBody)
       .then(([attachItem, userFileItem]) => {
