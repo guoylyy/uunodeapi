@@ -78,8 +78,11 @@ pub.queryCheckinList = (req, res) => {
         userCheckinResult.canCheckin = req.__CAN_CLAZZ_CHECKIN;
         userCheckinResult.userInfo = apiUtil.pickUserBasicInfo(req.__CURRENT_USER);
 
+
+        const checkinFileIds = [];
         _.forEach(userCheckinResult.checkins, (checkinItem) => {
           checkinItem.checkinTime = moment(checkinItem.checkinTime).format('YYYY-MM-DD');
+          _.extend(checkinFileIds, checkinItem.checkinFiles.fileKeys);
         });
 
         const pickedClazzItem = apiUtil.pickClazzBasicInfo(currentClazzItem);
@@ -103,8 +106,37 @@ pub.queryCheckinList = (req, res) => {
 
         pickedClazzItem.todayCheckinCount = _.size(todayCheckinList);
 
+        debug(checkinFileIds);
         userCheckinResult.clazz = pickedClazzItem;
-        // render数据
+
+        const filePromise = userFileService.fetchUserFilesByIdList(checkinFileIds);
+        const resultPromise = Promise.resolve([]).then(()=>{
+          return userCheckinResult;
+        });
+        return Promise.all([resultPromise, filePromise])
+      }).then(([userCheckinResult, files])=>{
+        debug(files);
+        //Convert files To Map
+        const fileMap = {};
+        _.map(files, (fileItem)=>{
+          fileMap[_.get(fileItem,'_id')] = fileItem;
+        });
+        userCheckinResult['fileMap'] = fileMap;
+
+
+        //Checkin Add Files
+        _.map(userCheckinResult.checkins, (item)=>{
+          let fileKeys = item.checkinFiles.fileKeys;
+          let itemFiles = [];
+          _.each(fileKeys, (key)=>{
+            let f = fileMap[key];
+            if(!_.isNil(f)){
+              itemFiles.push(f);
+            }
+          });
+          item['files'] = itemFiles;
+        });
+
         return apiRender.renderBaseResult(res, userCheckinResult);
       })
       .catch(req.__ERROR_HANDLER); // 错误处理
