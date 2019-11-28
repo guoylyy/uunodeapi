@@ -58,21 +58,29 @@ pub.qiniuCallbackHandler = (req, res) => {
   debug(callbackBody);
   debug(auth);
 
-  if (!qiniuComponent.isCallbackValid(systemConfig.APP_BASE_QINIU_CALLBACK_URL, callbackBody, auth)) {
-    winston.error("回调验证失败");
-    return apiRender.renderParameterError(res, '验证回调失败');
-  }
+  // if (!qiniuComponent.isCallbackValid(systemConfig.APP_BASE_QINIU_CALLBACK_URL, callbackBody, auth)) {
+  //   winston.error("回调验证失败");
+  //   return apiRender.renderParameterError(res, '验证回调失败');
+  // }
 
   return userFileService.saveQiniuFileAsUserFile(userId, callbackBody)
-      .then(([attachItem, userFileItem]) => {
-        debug(attachItem);
+      // .then(([attachItem, userFileItem]) => {
+      //   // debug(attachItem);
+      //   debug(userFileItem);
+      //
+      //   let pickedUserFileItem = webUtil.pickUserFileBasicInfo(userFileItem);
+      //   pickedUserFileItem.fileUrl = userFileItem.fileUrl;
+      //   pickedUserFileItem.downloadRequired = false;
+      //
+      //   return apiRender.renderBaseResult(res, pickedUserFileItem);
+      .then((results) => {
+        debug(results);
+
+        let userFileItem = results[1];
+
         debug(userFileItem);
 
-        let pickedUserFileItem = webUtil.pickUserFileBasicInfo(userFileItem);
-        pickedUserFileItem.fileUrl = userFileItem.fileUrl;
-        pickedUserFileItem.downloadRequired = false;
-
-        return apiRender.renderBaseResult(res, pickedUserFileItem);
+        return apiRender.renderBaseResult(res, webUtil.pickUserFileBasicInfo(userFileItem));
       })
       .catch(req.__ERROR_HANDLER);
 };
