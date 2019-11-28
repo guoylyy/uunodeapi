@@ -54,6 +54,7 @@ pub.qiniuCallbackHandler = (req, res) => {
       userId = parseInt(req.body.userId);
 
   debug(callbackBody);
+  winston.error(callbackBody);
   debug(auth);
 
   //暂时不验证回调，为了调试
