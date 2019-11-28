@@ -16,6 +16,7 @@ const apiRender = require('../render/api.render');
 const enumModel = require('../../services/model/enum');
 
 const checkinService = require('../../services/checkin.service');
+const userFileService = require('../../services/userFile.service');
 const clazzAccountService = require('../../services/clazzAccount.service');
 const clazzLuckyCheckinService = require('../../services/clazzLuckyCheckin.service');
 
@@ -112,8 +113,10 @@ pub.queryCheckinList = (req, res) => {
 
 /**
  * 分页获取用户打卡动态（班级）
+ *
+ *  * 1128-添加打卡文件基本信息获取
+ *
  */
-
 pub.queryClazzCheckins = (req, res) => {
   const currentClazzItem = req.__CURRENT_CLAZZ;
   const currentClazzId = currentClazzItem.id;
@@ -125,13 +128,23 @@ pub.queryClazzCheckins = (req, res) => {
       })
       .then((pagedResult) => {
         const pagedCheckinList = pagedResult.values;
-        debug(pagedCheckinList);
         const userIdList = _.map(pagedCheckinList, 'user.id');
+        const filesIdList = [];
+        _.map(pagedCheckinList, (checkinItem) => {
+          _.extend(filesIdList, checkinItem.checkinFiles.fileKeys);
+        });
+
+        debug(filesIdList);
+        debug(pagedCheckinList);
 
         const clazzBeginDate = moment(currentClazzItem.startDate).startOf('day').toDate(),
             todayEndDate = moment().endOf('day').toDate();
 
-        return checkinService.queryCheckinList(userIdList, currentClazzId, clazzBeginDate, todayEndDate)
+
+        const filePromise = userFileService.fetchUserFilesByIdList(filesIdList);
+
+
+        const resultPromise = checkinService.queryCheckinList(userIdList, currentClazzId, clazzBeginDate, todayEndDate)
             .then((checkinList) => {
               const userCheckinCountMap = _.chain(checkinList)
                   .groupBy('userId')
@@ -143,23 +156,48 @@ pub.queryClazzCheckins = (req, res) => {
                       {}
                   )
                   .value();
-
               const pickedPagedCheckinList = _.map(pagedCheckinList, (checkinItem) => {
                 const pickedCheckin = apiUtil.pickCheckinInfo(checkinItem, currentClazzItem.configuration.endHour);
 
                 const checkinUser = _.get(pickedCheckin, ['userInfo']);
                 if (!_.isNil(checkinUser)) {
                   checkinUser.checkinCount = _.get(userCheckinCountMap, checkinUser.id, 0);
-
                   pickedCheckin.userInfo = checkinUser;
                 }
-
                 return pickedCheckin;
               });
 
-              return apiRender.renderPageResult(res, pickedPagedCheckinList, pagedResult.itemSize, pagedResult.pageSize, pagedResult.pageNumber);
+              return {
+                'pickedPagedCheckinList': pickedPagedCheckinList,
+                'pagedResult': pagedResult
+              };
             });
 
+        return Promise.all([resultPromise, filePromise]);
+      }).then(([result, files]) => {
+        let pagedResult = result.pagedResult;
+
+        //Convert files To Map
+        const fileMap = {};
+        _.map(files, (fileItem)=>{
+          fileMap[_.get(fileItem,'_id')] = fileItem;
+        });
+
+        //Convert results and fill files
+        _.map(result.pickedPagedCheckinList, (item)=>{
+          let fileKeys = item.checkinFiles.fileKeys;
+          let itemFiles = [];
+          _.each(fileKeys, (key)=>{
+            let f = fileMap[key];
+            if(!_.isNil(f)){
+              itemFiles.push(f);
+            }
+          });
+          item['files'] = itemFiles;
+        });
+
+        return apiRender.renderPageResult(res, {'checkins': result.pickedPagedCheckinList, 'fileMap': fileMap},
+            pagedResult.itemSize, pagedResult.pageSize, pagedResult.pageNumber)
       })
       .catch(req.__ERROR_HANDLER); // 错误处理
 };
@@ -326,7 +364,7 @@ pub.getUserCheckinDays = (req, res) => {
         return checkinService.getUserCheckinDays(userId);
       })
       .then((number) => {
-        return apiRender.renderBaseResult(res, {'checkinDays':number});
+        return apiRender.renderBaseResult(res, {'checkinDays': number});
       })
       .catch(req.__ERROR_HANDLER);
 };

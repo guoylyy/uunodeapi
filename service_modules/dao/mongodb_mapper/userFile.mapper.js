@@ -3,6 +3,7 @@
 /**
  * 数据查询相关方法，用于统一向service层提供Promise返回及封装dao层具体实现
  */
+const _ = require('lodash');
 const debug = require('debug')('mapper');
 
 const userFileSchema = require('./schema/userFile.schema');
@@ -44,6 +45,14 @@ pub.create = (userFileItem) => {
  */
 pub.fetchById = (userFileId) => {
   return userFileSchema.findItemById(userFileId);
+};
+
+/**
+ * 根据 Id 列表获取用户文件
+ */
+pub.fetchByIds = (userFileIds) =>{
+  let ids = _.filter(userFileIds, (id) => {return id.length > 10});
+  return userFileSchema.find().where({'_id':{$in:ids}});
 };
 
 /**
