@@ -56,6 +56,7 @@ pub.qiniuCallbackHandler = (req, res) => {
       userId = parseInt(req.body.userId);
 
   debug(callbackBody);
+  winston.error(callbackBody);
   debug(auth);
 
   // if (!qiniuComponent.isCallbackValid(systemConfig.APP_BASE_QINIU_CALLBACK_URL, callbackBody, auth)) {

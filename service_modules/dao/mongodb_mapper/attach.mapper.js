@@ -1,4 +1,3 @@
-"use strict";
 
 /**
  * attach数据查询相关方法，用于统一向service层提供Promise返回及封装dao层具体实现
