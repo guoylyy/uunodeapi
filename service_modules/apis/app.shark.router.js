@@ -117,6 +117,8 @@ router.get('/clazzes/checkin_days', checkinApis.getUserCheckinDays);
  **********************************************************************************************************************/
 router.use('/clazz/:clazzId', h5MiddleWare.preloadClazzItem);
 
+
+router.get('/clazz/:clazzId/strategy', h5MiddleWare.preloadClazzIntroductionItem, clazzApis.fetchClazzStrategyIntroduction);
 router.get('/clazz/:clazzId/introduction', h5MiddleWare.preloadClazzIntroductionItem, clazzApis.fetchClazzIntroduction);
 router.get('/clazz/:clazzId/payment', clazzApis.fetchClazzPayment);
 router.post('/clazz/:clazzId/payment', clazzApis.preProcessClazzPayment);
@@ -170,6 +172,10 @@ router.use('/clazz/:clazzId/checkin/:checkinId', h5MiddleWare.preloadCheckinItem
 router.get('/clazz/:clazzId/checkin/:checkinId', h5CheckinApis.fetchCheckinItem);
 router.put('/clazz/:clazzId/checkin/:checkinId', h5CheckinApis.updateCheckinItem);
 router.delete('/clazz/:clazzId/checkin/:checkinId', h5CheckinApis.deleteCheckin);
+
+//给学员打卡点赞和取消点赞
+//router.post('/clazz/:clazzId/checkin/:checkinId/awesome');
+//router.delete('/clazz/:clazzId/checkin/:checkinId/awesome');
 
 const clazzPlayApis = require('./app.shark/clazzRolePlay.controller');
 router.get('/clazz/:clazzId/plays', clazzPlayApis.queryClazzPlayList);
