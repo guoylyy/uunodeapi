@@ -259,6 +259,8 @@ pub.pickCheckinInfo = (checkinItem, checkinEndHour) => {
     pickedCheckin.aheadSeconds = checkinEndMoment.diff(checkinMoment, 'seconds');
   }
 
+  pickedCheckin.checkimTime =  moment(checkinItem.checkinTime).format('YYYY-MM-DD');
+
   // 用户基本信息
   const checkinUser = checkinItem.user;
   if (!_.isNil(checkinUser)) {
