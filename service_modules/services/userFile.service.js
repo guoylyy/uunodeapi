@@ -107,6 +107,18 @@ pub.fetchUserFileById = (userFileId) => {
 };
 
 /**
+ * 根据 fileId 列表获取用户文件
+ */
+pub.fetchUserFilesByIdList = (userFileIds) =>{
+  if(_.isNil(userFileIds)){
+    winston.error("参数错误!! userFileIds: %s", userFileIds);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return userFileMapper.fetchByIds(userFileIds);
+};
+
+
+/**
  * 更新用户文件信息
  *
  * @param userFileId

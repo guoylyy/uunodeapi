@@ -248,7 +248,7 @@ pub.pickCheckinInfo = (checkinItem, checkinEndHour) => {
     return null;
   }
 
-  const pickedCheckin = _.pick(checkinItem, ['id','title','isPublic','checkinFiles', 'status', 'score', 'remark', 'isPublic', 'userScore', 'userScoreIds']);
+  const pickedCheckin = _.pick(checkinItem, ['id','title','isPublic','checkinFiles', 'status', 'score', 'checkinTime', 'remark', 'isPublic', 'userScore', 'userScoreIds']);
 
   if (_.isNumber(checkinEndHour)) {
     const diffHour = checkinEndHour - 24;
@@ -258,6 +258,8 @@ pub.pickCheckinInfo = (checkinItem, checkinEndHour) => {
     // 计算提前打卡时间 秒数
     pickedCheckin.aheadSeconds = checkinEndMoment.diff(checkinMoment, 'seconds');
   }
+
+  pickedCheckin.checkinTime =  moment(checkinItem.checkinTime).format('YYYY-MM-DD');
 
   // 用户基本信息
   const checkinUser = checkinItem.user;

@@ -142,6 +142,19 @@ pub.queryClazzList = (req, res) => {
 };
 
 /**
+ * 获取课程的介绍相关内容
+ */
+pub.fetchClazzStrategyIntroduction = (req, res) =>{
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then((queryParam)=>{
+        const strategy = _.get(req.__CURRENT_CLAZZ_INTRODUCTION, 'strategy');
+        return apiRender.renderBaseResult(res, {"content":strategy});
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+
+/**
  * 获取课程简介
  * @param req
  * @param res
@@ -156,7 +169,6 @@ pub.fetchClazzIntroduction = (req, res) => {
 
         // 获取课程简介
         const introduction = _.get(req.__CURRENT_CLAZZ_INTRODUCTION, 'introduction');
-
         const parseIntroductionPromise = taskUtil.parseHtmlToListPromise(introduction);
 
         // 获取加入班级人员数据
