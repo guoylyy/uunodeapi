@@ -22,6 +22,7 @@ const accountSchema = require('./schema/account.schema');
 const userService = require('../../services/user.service');
 const userBindService = require('../../services/userBind.service');
 const couponService = require('../../services/coupon.service');
+const ubandCardService = require('../../services/ubandCard.service');
 
 const enumModel = require('../../services/model/enum');
 
@@ -208,6 +209,32 @@ pub.fetchCouponList = (req, res) => {
 
         return apiRender.renderBaseResult(res, pickedCouponList);
       })
+      .catch(req.__ERROR_HANDLER);
+};
+
+
+/**
+ * 查询用户卡片讯息
+ *
+ * @param req
+ * @param res
+ */
+pub.fetchUserCards = (req, res) => {
+  schemaValidator.validatePromise(accountSchema.cardQuerySchema, req.query)
+      .then((queryParam) => {
+        debug(req.__CURRENT_USER.id);
+        let status = queryParam.status || 'ALL';
+        return ubandCardService.queryUserAvailableCard(req.__CURRENT_USER.id, status);
+      }).then((cardList) => {
+    let nList = _.map(cardList, (card) => {
+      card.type = enumModel.getEnumByKey(card.type, enumModel.ubandCardTypeEnum);
+      card.status = enumModel.getEnumByKey(card.status, enumModel.ubandCardStatusEnum);
+      card.scope = enumModel.getEnumByKey(card.scope, enumModel.ubandCardScopeEnum);
+
+      return card;
+    });
+    return apiRender.renderBaseResult(res, nList);
+  })
       .catch(req.__ERROR_HANDLER);
 };
 

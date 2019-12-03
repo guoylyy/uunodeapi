@@ -56,4 +56,12 @@ pub.useUbandCoinSchema = Joi.object().keys({
   })
 });
 
+
+/**
+ * 用户查询卡片 query schema
+ */
+pub.cardQuerySchema = Joi.object().keys({
+  status: Joi.string()
+});
+
 module.exports = pub;

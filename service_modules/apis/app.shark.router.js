@@ -93,6 +93,7 @@ router.put('/account/privacy/wechat', accountRegisterApi.connectAccountPrivacyWe
 
 router.get('/account/coins', h5AccountApis.fetchCoins);
 router.get('/account/coupons', accountApis.fetchCouponList);
+router.get('/account/cards', accountApis.fetchUserCards);
 
 const ubandCoinApis = require('./app.shark/ubandCoin.controller');
 router.get('/account/ubandCoin/products', ubandCoinApis.queryAvailableIapProducts);
