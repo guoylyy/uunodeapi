@@ -248,7 +248,7 @@ pub.pickCheckinInfo = (checkinItem, checkinEndHour) => {
     return null;
   }
 
-  const pickedCheckin = _.pick(checkinItem, ['id','title','isPublic','checkinFiles', 'status', 'score', 'checkinTime', 'remark', 'isPublic', 'userScore', 'userScoreIds']);
+  const pickedCheckin = _.pick(checkinItem, ['id','title','isPublic','checkinFiles', 'status', 'score', 'checkinTime', 'remark', 'isPublic', 'userScore', 'userScoreIds', 'likeArr', 'dislikeArr']);
 
   if (_.isNumber(checkinEndHour)) {
     const diffHour = checkinEndHour - 24;
@@ -266,6 +266,14 @@ pub.pickCheckinInfo = (checkinItem, checkinEndHour) => {
   if (!_.isNil(checkinUser)) {
     pickedCheckin.userInfo = pub.pickUserBasicInfo(checkinUser);
   }
+
+  pickedCheckin.likeArr = pickedCheckin.likeArr || [];
+
+  pickedCheckin.dislikeArr = pickedCheckin.dislikeArr || [];
+
+  pickedCheckin.likeCount = pickedCheckin.likeArr.length;
+
+  pickedCheckin.dislikeCount = pickedCheckin.dislikeArr.length;
 
   return pickedCheckin;
 };

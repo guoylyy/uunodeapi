@@ -88,3 +88,6 @@ mongoose.migrate.json
 
 # tmp目录
 tmp/
+
+# Editor
+.vscode

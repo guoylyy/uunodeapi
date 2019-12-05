@@ -152,6 +152,7 @@ pub.queryCheckinList = (req, res) => {
 pub.queryClazzCheckins = (req, res) => {
   const currentClazzItem = req.__CURRENT_CLAZZ;
   const currentClazzId = currentClazzItem.id;
+  const currentUserId = req.__CURRENT_USER.id
   return schemaValidator.validatePromise(clazzSchema.clazzCheckinsSchema, req.query)
       .then((queryParam) => {
         req.__MODULE_LOGGER(`获取课程${req.__CURRENT_CLAZZ.id}打卡记录`, queryParam);
@@ -196,6 +197,10 @@ pub.queryClazzCheckins = (req, res) => {
                   checkinUser.checkinCount = _.get(userCheckinCountMap, checkinUser.id, 0);
                   pickedCheckin.userInfo = checkinUser;
                 }
+                
+                pickedCheckin.liked = pickedCheckin.likeArr.includes(currentUserId)
+                pickedCheckin.disliked = pickedCheckin.dislikeArr.includes(currentUserId)
+
                 return pickedCheckin;
               });
 
@@ -244,7 +249,7 @@ pub.queryClazzCheckins = (req, res) => {
 pub.queryCheckinTrend = (req, res) => {
   const currentClazzItem = req.__CURRENT_CLAZZ;
   const currentClazzId = currentClazzItem.id;
-
+  const currentUserId = req.__CURRENT_USER.id
   return schemaValidator.validatePromise(clazzSchema.checkinTrendPagedQuerySchema, req.query)
       .then((queryParam) => {
         debug(queryParam);
@@ -283,7 +288,8 @@ pub.queryCheckinTrend = (req, res) => {
 
                   pickedCheckin.userInfo = checkinUser;
                 }
-
+                pickedCheckin.liked = pickedCheckin.likeArr.includes(currentUserId)
+                pickedCheckin.disliked = pickedCheckin.dislikeArr.includes(currentUserId)
                 return pickedCheckin;
               });
 
@@ -401,4 +407,57 @@ pub.getUserCheckinDays = (req, res) => {
       .catch(req.__ERROR_HANDLER);
 };
 
+pub.like = (req, res) => {
+  const userId = req.__CURRENT_USER.id;
+  const checkin = req.__CURRENT_CHECKIN;
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then((queryParam) => {
+        req.__MODULE_LOGGER(`用户${userId} 点赞 ${checkin.id}打卡记录`, queryParam);
+        return checkinService.like(userId, checkin);
+      })
+      .then((_) => {
+        return apiRender.renderBaseResult(res, {});
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+pub.cancelLike = (req, res) => {
+  const userId = req.__CURRENT_USER.id;
+  const checkin = req.__CURRENT_CHECKIN;
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then((queryParam) => {
+        req.__MODULE_LOGGER(`用户${userId} 取消点赞 ${checkin.id}打卡记录`, queryParam);
+        return checkinService.cancelLike(userId, checkin);
+      })
+      .then((_) => {
+        return apiRender.renderBaseResult(res, {});
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+pub.dislike = (req, res) => {
+  const userId = req.__CURRENT_USER.id;
+  const checkin = req.__CURRENT_CHECKIN;
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then((queryParam) => {
+        req.__MODULE_LOGGER(`用户${userId} 点踩 ${checkin.id}打卡记录`, queryParam);
+        return checkinService.dislike(userId, checkin);
+      })
+      .then((_) => {
+        return apiRender.renderBaseResult(res, {});
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+pub.cancelDislike = (req, res) => {
+  const userId = req.__CURRENT_USER.id;
+  const checkin = req.__CURRENT_CHECKIN;
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then((queryParam) => {
+        req.__MODULE_LOGGER(`用户${userId} 取消点踩 ${checkin.id}打卡记录`, queryParam);
+        return checkinService.cancelDislike(userId, checkin);
+      })
+      .then((_) => {
+        return apiRender.renderBaseResult(res, {});
+      })
+      .catch(req.__ERROR_HANDLER);
+};
 module.exports = pub;
