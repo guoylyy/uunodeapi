@@ -39,6 +39,7 @@ const clazzTaskApis = require('./h5/clazzTask.controller');
 // todo 移除旧router
 router.get('/clazz/task/:taskId', clazzTaskApis.fetchClazzTaskItem);
 router.get('/clazz/task/:taskId/replies', clazzTaskApis.fetchReplies);
+router.get('/clazz/:clazzId/app_task/:taskId', middleware.preloadClazzItem, clazzTaskApis.fetchClazzTaskItem);
 router.get('/clazz/:clazzId/task/:taskId', middleware.preloadClazzItem, clazzTaskApis.fetchClazzTaskItem);
 router.get('/clazz/:clazzId/task/:taskId/replies', clazzTaskApis.fetchReplies);
 
