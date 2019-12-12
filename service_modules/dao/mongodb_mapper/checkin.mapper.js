@@ -24,7 +24,7 @@ const QUERY_SORT_BY = queryUtil.disposeSortBy([{column: 'checkinTime', isDescend
  * @returns {*|Promise|Promise.<TResult>}
  */
 pub.queryPageCheckinList = (queryParam, pageNumber = 1, pageSize = 10) => {
-  return checkinSchema.queryPaged(queryParam, QUERY_SAFE_PARAM_LIST, QUERY_SELECT_COLUMNS, pageNumber, pageSize, 'checkinTime');
+  return checkinSchema.queryPaged(queryParam, QUERY_SAFE_PARAM_LIST, QUERY_SELECT_COLUMNS, pageNumber, pageSize, QUERY_SORT_BY);
 };
 
 /**
