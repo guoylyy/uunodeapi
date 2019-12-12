@@ -37,7 +37,9 @@ let checkinSchema = new Schema({
   title: {type: String, required: false, default: ""},
   userScore: { type: Number },
   checkinTime: { type: Date, required: true, default: Date.now },
-  remark: String
+  remark: String,
+  likeArr: [Number],
+  dislikeArr: [Number]
 });
 
 // 自定义检查

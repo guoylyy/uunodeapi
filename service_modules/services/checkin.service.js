@@ -55,11 +55,11 @@ pub.listCheckins = (clazzItem, clazzAccountItem) => {
       {
         'userId': userId,
         'clazz': clazzId,
-        checkinTime: { $lte: nowMoment.toDate() }
+        checkinTime: {$lte: nowMoment.toDate()}
       }),
       queryClazzAccountRecordListPromise = clazzType === enumModel.clazzTypeEnum.LONG_TERM.key
-          ? clazzAccountRecordMapper.queryClazzAccountRecordList({ clazzAccountId: clazzAccountItem.id })
-          : Promise.resolve([{ startDate: clazzStartDate, endDate: clazzEndDate }]);
+          ? clazzAccountRecordMapper.queryClazzAccountRecordList({clazzAccountId: clazzAccountItem.id})
+          : Promise.resolve([{startDate: clazzStartDate, endDate: clazzEndDate}]);
 
   return Promise.all([queryClazzCheckinListPromise, queryClazzAccountRecordListPromise])
       .then((results) => {
@@ -140,7 +140,7 @@ pub.fillCheckinWithUserFiles = (checkinItem, withFileUrl) => {
   // 获取打卡当天用户所提交的文件列表
   const queryUserFilePromise = userFileMapper.query({
     userId: checkinItem.userId,
-    upTime: { $gte: checkinMoment.startOf('day').toDate(), $lte: checkinMoment.endOf('day').toDate() }
+    upTime: {$gte: checkinMoment.startOf('day').toDate(), $lte: checkinMoment.endOf('day').toDate()}
   });
 
   /*
@@ -152,7 +152,7 @@ pub.fillCheckinWithUserFiles = (checkinItem, withFileUrl) => {
       : userFileMapper.query(
           {
             userId: checkinItem.userId,
-            upTime: { $gte: createMoment.startOf('day').toDate(), $lte: createMoment.endOf('day').toDate() }
+            upTime: {$gte: createMoment.startOf('day').toDate(), $lte: createMoment.endOf('day').toDate()}
           });
 
   const fetchWechatFileUrlFunctionPromise = withFileUrl === true
@@ -205,7 +205,7 @@ pub.updateCheckinFiles = (checkinItem, checkinFiles) => {
   // 获取用户打卡当天所提交的文件列表
   const queryCheckinTimeDateUserFilePromise = userFileMapper.query({
     userId: checkinItem.userId,
-    upTime: { $gte: checkinMoment.startOf('day').toDate(), $lte: checkinMoment.endOf('day').toDate() }
+    upTime: {$gte: checkinMoment.startOf('day').toDate(), $lte: checkinMoment.endOf('day').toDate()}
   });
 
   let queryCheckinCreatedMomentUserFilePromise;
@@ -216,7 +216,7 @@ pub.updateCheckinFiles = (checkinItem, checkinFiles) => {
   } else {
     queryCheckinCreatedMomentUserFilePromise = userFileMapper.query({
       userId: checkinItem.userId,
-      upTime: { $gte: checkinCreatedMoment.startOf('day').toDate(), $lte: checkinCreatedMoment.endOf('day').toDate() }
+      upTime: {$gte: checkinCreatedMoment.startOf('day').toDate(), $lte: checkinCreatedMoment.endOf('day').toDate()}
     });
   }
 
@@ -233,7 +233,7 @@ pub.updateCheckinFiles = (checkinItem, checkinFiles) => {
           return Promise.reject(commonError.PARAMETER_ERROR());
         }
 
-        return checkinMapper.updateById(checkinItem.id, { checkinFiles: { fileKeys: checkinFileKeys } })
+        return checkinMapper.updateById(checkinItem.id, {checkinFiles: {fileKeys: checkinFileKeys}})
       });
 };
 
@@ -271,7 +271,7 @@ pub.createClazzCheckinItem = (userId, clazzId, checkinItem) => {
   // 获取用户打卡当天所提交的文件列表
   let queryUserFilePromise = userFileMapper.query({
     userId: userId,
-    upTime: { $gte: checkinMoment.startOf('day').toDate(), $lte: checkinMoment.endOf('day').toDate() }
+    upTime: {$gte: checkinMoment.startOf('day').toDate(), $lte: checkinMoment.endOf('day').toDate()}
   });
 
   let nowMoment = moment(),
@@ -281,7 +281,7 @@ pub.createClazzCheckinItem = (userId, clazzId, checkinItem) => {
   } else {
     queryTodayUserFilePromise = userFileMapper.query({
       userId: userId,
-      upTime: { $gte: nowMoment.startOf('day').toDate(), $lte: nowMoment.endOf('day').toDate() }
+      upTime: {$gte: nowMoment.startOf('day').toDate(), $lte: nowMoment.endOf('day').toDate()}
     });
   }
 
@@ -300,7 +300,7 @@ pub.createClazzCheckinItem = (userId, clazzId, checkinItem) => {
 
         let newCheckinItem = {
           status: enumModel.checkinStatusEnum.NORMAL.key,
-          checkinFiles: { fileKeys: checkinFileKeys },
+          checkinFiles: {fileKeys: checkinFileKeys},
           clazz: clazzId,
           isPublic: checkinItem.isPublic,
           remark: checkinItem.remark,
@@ -341,7 +341,7 @@ pub.queryCheckinList = (userId, clazzId, startDate, endDate, idList) => {
   const queryEndDate = _.isDate(endDate) ? endDate : new Date();
 
   const queryParam = {
-    checkinTime: { $gte: startDate, $lte: queryEndDate }
+    checkinTime: {$gte: startDate, $lte: queryEndDate}
   };
   if (!_.isNil(userId)) {
     queryParam.userId = userId;
@@ -443,7 +443,7 @@ pub.fetchClazzCheckinPagedList = (clazzId, queryDate, pageNumber, pageSize) => {
         }
 
         let queryParam = {};
-        if(queryDate != null){
+        if (queryDate != null) {
           let queryDateMoment = moment(queryDate);
           queryParam = {
             clazz: clazzId,
@@ -452,7 +452,7 @@ pub.fetchClazzCheckinPagedList = (clazzId, queryDate, pageNumber, pageSize) => {
               $lte: queryDateMoment.endOf('day').toDate()
             }
           };
-        }else{
+        } else {
           queryParam = {
             clazz: clazzId
           };
@@ -499,7 +499,7 @@ pub.queryPagedClazzUncheckins = (clazzId, date, pageNumber, pageSize, keyword) =
   return checkinMapper.queryCheckinList(
       {
         clazz: clazzId,
-        checkinTime: { $gte: moment(date).startOf('day').toDate(), $lte: moment(date).endOf('day').toDate() },
+        checkinTime: {$gte: moment(date).startOf('day').toDate(), $lte: moment(date).endOf('day').toDate()},
       })
       .then((checkinList) => {
         debug(checkinList);
@@ -553,7 +553,7 @@ pub.queryClazzUncheckinUserList = (clazzId, queryDate, keyword) => {
   return checkinMapper.queryCheckinList(
       {
         clazz: clazzId,
-        checkinTime: { $gte: moment(queryDate).startOf('day').toDate(), $lte: moment(queryDate).endOf('day').toDate() },
+        checkinTime: {$gte: moment(queryDate).startOf('day').toDate(), $lte: moment(queryDate).endOf('day').toDate()},
       })
       .then((checkinList) => {
         debug(checkinList);
@@ -575,16 +575,64 @@ pub.queryClazzUncheckinUserList = (clazzId, queryDate, keyword) => {
 /**
  * 获取用户打卡的天数
  */
-pub.getUserCheckinDays = (userId) =>{
+pub.getUserCheckinDays = (userId) => {
   if (_.isNil(userId)) {
     winston.error('参数错误！！！ userId: %s', userId);
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
   return checkinMapper.sumCheckinDay(userId)
-      .then((result)=>{
+      .then((result) => {
         debug(result);
         return result[0].count;
       });
+};
+
+pub.like = (userId, checkin) => {
+  if (_.isNil(userId)) {
+    winston.error('参数错误！！！ userId: %s', userId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  const likeArr = checkin.likeArr || [];
+  if (likeArr.includes(userId)) {
+    return Promise.reject(commonError.BIZ_FAIL_ERROR("已点赞过该打卡"));
+  } else {
+    likeArr.push(userId);
+    return checkinMapper.updateById(checkin.id, {likeArr: likeArr})
+  }
+};
+
+pub.cancelLike = (userId, checkin) => {
+  if (_.isNil(userId)) {
+    winston.error('参数错误！！！ userId: %s', userId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  const likeArr = checkin.likeArr || [];
+  likeArr.pop(userId);
+  return checkinMapper.updateById(checkin.id, {likeArr: likeArr})
+};
+
+pub.dislike = (userId, checkin) => {
+  if (_.isNil(userId)) {
+    winston.error('参数错误！！！ userId: %s', userId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  const dislikeArr = checkin.dislikeArr || [];
+  if (dislikeArr.includes(userId)) {
+    return Promise.reject(commonError.BIZ_FAIL_ERROR("已点踩过该打卡"));
+  } else {
+    dislikeArr.push(userId);
+    return checkinMapper.updateById(checkin.id, {dislikeArr: dislikeArr})
+  }
+};
+
+pub.cancelDislike = (userId, checkin) => {
+  if (_.isNil(userId)) {
+    winston.error('参数错误！！！ userId: %s', userId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  const dislikeArr = checkin.dislikeArr || [];
+  dislikeArr.pop(userId);
+  return checkinMapper.updateById(checkin.id, {dislikeArr: dislikeArr})
 };
 
 module.exports = pub;

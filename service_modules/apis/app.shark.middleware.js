@@ -212,4 +212,37 @@ pub.preloadLuckyCheckinItem = (req, res, next) => {
       .catch(req.__ERROR_HANDLER);
 };
 
+
+/**
+ * 预装载打卡条目信息，如果checkinId不存在，或非本人，或非当前课程则报404
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
+pub.preloadCheckinItem = (req, res, next) => {
+  let clazzId = req.params.clazzId,
+      checkinId = req.params.checkinId;
+
+  schemaValidator.validatePromise(commonSchema.mongoIdSchema, checkinId)
+      .then((checkinId) => {
+        debug(checkinId);
+
+        return checkinService.fetchCheckinById(checkinId);
+      })
+      .then((checkinItem) => {
+        // 检查checkinId是否为当前课程的
+        if (_.isNil(checkinItem) || checkinItem.clazz !== clazzId) {
+          winston.error('获取checkin对象失败！！！ checkinId: %s, clazzId: %s, userId: %s。', checkinId, clazzId, userId);
+          return apiRender.renderNotFound(res);
+        }
+        req.__CURRENT_CHECKIN = checkinItem;
+        next();
+        // 返回null，避免bluebird报not returned from promise警告
+        return null;
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+
 module.exports = pub;

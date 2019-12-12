@@ -142,7 +142,16 @@ router.get('/clazz/:clazzId/checkins/trend', checkinApis.queryCheckinTrend);
 
 router.get('/clazz/:clazzId/luckyCheckins', checkinApis.fetchClazzLuckyCheckins);
 
+//给学员打卡点赞和取消赞
+router.post('/clazz/:clazzId/checkin/:checkinId/like', middleware.preloadCheckinItem, checkinApis.like);
+router.delete('/clazz/:clazzId/checkin/:checkinId/like', middleware.preloadCheckinItem,  checkinApis.cancelLike);
+//给学员打卡点踩和取消踩
+router.post('/clazz/:clazzId/checkin/:checkinId/dislike', middleware.preloadCheckinItem, checkinApis.dislike);
+router.delete('/clazz/:clazzId/checkin/:checkinId/dislike', middleware.preloadCheckinItem, checkinApis.cancelDislike);
+
 router.use('/clazz/:clazzId/feedback', h5MiddleWare.preloadFeedbackItem);
+
+
 // 课程点评API
 const clazzFeedbackApis = require('./h5/clazzFeedback.controller');
 router.get('/clazz/:clazzId/feedback/material/:materialId', clazzFeedbackApis.fetchFeedbackMaterial);
@@ -173,10 +182,6 @@ router.use('/clazz/:clazzId/checkin/:checkinId', h5MiddleWare.preloadCheckinItem
 router.get('/clazz/:clazzId/checkin/:checkinId', h5CheckinApis.fetchCheckinItem);
 router.put('/clazz/:clazzId/checkin/:checkinId', h5CheckinApis.updateCheckinItem);
 router.delete('/clazz/:clazzId/checkin/:checkinId', h5CheckinApis.deleteCheckin);
-
-//给学员打卡点赞和取消点赞
-//router.post('/clazz/:clazzId/checkin/:checkinId/awesome');
-//router.delete('/clazz/:clazzId/checkin/:checkinId/awesome');
 
 const clazzPlayApis = require('./app.shark/clazzRolePlay.controller');
 router.get('/clazz/:clazzId/plays', clazzPlayApis.queryClazzPlayList);
