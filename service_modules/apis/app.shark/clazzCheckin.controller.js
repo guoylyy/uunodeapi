@@ -82,7 +82,12 @@ pub.queryCheckinList = (req, res) => {
         const checkinFileIds = [];
         _.forEach(userCheckinResult.checkins, (checkinItem) => {
           checkinItem.checkinTime = moment(checkinItem.checkinTime).format('YYYY-MM-DD');
-          _.extend(checkinFileIds, checkinItem.checkinFiles.fileKeys);
+          let keys = checkinItem.checkinFiles.fileKeys;
+          if(!_.isNil(keys) && keys.length > 0){
+            _.each(keys,(item, index)=>{
+              checkinFileIds.push(item);
+            });
+          }
         });
 
         const pickedClazzItem = apiUtil.pickClazzBasicInfo(currentClazzItem);
@@ -122,8 +127,6 @@ pub.queryCheckinList = (req, res) => {
           fileMap[_.get(fileItem,'_id')] = fileItem;
         });
         userCheckinResult['fileMap'] = fileMap;
-
-
         //Checkin Add Files
         _.map(userCheckinResult.checkins, (item)=>{
           let fileKeys = item.checkinFiles.fileKeys;
@@ -164,7 +167,12 @@ pub.queryClazzCheckins = (req, res) => {
         const userIdList = _.map(pagedCheckinList, 'user.id');
         const filesIdList = [];
         _.map(pagedCheckinList, (checkinItem) => {
-          _.extend(filesIdList, checkinItem.checkinFiles.fileKeys);
+          let keys = checkinItem.checkinFiles.fileKeys;
+          if(!_.isNil(keys) && keys.length > 0){
+            _.each(keys,(item, index)=>{
+              filesIdList.push(item);
+            });
+          }
         });
 
         debug(filesIdList);
