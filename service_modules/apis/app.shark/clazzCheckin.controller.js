@@ -415,6 +415,12 @@ pub.getUserCheckinDays = (req, res) => {
       .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 用户点赞接口
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
+ */
 pub.like = (req, res) => {
   const userId = req.__CURRENT_USER.id;
   const checkin = req.__CURRENT_CHECKIN;
@@ -429,6 +435,12 @@ pub.like = (req, res) => {
       .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 用户取消打卡点赞接口
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
+ */
 pub.cancelLike = (req, res) => {
   const userId = req.__CURRENT_USER.id;
   const checkin = req.__CURRENT_CHECKIN;
@@ -442,6 +454,13 @@ pub.cancelLike = (req, res) => {
       })
       .catch(req.__ERROR_HANDLER);
 };
+
+/**
+ * 用户对打卡点踩接口
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
+ */
 pub.dislike = (req, res) => {
   const userId = req.__CURRENT_USER.id;
   const checkin = req.__CURRENT_CHECKIN;
@@ -455,6 +474,13 @@ pub.dislike = (req, res) => {
       })
       .catch(req.__ERROR_HANDLER);
 };
+
+/**
+ * 用户取消踩接口
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
+ */
 pub.cancelDislike = (req, res) => {
   const userId = req.__CURRENT_USER.id;
   const checkin = req.__CURRENT_CHECKIN;
@@ -468,4 +494,6 @@ pub.cancelDislike = (req, res) => {
       })
       .catch(req.__ERROR_HANDLER);
 };
+
+
 module.exports = pub;

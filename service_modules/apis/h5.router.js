@@ -235,6 +235,7 @@ const guideController = require('./h5/guide.controller');
 
 router.get('/guide/chats', guideController.fetchInteractiveChatList);
 
+//用户退班相关接口
 router.post('/clazzExit', clazzApis.createClazzExitItem);
 router.get('/clazzExit/list', clazzApis.getUserClazzExits);
 router.get('/clazzExit/:exitId', clazzApis.getClazzExistById);

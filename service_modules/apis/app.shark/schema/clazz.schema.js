@@ -58,4 +58,19 @@ pub.clazzLuckyCheckinQuerySchema = Joi.object().keys({
   date: Joi.date().format('YYYY-MM-DD').max('now').default(() => new Date(), 'current date')
 });
 
+/**
+ * 学员退班记录Schema
+ */
+pub.clazzExitSchema = Joi.object().keys({
+  clazzId: commonSchema.mongoIdSchema.required(),
+  reason: Joi.string().trim().max(255).required()
+});
+
+/**
+ * 学员退班查询
+ */
+pub.clazzExitQuerySchema = Joi.object().keys({
+  status: Joi.string().trim().max(255).required()
+});
+
 module.exports = pub;

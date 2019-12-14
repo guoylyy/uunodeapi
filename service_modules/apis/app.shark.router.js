@@ -88,6 +88,9 @@ router.post('/account/privacy/phoneNumber/sms', accountRegisterApi.sendPrivacyPh
 router.put('/account/privacy/phoneNumber/sms', accountRegisterApi.checkPrivacyPhonenumberRegisterCode);
 router.put('/account/privacy/phoneNumber', accountRegisterApi.connectAccountPrivacyPhonenumber);
 
+//判断登录用户是否绑定了手机号
+router.get('/account/privacy/phoneNumber/isConnected', accountRegisterApi.isConnectedPhonenumber);
+
 router.get('/account/privacy/wechat', accountRegisterApi.fetchAccountPrivacyWechat);
 router.put('/account/privacy/wechat', accountRegisterApi.connectAccountPrivacyWechat);
 
@@ -186,5 +189,13 @@ router.delete('/clazz/:clazzId/checkin/:checkinId', h5CheckinApis.deleteCheckin)
 const clazzPlayApis = require('./app.shark/clazzRolePlay.controller');
 router.get('/clazz/:clazzId/plays', clazzPlayApis.queryClazzPlayList);
 router.get('/clazz/:clazzId/play/:playId', clazzPlayApis.fetchClazzPlayItem);
+
+
+//用户退班相关接口
+router.post('/clazzExit', clazzApis.createClazzExitItem);
+router.get('/clazzExit/list', clazzApis.getUserClazzExits);
+router.get('/clazzExit/:exitId', clazzApis.getClazzExistById);
+router.delete('/clazzExit/:clazzId', clazzApis.removeClazzExitById);
+
 
 module.exports = router;

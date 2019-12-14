@@ -63,7 +63,7 @@ pub.sendRegisterCode = (req, res) => {
               debug(smsConfig);
 
               if (!_.isNil(userBindItem)) {
-                winston.error(`手机号 ${ phoneNumber } 已注册`);
+                winston.error(`手机号 ${phoneNumber} 已注册`);
                 return Promise.reject(commonError.PARAMETER_ERROR('用户已注册'));
               }
 
@@ -102,12 +102,12 @@ pub.checkRegisterCode = (req, res) => {
               debug(latestCodeItem);
 
               if (!_.isNil(userBindItem)) {
-                winston.error(`手机号 ${ phoneNumber } 已注册`);
+                winston.error(`手机号 ${phoneNumber} 已注册`);
                 return Promise.reject(commonError.PARAMETER_ERROR('用户已注册'));
               }
 
               if (!isValidSecurityCode(latestCodeItem, securityCode)) {
-                winston.error(`手机号 ${ phoneNumber } 及 ${ securityCode } 验证失败`);
+                winston.error(`手机号 ${phoneNumber} 及 ${securityCode} 验证失败`);
                 return Promise.reject(commonError.PARAMETER_ERROR('验证失败'));
               }
 
@@ -141,12 +141,12 @@ pub.initAccountByPhonenumber = (req, res) => {
               debug(latestCodeItem);
 
               if (!_.isNil(userBindItem)) {
-                winston.error(`手机号 ${ phoneNumber } 已注册`);
+                winston.error(`手机号 ${phoneNumber} 已注册`);
                 return Promise.reject(commonError.PARAMETER_ERROR('用户已注册'));
               }
 
               if (!isValidSecurityCode(latestCodeItem, securityCode)) {
-                winston.error(`手机号 ${ phoneNumber } 及 ${ securityCode } 验证失败`);
+                winston.error(`手机号 ${phoneNumber} 及 ${securityCode} 验证失败`);
                 return Promise.reject(commonError.PARAMETER_ERROR('验证失败'));
               }
 
@@ -176,7 +176,7 @@ pub.initAccountByPhonenumber = (req, res) => {
               );
 
               // 签名， token
-              const userObj = { appUserId: userItem.id };
+              const userObj = {appUserId: userItem.id};
               const signTokenPromise = jwtUtil.sign(userObj, systemConfig.jwt_app_shark.secretKey, systemConfig.jwt_app_shark.options);
 
               return Promise.all([createUserBindPromise, signTokenPromise])
@@ -216,7 +216,7 @@ pub.sendResetPasswordCode = (req, res) => {
               debug(smsConfig);
 
               if (_.isNil(userBindItem)) {
-                winston.error(`手机号 ${ phoneNumber } 未注册`);
+                winston.error(`手机号 ${phoneNumber} 未注册`);
                 return Promise.reject(commonError.PARAMETER_ERROR('用户未注册'));
               }
 
@@ -255,12 +255,12 @@ pub.checkRestPasswordCode = (req, res) => {
               debug(latestCodeItem);
 
               if (_.isNil(userBindItem)) {
-                winston.error(`手机号 ${ phoneNumber } 未注册`);
+                winston.error(`手机号 ${phoneNumber} 未注册`);
                 return Promise.reject(commonError.PARAMETER_ERROR('用户未注册'));
               }
 
               if (!isValidSecurityCode(latestCodeItem, securityCode)) {
-                winston.error(`手机号 ${ phoneNumber } 及 ${ securityCode } 验证失败`);
+                winston.error(`手机号 ${phoneNumber} 及 ${securityCode} 验证失败`);
                 return Promise.reject(commonError.PARAMETER_ERROR('验证失败'));
               }
 
@@ -294,12 +294,12 @@ pub.resetAccountPassword = (req, res) => {
               debug(latestCodeItem);
 
               if (_.isNil(userBindItem)) {
-                winston.error(`手机号 ${ phoneNumber } 未注册`);
+                winston.error(`手机号 ${phoneNumber} 未注册`);
                 return Promise.reject(commonError.PARAMETER_ERROR('用户未注册'));
               }
 
               if (!isValidSecurityCode(latestCodeItem, securityCode)) {
-                winston.error(`手机号 ${ phoneNumber } 及 ${ securityCode } 验证失败`);
+                winston.error(`手机号 ${phoneNumber} 及 ${securityCode} 验证失败`);
                 return Promise.reject(commonError.PARAMETER_ERROR('验证失败'));
               }
 
@@ -332,7 +332,7 @@ pub.resetAccountPassword = (req, res) => {
         debug(updatedUserBindItem);
 
         // 签名， token
-        const userObj = { appUserId: updatedUserItem.id };
+        const userObj = {appUserId: updatedUserItem.id};
 
         return jwtUtil.sign(userObj, systemConfig.jwt_app_shark.secretKey, systemConfig.jwt_app_shark.options);
       })
@@ -342,6 +342,34 @@ pub.resetAccountPassword = (req, res) => {
         res.set('X-Auth-Token', token);
 
         return apiRender.renderSuccess(res);
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+
+/**
+ * 检查是否账号已经绑定了手机号码
+ * @param req
+ * @param res
+ * @return {Bluebird<R>}
+ */
+pub.isConnectedPhonenumber = (req, res) => {
+  const currentUser = req.__CURRENT_USER; //获取当前用户
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
+      .then((params) => {
+        return userBindService.fetchUserBindByUserId(enumModel.userBindTypeEnum.PHONE_NUMBER.key, currentUser.id);
+      })
+      .then((userBindItem) => {
+        debug(userBindItem);
+        const result = {};
+        if (!_.isNil(userBindItem)) {
+          let phoneNumber = _.get(userBindItem, 'accountName');
+          winston.error(`手机号 ${phoneNumber} 已注册`);
+          result['result'] = true;
+        } else {
+          result['result'] = false;
+        }
+        return apiRender.renderBaseResult(res, result);
       })
       .catch(req.__ERROR_HANDLER);
 };
@@ -370,7 +398,7 @@ pub.sendPrivacyPhonenumberRegisterCode = (req, res) => {
               debug(smsConfig);
 
               if (!_.isNil(userBindItem)) {
-                winston.error(`手机号 ${ phoneNumber } 已注册`);
+                winston.error(`手机号 ${phoneNumber} 已注册`);
                 return Promise.reject(commonError.PARAMETER_ERROR('手机号已注册'));
               }
 
@@ -411,12 +439,12 @@ pub.checkPrivacyPhonenumberRegisterCode = (req, res) => {
               debug(latestCodeItem);
 
               if (!_.isNil(userBindItem)) {
-                winston.error(`手机号 ${ phoneNumber } 已注册`);
+                winston.error(`手机号 ${phoneNumber} 已注册`);
                 return Promise.reject(commonError.PARAMETER_ERROR('手机号已注册'));
               }
 
               if (!isValidSecurityCode(latestCodeItem, securityCode)) {
-                winston.error(`手机号 ${ phoneNumber } 及 ${ securityCode } 验证失败`);
+                winston.error(`手机号 ${phoneNumber} 及 ${securityCode} 验证失败`);
                 return Promise.reject(commonError.PARAMETER_ERROR('验证失败'));
               }
 
@@ -452,12 +480,12 @@ pub.connectAccountPrivacyPhonenumber = (req, res) => {
               debug(latestCodeItem);
 
               if (!_.isNil(userBindItem)) {
-                winston.error(`手机号 ${ phoneNumber } 已注册`);
+                winston.error(`手机号 ${phoneNumber} 已注册`);
                 return Promise.reject(commonError.PARAMETER_ERROR('手机号已注册'));
               }
 
               if (!isValidSecurityCode(latestCodeItem, securityCode)) {
-                winston.error(`手机号 ${ phoneNumber } 及 ${ securityCode } 验证失败`);
+                winston.error(`手机号 ${phoneNumber} 及 ${securityCode} 验证失败`);
                 return Promise.reject(commonError.PARAMETER_ERROR('验证失败'));
               }
 
@@ -555,7 +583,7 @@ pub.connectAccountPrivacyWechat = (req, res) => {
         });
 
         // 签名， token
-        const userObj = { appUserId: userItem.id };
+        const userObj = {appUserId: userItem.id};
         const signTokePromise = jwtUtil.sign(userObj, systemConfig.jwt_app_shark.secretKey, systemConfig.jwt_app_shark.options);
 
         return Promise.all([Promise.all(updateUserBindPromiseList), signTokePromise])
