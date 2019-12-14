@@ -207,7 +207,6 @@ router.post('/admin/user/:userId/coin', userManageController.createUserCoinItem)
 router.post('/admin/user/:userId/coupon', userManageController.createUserCoupon);
 router.get('/admin/user/:userId/payments', userManageController.queryUserPayList);
 
-
 //2. 班级管理
 const clazzManageController = require('./admin/clazz.controller');
 router.get('/admin/clazzes', clazzManageController.queryClazzes);
@@ -249,7 +248,6 @@ router.get('/admin/coupon/:couponId', couponManageController.fetchCouponItem);
 router.put('/admin/coupon/:couponId', couponManageController.updateCouponItem);
 router.delete('/admin/coupon/:couponId', couponManageController.deleteCouponItem);
 
-
 //4. 财务管理
 // 退款管理
 const withdrawController = require('./admin/withdraw.controller');
@@ -284,6 +282,6 @@ const promotionController = require('./admin/promotion.controller');
 router.get('/admin/promotion/incomes', promotionController.queryPromototionIncomeList);
 
 //8.用户卡片管理
-
+//TODO:暂未开发
 
 module.exports = router;
