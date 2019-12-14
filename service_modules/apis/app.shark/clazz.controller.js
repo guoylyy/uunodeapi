@@ -21,6 +21,7 @@ const cacheWrapper = require('../../services/component/cacheWrap.component');
 
 const clazzService = require('../../services/clazz.service');
 const clazzAccountService = require('../../services/clazzAccount.service');
+const userService = require('../../services/user.service');
 const userCoinService = require('../../services/userCoin.service');
 const ubandCoinService = require('../../services/ubandCoin.service');
 const couponService = require('../../services/coupon.service');
