@@ -284,4 +284,13 @@ router.get('/admin/promotion/incomes', promotionController.queryPromototionIncom
 //8.用户卡片管理
 //TODO:暂未开发
 
+//9.H5首页推广配置
+const advEntityController = require('./mng/advEntity.controller');
+router.get('/admin/advEntity/all', advEntityController.fetchAllAdvs);
+router.get('/admin/advEntity/:advId', advEntityController.fetchAdvEntity);
+router.delete('/admin/advEntity/:advId', advEntityController.removeAdvEntity);
+router.post('/admin/advEntity', advEntityController.createNewAdvEntity);
+router.put('/admin/advEntity/:advId', advEntityController.updateAdvEntity);
+
+
 module.exports = router;
