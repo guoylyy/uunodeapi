@@ -26,6 +26,7 @@ const ubandCoinService = require('../../services/ubandCoin.service');
 const couponService = require('../../services/coupon.service');
 const promotionService = require('../../services/promotion.service');
 const ubandAdvertiseService = require('../../services/ubandAdvertise.service');
+const clazzExitService = require('../../services/clazzExit.servie');
 
 const apiUtil = require('../util/api.util');
 const clazzUtil = require('../../services/util/clazz.util');
