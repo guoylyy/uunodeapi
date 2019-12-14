@@ -69,6 +69,8 @@ router.get('/clazz/:clazzId/account/:accountId/score', clazzAccountController.qu
 router.get('/clazz/:clazzId/account/:accountId/checkin', clazzAccountController.queryAccountCheckinStatusByDate);
 router.post('/clazz/:clazzId/account/:accountId/checkin', clazzAccountController.createAccountCheinItem);
 
+router.get('/clazz/:clazzId/account/:accountId/bill',clazzAccountController.queryClazzAccountPaybill);
+
 /***********************************************************************************************************************
  * 1. 必须为长期班
  * 2. 预加载长期班账户记录列表

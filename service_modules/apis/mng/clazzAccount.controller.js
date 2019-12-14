@@ -19,8 +19,10 @@ const clazzAccountService = require('../../services/clazzAccount.service');
 const userService = require('../../services/user.service');
 const checkinService = require('../../services/checkin.service');
 const promotionService = require('../../services/promotion.service');
+const userPayService = require('../../services/userPay.service');
 
 const clazzUtil = require('../../services/util/clazz.util');
+const apiUtil = require('../util/api.util');
 
 const wechatTemplateReply = require('../../lib/wechat.template.reply');
 const wechatUser = require('../../lib/wechat.user');
@@ -514,6 +516,55 @@ pub.updateClazzAccountRecordList = (req, res) => {
         debug(destroyResult);
 
         return apiRender.renderSuccess(res);
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 查询用户付款详情
+ * @param req
+ * @param res
+ */
+pub.queryClazzAccountPaybill = (req, res) =>{
+  const currentClazz = req.__CURRENT_CLAZZ,
+      currentClazzAccount = req.__CURRENT_STUDENT_CLAZZ_ACCOUNT;
+
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
+      .then(()=>{
+        debug(currentClazzAccount);
+        const userPayPromise = userPayService.queryUserPayListByOutBiz(enumModel.userPayOutbizTypeEnum.CLAZZPAY.key,
+            [currentClazzAccount.id]);
+
+        const userInfoPromise = userService.fetchById(currentClazzAccount.userId);
+        return Promise.all([userPayPromise, userInfoPromise])
+      })
+      .then(([userPay, userInfo])=>{
+        const reuslt = {
+          bill:{},
+          userInfo:{},
+          billDate: null,
+          clazzInfo:{},
+          userStatus: null
+        };
+
+        reuslt.clazzInfo = {
+          clazzName: currentClazz.name,
+          clazzPrice: currentClazz.configuration.totalFee,
+          clazzStatus: currentClazz.status
+        };
+        reuslt.userStatus = currentClazzAccount.status;
+        reuslt.billDate = currentClazzAccount.joinDate;
+        reuslt.userInfo = apiUtil.pickUserBasicInfo(userInfo);
+
+        if(!_.isNil(userPay) && _.isArray(userPay)){
+          reuslt.bill = {
+            payInfo:JSON.parse(userPay[0].bill),
+            payDate: userPay[0].payTime,
+            payWay: userPay[0].payway,
+            payStatus: userPay[0].status
+          };
+        }
+        return apiRender.renderBaseResult(res, reuslt);
       })
       .catch(req.__ERROR_HANDLER);
 };
