@@ -17,4 +17,12 @@ pub.appVersionSchema = Joi.object().keys({
   platform: Joi.string().valid(_.keys(enumModel.appTypeEnum)).required()
 });
 
+/**
+ * 系统配置类型 Schema
+ */
+pub.fetchSysconfigSchema = Joi.object().keys({
+  sysconfigType: Joi.string().required(),
+  key: Joi.string().required()
+});
+
 module.exports = pub;

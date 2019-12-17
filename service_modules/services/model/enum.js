@@ -1937,6 +1937,14 @@ const systemConfigTypeEnum = {
   'SMS_CONFIG': {
     key: 'SMS_CONFIG',
     name: '短信系统配置'
+  },
+  'APP_SERVICE_CONFIG':{
+    'key': 'APP_SERVICE_CONFIG',
+    'name': 'APP 客服配置'
+  },
+  'APP_CARD_CONFIG':{
+    'key': 'APP_CARD_CONFIG',
+    'name': 'APP 卡片配置'
   }
 };
 

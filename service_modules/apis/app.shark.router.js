@@ -39,6 +39,7 @@ router.post('/qiniu/callback', bodyParser.urlencoded({ extended: false }), qiniu
 const basicApis = require('./app.shark/basic.controller');
 router.get('/version', basicApis.fetchAppVersion);
 router.get('/system', basicApis.fetchIsAudit);
+router.get('/systemConfig', basicApis.fetchSystemConfig);
 
 const accountRegisterApi = require('./app.shark/account.register.controller');
 router.post('/account/phoneNumber/sms', accountRegisterApi.sendRegisterCode);
@@ -94,6 +95,13 @@ router.get('/account/privacy/phoneNumber/isConnected', accountRegisterApi.isConn
 router.get('/account/privacy/wechat', accountRegisterApi.fetchAccountPrivacyWechat);
 router.put('/account/privacy/wechat', accountRegisterApi.connectAccountPrivacyWechat);
 
+
+//用户提现
+router.get('/account/withdraws', h5AccountApis.queryUserWithdraws);
+router.post('/account/withdraw', h5AccountApis.userWithdraw);
+router.get('/account/withdraw/:withdrawId', h5AccountApis.getUserWithdraw);
+router.delete('/account/withdraw/:withdrawId', h5AccountApis.userCancelWithdraw);
+//用户优币接口
 router.get('/account/coins', h5AccountApis.fetchCoins);
 router.get('/account/coupons', accountApis.fetchCouponList);
 router.get('/account/cards', accountApis.fetchUserCards);

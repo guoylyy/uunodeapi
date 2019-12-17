@@ -42,4 +42,18 @@ pub.fetchSystemConfigByType = (type) => {
       });
 };
 
+/**
+ * 根据Type和Key返回信息
+ * @param type
+ * @param key
+ * @return {*}
+ */
+pub.fetchSystemConfigByTypeAndKey = (type, key) =>{
+  if (_.isNil(enumModel.getEnumByKey(type, enumModel.systemConfigTypeEnum)) || _.isNil(key)) {
+    winston.error('查询系统配置失败，参数错误： type: %s key: %s', type, key);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return systemConfigMapper.fetchAllByParam({type:type, key:key});
+};
+
 module.exports = pub;
