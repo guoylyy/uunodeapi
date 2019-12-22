@@ -83,11 +83,11 @@ router.use(oneMiddleware.moduleLogger);
 // router.post('/task/:taskId/checkin/:checkinId/like') //笔芯
 
 // 学习材料
-// router.get('/lessons')
-// router.get('/lesson/:lessonId')
-// router.get('/lessons/banners')
+const lessonController = require('./weapp.one/lesson.controller');
 
-
+router.get('/lessons', lessonController.getLessonList)
+// router.get('/lesson/:lessonId',lessonController.getLesson)
+// router.get('/lessons/banners', lessonController.getBanners)
 
 // 课程相关API
 // const clazzApis = require('./weapp.one/clazz.controller');

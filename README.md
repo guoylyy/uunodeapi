@@ -185,7 +185,7 @@ pm2 startup
 pm2 logs
 
 // 监控
-pm2 m
+pm2 monit
 ```
 
 ### 线上更新 & 重启

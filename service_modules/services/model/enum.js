@@ -2005,6 +2005,35 @@ const advTypeEnum = {
   }
 };
 
+const lessonTypeEnum = {
+  'TECH': {
+    key: 'TECH',
+    name: '技巧'
+  },
+  'TOOL': {
+    key: 'TOOL',
+    name: '工具'
+  },
+  'EXAM': {
+    key: 'EXAM',
+    name: '考试'
+  },
+  'BEGINNER': {
+    key: 'BEGINNER',
+    name: '入门'
+  }
+}
+
+const lessonLinkTypeEnum = {
+  'HTML': {
+    key: 'HTML',
+    name: '网页内容'
+  },
+  'URL': {
+    key: 'URL',
+    name: '链接'
+  }
+}
 
 // functions
 exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
@@ -2096,3 +2125,5 @@ exports.clazzExitStatusTypeEnum = withdrawStatusEnum;
 exports.userScoreTypeEnum = userScoreTypeEnum;
 exports.securityCodeTypeEnum = securityCodeTypeEnum;
 exports.userRankTypeEnum = userRankTypeEnum;
+exports.lessonTypeEnum = lessonTypeEnum;
+exports.lessonLinkTypeEnum = lessonLinkTypeEnum;
