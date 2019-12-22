@@ -2006,6 +2006,39 @@ const advTypeEnum = {
 };
 
 
+//用户证书枚举字段
+const userCertificationEnum = {
+  'CET-4': {
+    key: 'CET-4',
+    name: '专业英语四级'
+  },
+  'CET-8': {
+    key: 'CET-8',
+    name: '专业英语八级'
+  },
+  'CATTI-KY-1': {
+    key: 'CATTI-KY-1',
+    name: 'CATTI口译一级'
+  },
+  'CATTI-KY-2': {
+    key: 'CATTI-KY-1',
+    name: 'CATTI口译二级'
+  },
+  'CATTI-KY-3': {
+    key: 'CATTI-KY-3',
+    name: 'CATTI口译三级'
+  },
+  'SH-KY-M': {
+    key: 'SH-KY-M',
+    name: '上海市中口'
+  },
+  'SH-KY-H': {
+    key: 'SH-KY-H',
+    name: '上海市高口'
+  },
+};
+
+
 // functions
 exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
   if (EnumObj[key]) {
@@ -2014,6 +2047,9 @@ exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
 
   return null;
 };
+
+//update at 2019-12-23
+exports.userCertificationEnum = userCertificationEnum;
 
 //update at 2019-05-24
 exports.advTypeEnum = advTypeEnum;

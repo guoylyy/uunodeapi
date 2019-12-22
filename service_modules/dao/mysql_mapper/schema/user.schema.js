@@ -21,6 +21,8 @@ let user = baseSchema.BaseBookshelfModel.extend({
     saltHashedPassword: Joi.string().max(128),
     sex: Joi.number().valid(0, 1, 2),
     city: Joi.string().max(32).allow(''),
+    school: Joi.string().max(64).allow(''),
+    certification: Joi.string().max(512).allow(''),
     hasFillInfo: Joi.boolean().default(false),
 
     address: Joi.string().max(128),
@@ -43,6 +45,8 @@ let user = baseSchema.BaseBookshelfModel.extend({
     unionid: Joi.string().max(32),
     sex: Joi.number().valid(0, 1, 2),
     city: Joi.string().max(32).allow(''),
+    school: Joi.string().max(64).allow(''),
+    certification: Joi.string().max(512).allow(''),
 
     hasFillInfo: Joi.boolean(),
     phoneNumber: Joi.string().max(11),

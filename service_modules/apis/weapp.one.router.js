@@ -25,11 +25,12 @@ router.post('/qiniu/callback', bodyParser.urlencoded({ extended: false }), qiniu
  */
 const commonMiddleware = require('./common.middleware');
 const clazzTeacherApis = require('./weapp.one/clazzTeacher.controller');
+const commonApis = require('./weapp.one/common.controller');
 
 router.post('/wechat/auth', wechatApi.authWechatLogin);
 router.get('/teachers',  clazzTeacherApis.fetchAllTeacherList);
 router.get('/teacher/:teacherId', clazzTeacherApis.fetchTeacherDetail);
-//router.get('/schools',) //搜索学校
+router.get('/schools',commonApis.querySchools) //搜索学校
 
 // router.post('/wechat/pay', commonMiddleware.wechatXmlParser, wechatApi.wechatPaymentCallbackHandler);
 
@@ -48,27 +49,27 @@ router.use(oneMiddleware.parseAuthToken);
 router.use(oneMiddleware.moduleLogger);
 
 // @yiliang
-
+const accountApis = require('./weapp.one/account.controller');
 // 账户相关API
 // router.get('/account/homeInfo') //主页的内容
-// router.get('/account/info') //个人信息
-// router.put('/account/info') //更新个人信息
-// router.put('/account/info/school') //更新个人学校
-// router.put('/account/info/certifications') //更新个人证书
+router.get('/account/info', accountApis.getAccountBaseInfo); //个人信息
+router.put('/account/info', accountApis.updateAccountInfo); //更新个人信息
+router.put('/account/info/school', accountApis.updateAccountSchool); //更新个人学校
+router.put('/account/info/certifications', accountApis.updateAccountCertifications); //更新个人证书
 
-// router.put('/account/personalStudy') //设置个性化练习设置
+router.get('/account/personalConfig/:configApp', accountApis.fetchUserPersonConfiguration); //设置个性化练习设置
+router.put('/account/personalConfig/:configApp', accountApis.updateUserPersonConfiguration); //设置个性化练习设置
 
-// router.get('/account/like/sum') //个人笔芯记录
-// router.get('/account/likes')   //用户笔芯记录
-// router.get('/account/like/rules') //个人笔芯规则
-// router.get('/account/like/getways') //个人笔芯任务获取情况
-
-// @hupeng
+router.get('/account/like/sum', accountApis.fetchUserLikeSum); //个人笔芯记录
+router.get('/account/likes', accountApis.fetchUserLikes);    //用户笔芯记录
+router.get('/account/like/rules', accountApis.fetchUserLikeRules); //个人笔芯规则
+router.get('/account/like/getways', accountApis.fetchUserLikeTasks); //个人笔芯任务获取情况
 
 // router.get('/account/statistics/checkin') //课程档案
 // router.get('/account/statistics/practise') //口译记录
 // router.get('/account/checkins') //个人口译记录筛选
 
+// @hupeng
 // 任务练习相关API
 // router.get('/task/today') //获取今日任务
 // router.get('/tasks') //往期材料搜索

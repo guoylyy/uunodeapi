@@ -45,7 +45,7 @@ pub.pickUserBasicInfo = (userItem) => {
     return null;
   }
 
-  return _.pick(userItem, ['id', 'name', 'headImgUrl', 'studentNumber']);
+  return _.pick(userItem, ['id', 'name', 'headImgUrl', 'studentNumber', 'school']);
 };
 
 /**

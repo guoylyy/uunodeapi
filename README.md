@@ -95,7 +95,7 @@ npm run knex migrate:make migration_name
 ```
 exports.up = function(knex, Promise) {
 // 此处为migration操作
-};
+};np
 
 exports.down = function(knex, Promise) {
 // 此处为rollback操作
