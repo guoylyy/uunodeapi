@@ -28,10 +28,11 @@ const clazzTeacherApis = require('./weapp.one/clazzTeacher.controller');
 
 router.post('/wechat/auth', wechatApi.authWechatLogin);
 router.get('/teachers',  clazzTeacherApis.fetchAllTeacherList);
+router.get('/teacher/:teacherId', clazzTeacherApis.fetchTeacherDetail);
 //router.get('/schools',) //搜索学校
 
 // router.post('/wechat/pay', commonMiddleware.wechatXmlParser, wechatApi.wechatPaymentCallbackHandler);
-// router.get('/teacher/:teacherId', clazzTeacherApis.fetchTeacherDetail);
+
 /***********************************************************************************************************************
  * 检查是否加入了默认班级
  ***********************************************************************************************************************/
