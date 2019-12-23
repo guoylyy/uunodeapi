@@ -86,7 +86,7 @@ router.use(oneMiddleware.moduleLogger);
 const lessonController = require('./weapp.one/lesson.controller');
 
 router.get('/lessons', lessonController.getLessonList)
-// router.get('/lesson/:lessonId',lessonController.getLesson)
+router.get('/lesson/:lessonId',lessonController.getLesson)
 // router.get('/lessons/banners', lessonController.getBanners)
 
 // 课程相关API

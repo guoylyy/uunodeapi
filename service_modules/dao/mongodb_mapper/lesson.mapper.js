@@ -47,4 +47,11 @@ pub.queryPagedLessonList = (queryParam, pageNumber = 1, pageSize = 10) => {
   );
 };
 
+/**
+ * 根据课程id获取课程详情
+ */
+pub.findById = (lessonId) => {
+  return lessonSchema.findItemById(lessonId)
+}
+
 module.exports = pub;
