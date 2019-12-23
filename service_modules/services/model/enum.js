@@ -2035,6 +2035,26 @@ const lessonLinkTypeEnum = {
   }
 }
 
+/**
+ * banner业务枚举
+ */
+const bannerBizTypeEnum = {
+  'LESSON': {
+    key: 'LESSON',
+    name: '课程相关'
+  }
+}
+
+/**
+ * banner链接类型
+ */
+const bannerLinkTypeEnum = {
+  'URL': {
+    key: 'URL',
+    name: '链接'
+  }
+}
+
 // functions
 exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
   if (EnumObj[key]) {
@@ -2127,3 +2147,5 @@ exports.securityCodeTypeEnum = securityCodeTypeEnum;
 exports.userRankTypeEnum = userRankTypeEnum;
 exports.lessonTypeEnum = lessonTypeEnum;
 exports.lessonLinkTypeEnum = lessonLinkTypeEnum;
+exports.bannerBizTypeEnum = bannerBizTypeEnum;
+exports.bannerLinkTypeEnum = bannerLinkTypeEnum;

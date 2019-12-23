@@ -6,8 +6,10 @@ const commonSchema = require("../common.schema");
 const lessonSchema = require("./schema/lesson.schema");
 const apiRender = require("../render/api.render");
 const lessonService = require("../../services/lesson.service");
+const bannerService = require("../../services/banner.service");
 const debug = require("debug")("controller");
-
+const enumModel = require('../../services/model/enum');
+const bannerBizTypeEnum = enumModel.bannerBizTypeEnum;
 const pub = {};
 /**
  * 分页查询课程列表
@@ -39,8 +41,23 @@ pub.getLesson = (req, res) => {
   .then(result => {
     return apiRender.renderBaseResult(res, result)
   })
+  .catch(req.__ERROR_HANDLER);
 };
 
-pub.getBanners = (req, res) => {};
+/**
+ * 获取banner列表
+ * 
+ */
+pub.getBanners = (req, res) => {
+  return schemaValidator
+    .validatePromise(commonSchema.emptySchema, req.query)
+    .then(() => {
+      return bannerService.queryBannerList(bannerBizTypeEnum.LESSON.key)
+    })
+    .then(result => {
+      return apiRender.renderBaseResult(res, result);
+    })
+    .catch(req.__ERROR_HANDLER);;
+};
 
 module.exports = pub;

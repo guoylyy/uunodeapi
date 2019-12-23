@@ -19,7 +19,6 @@ let lessonSchema = new Schema({
   type: { type: String, required:true, enum: lessonTypeEnum},
   linkType: { type: String, required:true, enum: lessonLinkTypeEnum},
   image: {type: String, required: true},
-  linkType: {type: String, required: true},
   linkContent: {type: String, required: false, default: ''},
   linkUrl: {type: String, required: false, default: ''},
   isHot: {type: Boolean, required: false, default: false},
