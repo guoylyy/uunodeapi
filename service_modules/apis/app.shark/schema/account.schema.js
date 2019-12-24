@@ -23,7 +23,8 @@ pub.userLoginBodySchema = Joi.object().keys({
  * 更新用户基本信息body schema
  */
 pub.userInfoUpdateSchema = Joi.object().keys({
-  sex: Joi.string().valid(_.keys(enumModel.genderEnum))
+  sex: Joi.string().valid(_.keys(enumModel.genderEnum)),
+  headImgUrl: Joi.string().max(256)
 });
 
 /**
