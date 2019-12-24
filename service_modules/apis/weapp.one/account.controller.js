@@ -7,6 +7,7 @@
 const _ = require('lodash');
 const debug = require('debug')('controller');
 const moment = require('moment');
+const apiUtil = require('../util/api.util');
 
 const apiRender = require('../render/api.render');
 
@@ -182,10 +183,10 @@ pub.updateUserPersonConfiguration = (req, res) => {
 pub.fetchUserLikeSum = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then(() => {
-        return userLikeService.fetchUserLikeStaticitcs(req.__CURRENT_USER.id);
+        return userLikeService.fetchUserLikeStaticitcs(req.__CURRENT_USER.id, 'WECHAT_MINI_KY');
       })
       .then((result) => {
-        return apiRender.renderBaseResult(res, result);
+        return apiRender.renderBaseResult(res, {'sum': result});
       }).catch(req.__ERROR_HANDLER);
 };
 
@@ -198,10 +199,17 @@ pub.fetchUserLikeSum = (req, res) => {
 pub.fetchUserLikes = (req, res) => {
   return schemaValidator.validatePromise(accountSchema.userLikeListQuerySchema, req.query)
       .then((params) => {
-        return userLikeService.fetchUserLikeRules(req.__CURRENT_USER.id,
-            params.pageNumber, params.pageSize, params.bizType);
+        return userLikeService.fetchUserLikesByPageList(req.__CURRENT_USER.id,
+            'WECHAT_MINI_KY', params.pageNumber, params.pageSize);
       })
       .then((result) => {
+        //获取列表信息
+        if(!_.isNil(result.values) && _.isArray(result.values)){
+          const values = _.map(result.values,(item)=>{
+              return apiUtil.pickUserLikeListInfo(item);
+          });
+          result.values = values;
+        }
         return apiRender.renderBaseResult(res, result);
       }).catch(req.__ERROR_HANDLER);
 };
@@ -217,12 +225,12 @@ pub.fetchUserLikeRules = (req, res) => {
     {
       'title': '完成新手任务',
       'desc': '快去查看下方新手任务吧',
-      'algorithmDesc': '+10'
+      'likeAddDesc': '+笔芯10'
     },
     {
       'title': '获取他人笔芯',
       'desc': '提交公开作业后获得别人赞赏',
-      'algorithmDesc': '+1'
+      'likeAddDesc': '+笔芯1'
     }
   ];
   return apiRender.renderBaseResult(res, rules);
@@ -247,7 +255,7 @@ pub.fetchUserLikeTasks = (req, res) => {
         _.each(likes, (like) => {
           let likeType = like.likeType;
           tasks[likeType]['finished'] = true;
-          tasks[likeType]['userLikeObject'] = like;
+          tasks[likeType]['userLike'] = apiUtil.pickUserLikeListInfo(like);
         });
 
         let taskList = []

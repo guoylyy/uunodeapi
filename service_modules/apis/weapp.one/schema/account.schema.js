@@ -91,22 +91,20 @@ pub.userConfigUpdateSchema = Joi.object().keys({
  */
 pub.userLikeListQuerySchema = Joi.object().keys({
   pageNumber: Joi.number().integer().positive().default(1),
-  pageSize: Joi.number().integer().positive().default(10),
-  bizType: Jio.number().string().required()
+  pageSize: Joi.number().integer().positive().default(10)
 });
 
 /**
  * 用户笔芯规则查看 Schema
  */
 pub.userLikeRuleQuerySchema = Joi.object().keys({
-  bizType: Jio.number().string().required()
+  bizType: Joi.string().required()
 });
 
 /**
  * 用户笔芯任务查看 Schema
  */
 pub.userLikeTaskQuerySchema = Joi.object().keys({
-  bizType: Jio.number().string().required()
 });
 
 module.exports = pub;

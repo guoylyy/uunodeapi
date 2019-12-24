@@ -16,21 +16,38 @@ const pub = {};
  * @param queryParams
  * @returns {Promise}
  */
-const QUERY_SAFE_PARAMS = [],
-    QUERY_SELECT_COLUMNS = ['id', 'userId', 'outBizId'];
+const QUERY_SAFE_PARAMS = ['id','appType','likeType','isValid'],
+    QUERY_SELECT_COLUMNS = ['id', 'userId', 'outBizId', 'likeType','likeRemark','appType','createdAt','updatedAt','likeCount'];
 
-pub.queryUserLikes = (queryParams) => {
+
+/**
+ * 查询分页用户笔芯列表
+ *
+ * @param queryParam
+ * * @param pageNumber
+ * @param pageSize
+ * @returns {Promise.<TResult>|Promise}
+ */
+pub.queryPageUserLikes = (queryParam, pageNumber, pageSize) => {
   return userLikeSchema.query(
       (query) => {
-        queryUtil.filterMysqlQueryParam(query, queryParams, QUERY_SAFE_PARAMS)
+        queryUtil.filterMysqlQueryParam(query, queryParam, QUERY_SAFE_PARAMS);
       })
-      .orderBy('updatedAt', 'desc')
-      .fetchAll({ columns: QUERY_SELECT_COLUMNS })
-      .then((userLikeList) => {
-        debug('--- Query success ---');
-        debug(userLikeList);
-        return userLikeList.toJSON();
-      });
+      .fetchPage({
+        columns: QUERY_SELECT_COLUMNS,
+        page: pageNumber,
+        pageSize: pageSize
+      })
+      .then((result) => {
+            debug(result.toJSON());
+            return {
+              values: result.toJSON(),
+              itemSize: result.pagination.rowCount,
+              pageSize: result.pagination.pageSize,
+              pageNumber: result.pagination.page
+            };
+          }
+      );
 };
 
 /**
@@ -95,22 +112,48 @@ pub.update = (userLike) => {
  * @returns {Promise}
  */
 pub.fetchByParam = (queryParam) => {
-  const safeParams = ['id'];
+  const safeParams = ['id','appType','likeType','isValid'];
 
   return userLikeSchema.query(
       (query) => {
         queryUtil.filterMysqlQueryParam(query, queryParam, safeParams)
       })
-      .fetch()
+      .fetchAll()
       .then((userLikeItem) => {
         debug(userLikeItem);
-
         if (_.isNil(userLikeItem)) {
           return null;
         }
-
         return userLikeItem.toJSON();
       })
 };
+
+
+/**
+ * 计算用户优币总额
+ *
+ * @param usrId
+ * @returns {*}
+ */
+pub.sumUserLike = (usrId, appType) => {
+  if (_.isNil(usrId)) {
+    return null;
+  }
+
+  return userLikeSchema.query(
+      (query) => {
+        query.sum('likeCount as sum').where('userId', usrId)
+            .andWhere('isValid', 1).andWhere('appType',appType);
+      })
+      .fetchAll()
+      .then((sumList) => {
+        let likeSum = _.first(sumList.toJSON()).sum;
+        debug('%s笔芯总额%d', usrId, likeSum);
+
+        return _.toNumber(likeSum);
+      })
+};
+
+
 
 module.exports = pub;

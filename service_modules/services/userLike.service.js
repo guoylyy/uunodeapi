@@ -17,8 +17,12 @@ let pub = {};
  * @param userId
  * @param appType
  */
-pub.fetchUserLikeStaticitcs = (userId, appType) =>{
-
+pub.fetchUserLikeStaticitcs = (userId, appType) => {
+  if (_.isNil(userId) || _.isNil(appType)) {
+    winston.error('获取积分统计信息失败！！！');
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return userLikeMapper.sumUserLike(userId, appType);
 };
 
 /**
@@ -28,26 +32,35 @@ pub.fetchUserLikeStaticitcs = (userId, appType) =>{
  * @param pageSize
  * @param appType
  */
-pub.fetchUserLikesByPage = (userId, pageNumber, pageSize, appType)=>{
-
+pub.fetchUserLikesByPageList = (userId, appType, pageNumber=1, pageSize=10) => {
+  if (_.isNil(userId) || _.isNil(appType)) {
+    winston.error('获取积分统计信息失败！！！');
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  let params = {
+    'userId':userId,
+    'appType': appType
+  };
+  return userLikeMapper.queryPageUserLikes(params, pageNumber, pageSize);
 };
 
-/**
- * 获取用户笔芯规则
- * @param userId
- * @param appType
- */
-pub.fetchUserLikeRules = (userId, appType) =>{
-
-};
 
 /**
  * 获取用户笔芯相关记录列表
  * @param userId
  * @param appType
  */
-pub.fetchUserLikeFromTasks = (userId, taskKeys, appType) =>{
-
+pub.fetchUserLikeFromTasks = (userId, taskKeys, appType) => {
+  if (!_.isNil(userId) && !_.isNil(appType) && !_.isArray(taskKeys)) {
+    winston.error('获取积分信息失败！！！');
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  let params = {
+    'userId': userId,
+    'appType': appType,
+    'likeType': {operator: 'in', value: taskKeys}
+  };
+  return userLikeMapper.fetchByParam(params);
 };
 
 module.exports = pub;

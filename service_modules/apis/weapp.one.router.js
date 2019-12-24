@@ -66,7 +66,7 @@ router.put('/account/personalConfig/:configApp', accountApis.updateUserPersonCon
 router.get('/account/like/sum', accountApis.fetchUserLikeSum); //个人笔芯记录
 router.get('/account/likes', accountApis.fetchUserLikes);    //用户笔芯记录
 router.get('/account/like/rules', accountApis.fetchUserLikeRules); //个人笔芯规则
-router.get('/account/like/getways', accountApis.fetchUserLikeTasks); //个人笔芯任务获取情况
+router.get('/account/like/tasks', accountApis.fetchUserLikeTasks); //个人笔芯任务获取情况
 
 // router.get('/account/statistics/checkin') //课程档案
 // router.get('/account/statistics/practise') //口译记录
