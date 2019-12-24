@@ -35,4 +35,27 @@ pub.querySchools = (req, res) =>{
       .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 获取系统枚举配置
+ * @param req
+ * @param res
+ */
+pub.getSystemEnums = (req, res) =>{
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
+      .then((params) =>{
+        //1.获取枚举key
+        let key = req.query['key'];
+        if(_.isNil(key)){
+          return apiRender.renderError(res, "没有设置查询参数");
+        }
+        if(_.isNil(enumModel[key])){
+          return apiRender.renderNotFound(res);
+        }else{
+          //2.返回枚举情况
+          return apiRender.renderBaseResult(res, enumModel[key]);
+        }
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
 module.exports = pub;

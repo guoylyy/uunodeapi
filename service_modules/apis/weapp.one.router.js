@@ -30,7 +30,10 @@ const commonApis = require('./weapp.one/common.controller');
 router.post('/wechat/auth', wechatApi.authWechatLogin);
 router.get('/teachers',  clazzTeacherApis.fetchAllTeacherList);
 router.get('/teacher/:teacherId', clazzTeacherApis.fetchTeacherDetail);
-router.get('/schools',commonApis.querySchools) //搜索学校
+router.get('/schools',commonApis.querySchools); //搜索学校
+
+// System相关接口
+router.get('/system/enums', commonApis.getSystemEnums);
 
 // router.post('/wechat/pay', commonMiddleware.wechatXmlParser, wechatApi.wechatPaymentCallbackHandler);
 
