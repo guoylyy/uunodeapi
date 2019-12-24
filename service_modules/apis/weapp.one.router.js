@@ -28,6 +28,7 @@ const clazzTeacherApis = require('./weapp.one/clazzTeacher.controller');
 
 router.post('/wechat/auth', wechatApi.authWechatLogin);
 router.get('/teachers',  clazzTeacherApis.fetchAllTeacherList);
+//router.get('/schools',) //搜索学校
 
 // router.post('/wechat/pay', commonMiddleware.wechatXmlParser, wechatApi.wechatPaymentCallbackHandler);
 // router.get('/teacher/:teacherId', clazzTeacherApis.fetchTeacherDetail);
@@ -45,16 +46,55 @@ router.use(oneMiddleware.parseAuthToken);
  ***********************************************************************************************************************/
 router.use(oneMiddleware.moduleLogger);
 
+// @yiliang
+
+// 账户相关API
+// router.get('/account/homeInfo') //主页的内容
+// router.get('/account/info') //个人信息
+// router.put('/account/info') //更新个人信息
+// router.put('/account/info/school') //更新个人学校
+// router.put('/account/info/certifications') //更新个人证书
+
+// router.put('/account/personalStudy') //设置个性化练习设置
+
+// router.get('/account/like/sum') //个人笔芯记录
+// router.get('/account/likes')   //用户笔芯记录
+// router.get('/account/like/rules') //个人笔芯规则
+// router.get('/account/like/getways') //个人笔芯任务获取情况
+
+// @hupeng
+
+// router.get('/account/statistics/checkin') //课程档案
+// router.get('/account/statistics/practise') //口译记录
+// router.get('/account/checkins') //个人口译记录筛选
+
+// 任务练习相关API
+// router.get('/task/today') //获取今日任务
+// router.get('/tasks') //往期材料搜索
+// router.get('/task/:taskId') //获取任务详细内容
+// router.post('/task/:taskId/checkin') //完成练习
+// router.get('/task/:taskId/checkin/:checkinId') //获取打卡内容
+// router.get('/task/:taskId/checkin/:checkinId/medias') //播放列表
+// router.put('/task/:taskId/checkin/:checkinId/media/:mediaId')
+// router.delete('/task/:taskId/checkin/:checkinId/media/:mediaId')
+
+// router.get('/task/:taskId/checkins') //获取广场内容
+// router.post('/task/:taskId/checkin/:checkinId/like') //笔芯
+
+// 学习材料
+// router.get('/lessons')
+// router.get('/lesson/:lessonId')
+// router.get('/lessons/banners')
+
+
+
 // 课程相关API
-const clazzApis = require('./weapp.one/clazz.controller');
-router.get('/clazzes', clazzApis.queryClazzList);
-
-
-
-const checkinApis = require('./weapp.one/clazzCheckin.controller');
-router.use('/clazz/:clazzId', oneMiddleware.preloadClazzItem);
-router.use('/clazz/:clazzId', oneMiddleware.checkHasJoinClass);
-router.post('/clazz/:clazzId/checkin', oneMiddleware.markCanCheckin, checkinApis.createClazzCheckin);
+// const clazzApis = require('./weapp.one/clazz.controller');
+// router.get('/clazzes', clazzApis.queryClazzList);
+// const checkinApis = require('./weapp.one/clazzCheckin.controller');
+// router.use('/clazz/:clazzId', oneMiddleware.preloadClazzItem);
+// router.use('/clazz/:clazzId', oneMiddleware.checkHasJoinClass);
+// router.post('/clazz/:clazzId/checkin', oneMiddleware.markCanCheckin, checkinApis.createClazzCheckin);
 
 // 七牛
 router.post('/qiniu', qiniuController.fetchQiniuUploadToken);
