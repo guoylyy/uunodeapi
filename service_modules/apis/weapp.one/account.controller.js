@@ -8,20 +8,15 @@ const _ = require('lodash');
 const debug = require('debug')('controller');
 const moment = require('moment');
 
-const systemConfig = require('../../../config/config');
-const commonError = require('../../services/model/common.error');
 const apiRender = require('../render/api.render');
-
-const apiUtil = require('../util/api.util');
-const jwtUtil = require('../util/jwt.util');
 
 const schemaValidator = require('../schema.validator');
 const commonSchema = require('../common.schema');
 const accountSchema = require('./schema/account.schema');
 
 const userService = require('../../services/user.service');
-const userBindService = require('../../services/userBind.service');
 const userConfigService = require('../../services/userConfig.service');
+const userLikeService = require('../../services/userLike.service');
 
 const enumModel = require('../../services/model/enum');
 
@@ -151,6 +146,9 @@ pub.fetchUserPersonConfiguration = (req, res) => {
 
 /**
  * 更新用户配置信息
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
  */
 pub.updateUserPersonConfiguration = (req, res) => {
   return schemaValidator.validatePromise(accountSchema.userConfigUpdateSchema, req.body)
@@ -177,26 +175,94 @@ pub.updateUserPersonConfiguration = (req, res) => {
 
 /**
  * 获取用户笔芯总额
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
  */
 pub.fetchUserLikeSum = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then(() => {
+        return userLikeService.fetchUserLikeStaticitcs(req.__CURRENT_USER.id);
+      })
+      .then((result) => {
+        return apiRender.renderBaseResult(res, result);
+      }).catch(req.__ERROR_HANDLER);
 };
 
 /**
  * 获取用户笔芯记录
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
  */
 pub.fetchUserLikes = (req, res) => {
-};
-
-/**
- * 获取用户笔芯任务完成情况
- */
-pub.fetchUserLikeTasks = (req, res) => {
+  return schemaValidator.validatePromise(accountSchema.userLikeListQuerySchema, req.query)
+      .then((params) => {
+        return userLikeService.fetchUserLikeRules(req.__CURRENT_USER.id,
+            params.pageNumber, params.pageSize, params.bizType);
+      })
+      .then((result) => {
+        return apiRender.renderBaseResult(res, result);
+      }).catch(req.__ERROR_HANDLER);
 };
 
 /**
  * 获取用户笔芯规则
+ *  * 目前规则在后台定死，暂时不入库
+ * @param req
+ * @param res
  */
 pub.fetchUserLikeRules = (req, res) => {
+  const rules = [
+    {
+      'title': '完成新手任务',
+      'desc': '快去查看下方新手任务吧',
+      'algorithmDesc': '+10'
+    },
+    {
+      'title': '获取他人笔芯',
+      'desc': '提交公开作业后获得别人赞赏',
+      'algorithmDesc': '+1'
+    }
+  ];
+  return apiRender.renderBaseResult(res, rules);
 };
+
+/**
+ * 获取用户笔芯任务完成情况
+ *  -如果有相关的笔芯任务就算是完成了
+ * @param req
+ * @param res
+ */
+pub.fetchUserLikeTasks = (req, res) => {
+  //1.定义task enum
+  const tasks = enumModel.userLikeTaskEnum;
+  //2.查询目前学员的记录里完成了什么
+  return schemaValidator.validatePromise(accountSchema.userLikeTaskQuerySchema, req.query)
+      .then((params) => {
+        return userLikeService.fetchUserLikeFromTasks(req.__CURRENT_USER.id, _.keys(tasks), 'WECHAT_MINI_KY');
+      })
+      .then((likes) => {
+        //3.合并，标记数据
+        _.each(likes, (like) => {
+          let likeType = like.likeType;
+          tasks[likeType]['finished'] = true;
+          tasks[likeType]['userLikeObject'] = like;
+        });
+
+        let taskList = []
+        _.each(_.keys(tasks), (key) => {
+          if (_.isNil(tasks[key]['finished'])) {
+            tasks[key]['finished'] = false;
+          }
+          taskList.push(tasks[key]);
+        });
+
+        return apiRender.renderBaseResult(res, taskList);
+      })
+      .catch(req.__ERROR_HANDLER);
+
+};
+
 
 module.exports = pub;

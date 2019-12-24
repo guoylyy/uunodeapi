@@ -2038,6 +2038,43 @@ const userCertificationEnum = {
   },
 };
 
+//用户小程序积分任务
+//本枚举值较复杂，未来有需要的时候可以迁移到数据库去
+const userLikeTaskEnum = {
+  'REGISTRATION_TASK':{
+    key:'REGISTRATION_TASK',
+    name:'初次授权登录',
+    likeAdd:10,
+    buttonText:'去授权',
+    targetPath:'/',
+    desc:' '
+  },
+  'FINISHPLAN_TASK':{
+    key:'FINISHPLAN_TASK',
+    name:'首次定制计划',
+    likeAdd:10,
+    buttonText:'去定制',
+    targetPath:'/',
+    desc:' '
+  },
+  'SHAREWORK_TASK':{
+    key:'SHAREWORK_TASK',
+    name:'首次分享作业',
+    likeAdd:10,
+    buttonText:'去分享',
+    targetPath:'/',
+    desc:' '
+  },
+  'COMPLETEINFO_TASK':{
+    key:'COMPLETEINFO_TASK',
+    name:'完善学校信息',
+    likeAdd:10,
+    buttonText:'去完善',
+    targetPath:'/',
+    desc:' '
+  }
+};
+
 
 // functions
 exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
@@ -2050,6 +2087,7 @@ exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
 
 //update at 2019-12-23
 exports.userCertificationEnum = userCertificationEnum;
+exports.userLikeTaskEnum = userLikeTaskEnum;
 
 //update at 2019-05-24
 exports.advTypeEnum = advTypeEnum;
