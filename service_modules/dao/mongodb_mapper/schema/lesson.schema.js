@@ -26,6 +26,6 @@ let lessonSchema = new Schema({
 });
 
 // create a schema named as Lesson, and collection as Lesson
-let LessonSchema = mongoose.model('Lesson', lessonSchema, 'Lesson');
+let LessonSchema = mongoose.model('WeLesson', lessonSchema, 'WeLesson');
 
 module.exports = LessonSchema;

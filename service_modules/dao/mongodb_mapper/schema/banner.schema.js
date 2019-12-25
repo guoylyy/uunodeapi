@@ -24,6 +24,6 @@ let bannerSchema = new Schema({
 });
 
 // create a schema named as Banner, and collection as Banner
-let BannerSchema = mongoose.model('Banner', bannerSchema, 'Banner');
+let BannerSchema = mongoose.model('WeBanner', bannerSchema, 'WeBanner');
 
 module.exports = BannerSchema;

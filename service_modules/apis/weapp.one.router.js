@@ -70,9 +70,10 @@ router.use(oneMiddleware.moduleLogger);
 // router.get('/account/checkins') //个人口译记录筛选
 
 // 任务练习相关API
-// router.get('/task/today') //获取今日任务
-// router.get('/tasks') //往期材料搜索
-// router.get('/task/:taskId') //获取任务详细内容
+const taskController = require('./weapp.one/task.controller');
+// router.get('/task/today',taskController.getTask) //获取今日任务
+router.get('/tasks', taskController.getTaskList) //往期材料搜索
+router.get('/task/:taskId', taskController.getTask) //获取任务详细内容
 // router.post('/task/:taskId/checkin') //完成练习
 // router.get('/task/:taskId/checkin/:checkinId') //获取打卡内容
 // router.get('/task/:taskId/checkin/:checkinId/medias') //播放列表

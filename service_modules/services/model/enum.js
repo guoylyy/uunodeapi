@@ -2055,6 +2055,77 @@ const bannerLinkTypeEnum = {
   }
 }
 
+/**
+ * task 语言枚举
+ */
+const taskLanguageEnum = {
+  'EN': {
+    key: 'EN',
+    name: '英文'
+  },
+  'CN': {
+    key: 'CN',
+    name: '中文'
+  }
+}
+
+exports.taskLanguageEnum = taskLanguageEnum;
+
+const taskLevelEnum = {
+  'BASIC': {
+    key: 'BASIC',
+    name: '基础'
+  },
+  'BEGINNER': {
+    key: 'BEGINNER',
+    name: '入门'
+  }
+}
+
+exports.taskLevelEnum = taskLevelEnum;
+
+const taskThemeEnum = {
+  'ENV': {
+    key: 'ENV',
+    name: '环境'
+  },
+  'TECH': {
+    key: 'TECH',
+    name: '技术'
+  }
+}
+
+exports.taskThemeEnum = taskThemeEnum;
+
+const taskTypeEnum = {
+  'CONFERENCE': {
+    key: 'CONFERENCE',
+    name: '环境'
+  },
+  'PRESS_CONFERENCE': {
+    key: 'PRESS_CONFERENCE',
+    name: '技术'
+  },
+  'DEBATE': {
+    key: 'DEBATE',
+    name: '技术'
+  },
+  'HEARING': {
+    key: 'HEARING',
+    name: '技术'
+  },
+  'INTERVIEW': {
+    key: 'INTERVIEW',
+    name: '技术'
+  },
+  'PEDAGOGICAL_MATERIAL': {
+    key: 'PEDAGOGICAL_MATERIAL',
+    name: '技术'
+  }
+}
+
+exports.taskTypeEnum = taskTypeEnum;
+
 // functions
 exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
   if (EnumObj[key]) {
