@@ -259,7 +259,7 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
                 return userService.wechatSignUp({
                       nickname: userInfo.nickName,
                       headimgurl: userInfo.avatarUrl,
-                      unionid: userInfo.unionId,
+                      unionId: userInfo.unionId,
                       openId: userInfo.openId,
                       sex: userInfo.gender,
                       city: userInfo.city
