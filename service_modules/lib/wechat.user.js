@@ -235,6 +235,8 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
       .then((userInfo) => {
         debug(userInfo);
 
+        winston.error('user', userInfo);
+
         return userService.fetchByUnionid(userInfo.unionId)
             .then((userItem) => {
               // 未注册用户，则执行注册流程
