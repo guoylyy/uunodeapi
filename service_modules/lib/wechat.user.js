@@ -198,6 +198,8 @@ pub.requestWeappUserInfo = (code, encryptedData, iv) => {
               debug(error);
               debug(body);
 
+              winston.error('body',body);
+
               if (error) {
                 return reject(error);
               }
