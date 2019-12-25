@@ -260,6 +260,7 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
                       nickname: userInfo.nickName,
                       headimgurl: userInfo.avatarUrl,
                       unionid: userInfo.unionId,
+                      openId: userInfo.openId,
                       sex: userInfo.gender,
                       city: userInfo.city
                     })
