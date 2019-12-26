@@ -23,4 +23,20 @@ pub.phoneNumberAuthBodySchema = Joi.object().keys({
   password: Joi.string().required()
 });
 
+/**
+ * 发送验证码 body schema
+ */
+pub.sendCodeBodyAuth = Joi.object().keys({
+  phoneNumber: Joi.string().min(11).required()
+});
+
+
+/**
+ * 验证码登录 body schema
+ */
+pub.smsAuthBody = Joi.object().keys({
+  phoneNumber: Joi.string().min(11).required(),
+  code: Joi.string().alphanum().length(6).required()
+});
+
 module.exports = pub;

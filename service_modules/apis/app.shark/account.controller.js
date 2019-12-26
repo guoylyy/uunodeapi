@@ -192,11 +192,12 @@ pub.fetchUserPrivacy = (req, res) => {
  * @param res
  */
 pub.fetchCouponList = (req, res) => {
-  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+  return schemaValidator.validatePromise(accountSchema.cardQuerySchema, req.query)
       .then((queryParams) => {
         debug(queryParams);
+        let status = queryParams['status'];
 
-        return couponService.fetchAvailableCouponsList(req.__CURRENT_USER.id);
+        return couponService.fetchAvailableCouponsList(req.__CURRENT_USER.id, status);
       })
       .then((couponList) => {
         debug(couponList);

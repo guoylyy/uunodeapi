@@ -28,6 +28,8 @@ if (global.IS_DEVLOPMENT_ENVIRONMENT) {
 const accountLoginApi = require('./app.shark/account.login.api');
 router.post('/wechat/auth', accountLoginApi.authWechatLogin); //微信登录
 router.post('/phoneNumber/auth', accountLoginApi.authPhonenumberLogin); //手机号登录
+router.post('/sms/code', accountLoginApi.sendLoginSmsCode);//发送登录用的短息验证码
+router.post('/sms/auth', accountLoginApi.authWithSmsCode); //短信验证码登录
 
 const paymentCallback = require('./app.shark/payment.callback.controller');
 router.post('/wechat/payCallback', commonMiddleware.wechatXmlParser, paymentCallback.wechatPaymentCallbackHandler);
