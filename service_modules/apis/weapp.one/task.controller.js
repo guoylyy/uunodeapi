@@ -7,7 +7,7 @@ const apiRender = require("../render/api.render");
 const debug = require("debug")("controller");
 const enumModel = require('../../services/model/enum');
 const taskService = require("../../services/task.service");
-const attachService = require("../../services/attach.service");
+const taskSchema = require("./schema/task.schema");
 const pub = {};
 
 /**
@@ -16,9 +16,18 @@ const pub = {};
  */
 pub.getTaskList = (req, res) => {
   return schemaValidator
-    .validatePromise(commonSchema.emptySchema, req.query)
+    .validatePromise(taskSchema.pagedSchema, req.query)
     .then(queryParam => {
-      debug(queryParam);
+      if (!_.isNil(queryParam.gtDuration)) {
+        queryParam.duration = {
+          $gt: queryParam.gtDuration
+        }
+      }
+      if (!_.isNil(queryParam.ltDuration)) {
+        queryParam.duration = {
+          $lt: queryParam.ltDuration
+        }
+      }
       return taskService.queryTaskList(queryParam);
     })
     .then(result => {

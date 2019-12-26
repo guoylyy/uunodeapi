@@ -2100,27 +2100,27 @@ exports.taskThemeEnum = taskThemeEnum;
 const taskTypeEnum = {
   'CONFERENCE': {
     key: 'CONFERENCE',
-    name: '环境'
+    name: '会议'
   },
   'PRESS_CONFERENCE': {
     key: 'PRESS_CONFERENCE',
-    name: '技术'
+    name: '发布会'
   },
   'DEBATE': {
     key: 'DEBATE',
-    name: '技术'
+    name: '辩论'
   },
   'HEARING': {
     key: 'HEARING',
-    name: '技术'
+    name: '耳语'
   },
   'INTERVIEW': {
     key: 'INTERVIEW',
-    name: '技术'
+    name: '采访'
   },
   'PEDAGOGICAL_MATERIAL': {
     key: 'PEDAGOGICAL_MATERIAL',
-    name: '技术'
+    name: '教学材料'
   }
 }
 

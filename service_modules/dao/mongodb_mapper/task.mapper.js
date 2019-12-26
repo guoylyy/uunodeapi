@@ -9,15 +9,15 @@ const debug = require("debug")("mapper");
 const taskSchema = require("./schema/task.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
-
-const QUERY_SAFE_PARAMS = ["_id", "type"];
+const winston = require("winston");
+const QUERY_SAFE_PARAMS = ["_id", "theme", "language", "oppoLanguage", "duration"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
   "sourceDate",
   "duration",
   "language",
   "oppoLanguage",
-  "type",
+  "theme",
   "pic",
   "createAt",
   "updateAt"
@@ -36,7 +36,6 @@ const pub = {};
  * @returns {Promise.<TResult>}
  */
 pub.queryPagedTaskList = (queryParam, pageNumber = 1, pageSize = 10) => {
-  debug(queryParam);
   return taskSchema.queryPaged(
     queryParam,
     QUERY_SAFE_PARAMS,
