@@ -27,7 +27,7 @@ pub.pickClazzBasicInfo = (clazzItem, currentClazzAccount) => {
     pickedClazzItem.clazzJoinStatus = _.get(currentClazzAccount, 'status', null);
   }
 
-  if (_.isNil(pickedClazzItem.smallBanner)){
+  if (_.isNil(pickedClazzItem.smallBanner)) {
     pickedClazzItem.smallBanner = "";
   }
 
@@ -45,7 +45,7 @@ pub.pickUserBasicInfo = (userItem) => {
     return null;
   }
 
-  return _.pick(userItem, ['id', 'name', 'headImgUrl', 'studentNumber']);
+  return _.pick(userItem, ['id', 'name', 'headImgUrl', 'studentNumber', 'school']);
 };
 
 /**
@@ -248,7 +248,7 @@ pub.pickCheckinInfo = (checkinItem, checkinEndHour) => {
     return null;
   }
 
-  const pickedCheckin = _.pick(checkinItem, ['id','title','isPublic','checkinFiles', 'status', 'score', 'checkinTime', 'remark', 'isPublic', 'userScore', 'userScoreIds', 'likeArr', 'dislikeArr']);
+  const pickedCheckin = _.pick(checkinItem, ['id', 'title', 'isPublic', 'checkinFiles', 'status', 'score', 'checkinTime', 'remark', 'isPublic', 'userScore', 'userScoreIds', 'likeArr', 'dislikeArr']);
 
   if (_.isNumber(checkinEndHour)) {
     const diffHour = checkinEndHour - 24;
@@ -259,7 +259,7 @@ pub.pickCheckinInfo = (checkinItem, checkinEndHour) => {
     pickedCheckin.aheadSeconds = checkinEndMoment.diff(checkinMoment, 'seconds');
   }
 
-  pickedCheckin.checkinTime =  moment(checkinItem.checkinTime).format('YYYY-MM-DD');
+  pickedCheckin.checkinTime = moment(checkinItem.checkinTime).format('YYYY-MM-DD');
 
   // 用户基本信息
   const checkinUser = checkinItem.user;
@@ -278,6 +278,11 @@ pub.pickCheckinInfo = (checkinItem, checkinEndHour) => {
   return pickedCheckin;
 };
 
+/**
+ * 获取用户排行列表
+ * @param userRankItem
+ * @return {null}
+ */
 pub.pickUserRank = (userRankItem) => {
   if (_.isNil(userRankItem)) {
     return null;
@@ -286,6 +291,18 @@ pub.pickUserRank = (userRankItem) => {
   userRankItem.userInfo = pub.pickUserBasicInfo(userRankItem.userInfo);
 
   return _.pick(userRankItem, ['id', 'userInfo', 'rank', 'value']);
+};
+
+/**
+ * 获取用户笔芯相关数据
+ * @param userLikeItem
+ * @return {null}
+ */
+pub.pickUserLikeListInfo = (userLikeItem) => {
+  if (_.isNil(userLikeItem)) {
+    return null;
+  }
+  return _.pick(userLikeItem, ['id','likeType','likeRemark','likeCount','updatedAt']);
 };
 
 module.exports = pub;

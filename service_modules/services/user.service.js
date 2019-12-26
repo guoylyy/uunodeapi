@@ -262,11 +262,11 @@ pub.wechatSignUp = (userObject) => {
   }
 
   if (global.IS_DEVLOPMENT_ENVIRONMENT === true) {
-    if (_.isNil(userObject.openid)) {
+    if (_.isNil(userObject.openId)) {
       return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息有误！'));
     }
   } else {
-    if (_.isNil(userObject.openid) || _.isNil(userObject.unionid)) {
+    if (_.isNil(userObject.openId) || _.isNil(userObject.unionId)) {
       return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息有误！'));
     }
   }
@@ -275,8 +275,8 @@ pub.wechatSignUp = (userObject) => {
   const userItem = {
     name: userObject.nickname,
     headImgUrl: userObject.headimgurl,
-    openId: userObject.openid,
-    unionid: userObject.unionid,
+    openId: userObject.openId,
+    unionid: userObject.unionId,
     sex: userObject.sex,
     city: userObject.city
   };

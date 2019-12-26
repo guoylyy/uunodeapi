@@ -23,8 +23,21 @@ pub.userLoginBodySchema = Joi.object().keys({
  * 更新用户基本信息body schema
  */
 pub.userInfoUpdateSchema = Joi.object().keys({
-  sex: Joi.string().valid(_.keys(enumModel.genderEnum)),
-  headImgUrl: Joi.string().max(256)
+  sex: Joi.string().valid(_.keys(enumModel.genderEnum))
+});
+
+/**
+ * 更新用户学校信息的body schema
+ */
+pub.userUpdateSchoolSchema = Joi.object().keys({
+  school: Joi.string().max(64).required()
+});
+
+/**
+ * 更新用户证书信息的body schema
+ */
+pub.userUpdateCertificationSchema = Joi.object().keys({
+  certifications : Joi.array().items(Joi.string().max(64).valid(_.keys(enumModel.userCertificationEnum)))
 });
 
 /**
@@ -63,6 +76,35 @@ pub.useUbandCoinSchema = Joi.object().keys({
  */
 pub.cardQuerySchema = Joi.object().keys({
   status: Joi.string()
+});
+
+/**
+ * 查询用户配置信息列表
+ */
+pub.userConfigUpdateSchema = Joi.object().keys({
+  key : Joi.string().required(),
+  value : Joi.string().required()
+});
+
+/**
+ * 获取用户笔芯记录 Schema（分页）
+ */
+pub.userLikeListQuerySchema = Joi.object().keys({
+  pageNumber: Joi.number().integer().positive().default(1),
+  pageSize: Joi.number().integer().positive().default(10)
+});
+
+/**
+ * 用户笔芯规则查看 Schema
+ */
+pub.userLikeRuleQuerySchema = Joi.object().keys({
+  bizType: Joi.string().required()
+});
+
+/**
+ * 用户笔芯任务查看 Schema
+ */
+pub.userLikeTaskQuerySchema = Joi.object().keys({
 });
 
 module.exports = pub;

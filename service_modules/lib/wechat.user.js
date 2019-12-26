@@ -198,6 +198,8 @@ pub.requestWeappUserInfo = (code, encryptedData, iv) => {
               debug(error);
               debug(body);
 
+              winston.error('body',body);
+
               if (error) {
                 return reject(error);
               }
@@ -235,6 +237,8 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
       .then((userInfo) => {
         debug(userInfo);
 
+        winston.error('user', userInfo);
+
         return userService.fetchByUnionid(userInfo.unionId)
             .then((userItem) => {
               // 未注册用户，则执行注册流程
@@ -255,7 +259,8 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
                 return userService.wechatSignUp({
                       nickname: userInfo.nickName,
                       headimgurl: userInfo.avatarUrl,
-                      unionid: userInfo.unionId,
+                      unionId: userInfo.unionId,
+                      openId: userInfo.openId,
                       sex: userInfo.gender,
                       city: userInfo.city
                     })

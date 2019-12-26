@@ -140,7 +140,7 @@ const safePrivacyFields = [
   'id', 'name', 'headImgUrl', 'openId', 'unionid', 'studentNumber', 'birthday',
   'sex', 'city', 'phoneNumber', 'wechat', 'alipay',
   'hasFillInfo', 'timezone', 'saltHashedPassword', 'realName', 'timezoneUpdatedAt',
-  'isSubscribe', 'invitatedBy', 'target'
+  'isSubscribe', 'invitatedBy', 'target', 'school', 'certification'
 ];
 
 /**
