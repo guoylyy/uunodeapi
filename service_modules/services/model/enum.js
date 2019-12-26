@@ -12,21 +12,21 @@ let isNonNegativeInteger = (value) => {
 };
 
 let shareTypeEnum = {
-  'SHARE':{
-    key:'SHARE',
+  'SHARE': {
+    key: 'SHARE',
     name: '仅分享'
   },
-  'SHAREANDCHECKIN':{
-    key:'SHAREANDCHECKIN',
-    name:'分享和打卡'
+  'SHAREANDCHECKIN': {
+    key: 'SHAREANDCHECKIN',
+    name: '分享和打卡'
   },
-  'CHECKIN':{
-    key:'CHECKIN',
-    name:'仅打卡'
+  'CHECKIN': {
+    key: 'CHECKIN',
+    name: '仅打卡'
   },
-  'NOTHING':{
-    key:'NOTHING',
-    name:'佛系学习'
+  'NOTHING': {
+    key: 'NOTHING',
+    name: '佛系学习'
   }
 };
 
@@ -43,7 +43,7 @@ let ubandCardStatusEnum = {
 
 let ubandCardTypeEnum = {
   'RECOVER_CARD': {
-    key : 'RECOVER_CARD',
+    key: 'RECOVER_CARD',
     name: '复活卡'
   }
 };
@@ -427,11 +427,11 @@ let clazzTaskIntroductionTypeEnum = {
     key: 'SPECIAL_NOTIFICATION',
     name: '特别通知'
   },
-  'USER_SHARE':{
+  'USER_SHARE': {
     key: 'USER_SHARE',
     name: '分享任务'
   },
-  'ENGLISH_TEXT':{
+  'ENGLISH_TEXT': {
     key: 'ENGLISH_TEXT',
     name: '英文文本'
   },
@@ -1017,7 +1017,7 @@ let systemerTypeEnum = {
   'ADMIN': {
     key: 'ADMIN',
     name: '系统管理员',
-    role: { 'roles': ['admin'] },
+    role: {'roles': ['admin']},
     permission: {
       'CLAZZ_PERMISSION': {},
       'SYSTEM_PERMISSION': ['CLAZZ_QUERY', 'SYSTEM_QUERY', 'UPLOAD_QINIU_FILE', 'VIEW_AUTO_REPLY', 'CREATE_AUTO_REPLY', 'UPDATE_AUTO_REPLY', 'DELETE_AUTO_REPLY', 'VIEW_WECHAT_MESSAGE', 'PUSH_WECHAT_MESSAGE', 'VIEW_USER', 'ADD_COUPON', 'CREATE_USER_COIN', 'VIEW_COUPON', 'UPDATE_COUPON', 'DELETE_COUPON', 'VIEW_WITHDRAW', 'UPDATE_WITHDRAW', 'VIEW_FEEDBACK', 'UPDATE_FEEDBACK', 'CLOSE_FEEDBACK', 'VIEW_ADMIN', 'UPDATE_ADMIN_PERMISSION']
@@ -1026,7 +1026,7 @@ let systemerTypeEnum = {
   'TEACHER': {
     key: 'TEACHER',
     name: '笃师',
-    role: { 'roles': ['teacher'] },
+    role: {'roles': ['teacher']},
     permission: {
       'CLAZZ_PERMISSION': {},
       'SYSTEM_PERMISSION': ['CLAZZ_QUERY', 'UPLOAD_QINIU_FILE']
@@ -1035,7 +1035,7 @@ let systemerTypeEnum = {
   'ROBOT': {
     key: 'ROBOT',
     name: '机器人',
-    role: { 'roles': ['robot'] },
+    role: {'roles': ['robot']},
     permission: {
       'CLAZZ_PERMISSION': {},
       'SYSTEM_PERMISSION': ['CLAZZ_QUERY', 'UPLOAD_QINIU_FILE']
@@ -1938,11 +1938,11 @@ const systemConfigTypeEnum = {
     key: 'SMS_CONFIG',
     name: '短信系统配置'
   },
-  'APP_SERVICE_CONFIG':{
+  'APP_SERVICE_CONFIG': {
     'key': 'APP_SERVICE_CONFIG',
     'name': 'APP 客服配置'
   },
-  'APP_CARD_CONFIG':{
+  'APP_CARD_CONFIG': {
     'key': 'APP_CARD_CONFIG',
     'name': 'APP 卡片配置'
   }
@@ -1999,7 +1999,7 @@ const advTypeEnum = {
     key: 'TEACHER',
     name: '教师'
   },
-  'FAVOR':{
+  'FAVOR': {
     key: 'FAVOR',
     name: '福利'
   }
@@ -2038,46 +2038,65 @@ const userCertificationEnum = {
   },
 };
 
+//用户小程序练习模式
+const miniKYPracticeModeEnumm = {
+  'INTERACT_TRANSLATE': {
+    key: 'INTERACT_TRANSLATE',
+    name: '交传练习',
+    desc: ''
+  },
+  'SHADOW_SPEAK': {
+    key: 'SHADOW_SPEAK',
+    name: '影子练习',
+    desc: ''
+  },
+  'REPLAY_TRANSLATE': {
+    key: 'REPLAY_TRANSLATE',
+    name: '复述练习',
+    desc: ''
+  }
+};
+
 //用户小程序积分任务
 //本枚举值较复杂，未来有需要的时候可以迁移到数据库去
 const userLikeTaskEnum = {
-  'REGISTRATION_TASK':{
-    key:'REGISTRATION_TASK',
-    name:'初次授权登录',
-    likeAdd:10,
-    buttonText:'去授权',
-    targetPath:'/',
-    desc:' '
+  'REGISTRATION_TASK': {
+    key: 'REGISTRATION_TASK',
+    name: '初次授权登录',
+    likeAdd: 10,
+    buttonText: '去授权',
+    targetPath: '/',
+    desc: ' '
   },
-  'FINISHPLAN_TASK':{
-    key:'FINISHPLAN_TASK',
-    name:'首次定制计划',
-    likeAdd:10,
-    buttonText:'去定制',
-    targetPath:'/',
-    desc:' '
+  'FINISHPLAN_TASK': {
+    key: 'FINISHPLAN_TASK',
+    name: '首次定制计划',
+    likeAdd: 10,
+    buttonText: '去定制',
+    targetPath: '/',
+    desc: ' '
   },
-  'SHAREWORK_TASK':{
-    key:'SHAREWORK_TASK',
-    name:'首次分享作业',
-    likeAdd:10,
-    buttonText:'去分享',
-    targetPath:'/',
-    desc:' '
+  'SHAREWORK_TASK': {
+    key: 'SHAREWORK_TASK',
+    name: '首次分享作业',
+    likeAdd: 10,
+    buttonText: '去分享',
+    targetPath: '/',
+    desc: ' '
   },
-  'COMPLETEINFO_TASK':{
-    key:'COMPLETEINFO_TASK',
-    name:'完善学校信息',
-    likeAdd:10,
-    buttonText:'去完善',
-    targetPath:'/',
-    desc:' '
+  'COMPLETEINFO_TASK': {
+    key: 'COMPLETEINFO_TASK',
+    name: '完善学校信息',
+    likeAdd: 10,
+    buttonText: '去完善',
+    targetPath: '/',
+    desc: ' '
   }
 };
 
 
 // functions
-exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
+exports.getEnumByKey = function getEnumByKey (key, EnumObj) {
   if (EnumObj[key]) {
     return EnumObj[key];
   }
@@ -2088,6 +2107,7 @@ exports.getEnumByKey = function getEnumByKey(key, EnumObj) {
 //update at 2019-12-23
 exports.userCertificationEnum = userCertificationEnum;
 exports.userLikeTaskEnum = userLikeTaskEnum;
+exports.miniKYPracticeModeEnumm = miniKYPracticeModeEnumm;
 
 //update at 2019-05-24
 exports.advTypeEnum = advTypeEnum;
