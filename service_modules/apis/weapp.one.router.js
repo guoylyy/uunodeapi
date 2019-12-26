@@ -71,7 +71,7 @@ router.use(oneMiddleware.moduleLogger);
 
 // 任务练习相关API
 const taskController = require('./weapp.one/task.controller');
-// router.get('/task/today',taskController.getTask) //获取今日任务
+router.get('/task/today',taskController.getTodayTask) //获取今日任务
 router.get('/tasks', taskController.getTaskList) //往期材料搜索
 router.get('/task/:taskId', taskController.getTask) //获取任务详细内容
 // router.post('/task/:taskId/checkin') //完成练习
