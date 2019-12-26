@@ -66,6 +66,19 @@ pub.getAccountBaseInfo = (req, res) => {
         if (pickedUserInfo.birthday) {
           pickedUserInfo.birthday = moment(pickedUserInfo.birthday).format('YYYY-MM-DD');
         }
+        // 处理学校和证书
+        if (_.isNil(pickedUserInfo['school'])){
+          pickedUserInfo['school'] = null;
+         }
+        if (_.isNil(pickedUserInfo['certification'])){
+          pickedUserInfo['certification'] = [];
+        }else{
+          let certs = [];
+          _.each(pickedUserInfo['certification'].split(","), (item) =>{
+             certs.push(enumModel.getEnumByKey(item, enumModel.userCertificationEnum));
+          });
+          pickedUserInfo['certification'] = certs;
+        }
 
         return apiRender.renderBaseResult(res, pickedUserInfo);
       })
@@ -140,7 +153,6 @@ pub.fetchUserPersonConfiguration = (req, res) => {
         debug(info);
         return userConfigService.queryUserConfigByApp(req.__CURRENT_USER.id, req.params['configApp']);
       }).then((items) => {
-        debug(items);
         return apiRender.renderBaseResult(res, items);
       }).catch(req.__ERROR_HANDLER);
 };

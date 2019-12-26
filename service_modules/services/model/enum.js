@@ -2021,7 +2021,7 @@ const userCertificationEnum = {
     name: 'CATTI口译一级'
   },
   'CATTI-KY-2': {
-    key: 'CATTI-KY-1',
+    key: 'CATTI-KY-2',
     name: 'CATTI口译二级'
   },
   'CATTI-KY-3': {
