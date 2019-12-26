@@ -97,6 +97,22 @@ pub.sendRegisterCode = (phoneNumber, limit = 5) => {
 };
 
 /**
+ * 发送登录验证码到手机
+ *
+ * @param phoneNumber
+ * @param limit
+ * @returns {Promise.<TResult>}
+ */
+pub.sendLoginCode = (phoneNumber, limit = 5) => {
+  debug(phoneNumber);
+
+  const codeType = enumModel.securityCodeTypeEnum.SMS_LOGIN.key;
+
+  return sendCodeToPhonenumber(codeType, phoneNumber, limit);
+};
+
+
+/**
  * 发送重置密码验证码
  *
  * @param userId
