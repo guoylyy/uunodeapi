@@ -47,7 +47,7 @@ pub.getTask = (req, res) => {
   .catch(req.__ERROR_HANDLER);
 };
 
-/**we
+/**
  * 获取今日任务
  */
 pub.getTodayTask = (req, res) => {
