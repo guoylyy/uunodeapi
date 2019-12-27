@@ -70,4 +70,18 @@ pub.getTodayTask = (req, res) => {
     .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 打卡接口
+ */
+pub.checkin = (req, res) => {
+  return schemaValidator.validatePromise(taskSchema.checkinSchema, req.body)
+  .then((param) => {
+    param.task = req.__TASK_ITEM.id;
+  })
+  .then(result => {
+    return apiRender.renderSuccess(res)
+  })
+  .catch(req.__ERROR_HANDLER);
+}
+
 module.exports = pub;

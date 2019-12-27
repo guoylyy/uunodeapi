@@ -23,6 +23,9 @@ pub.queryTaskList = queryParam => {
   );
 };
 
+/**
+ * 获取任务详情
+ */
 pub.fetchById = taskId => {
   if (_.isNil(taskId)) {
     winston.error("获取任务详情失败，参数错误！！！ taskId: %s", taskId);
@@ -56,6 +59,9 @@ pub.fetchById = taskId => {
   });
 };
 
+/**
+ * 获取当日任务
+ */
 pub.fetchTodayTask = () => {
   const currentDate = new Intl.DateTimeFormat('en-US').format(new Date())
   let param = {pushAt: currentDate};
@@ -69,5 +75,9 @@ pub.fetchTodayTask = () => {
     }
   });
 };
+
+pub.checkin = (taskCheckin) => {
+  
+}
 
 module.exports = pub;
