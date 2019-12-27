@@ -8,6 +8,7 @@ const debug = require("debug")("controller");
 const enumModel = require('../../services/model/enum');
 const taskService = require("../../services/task.service");
 const taskSchema = require("./schema/task.schema");
+const winston = require('winston');
 const pub = {};
 
 /**
@@ -75,13 +76,44 @@ pub.getTodayTask = (req, res) => {
  */
 pub.checkin = (req, res) => {
   return schemaValidator.validatePromise(taskSchema.checkinSchema, req.body)
-  .then((param) => {
-    param.task = req.__TASK_ITEM.id;
+  .then((taskCheckin) => {
+    winston.log('info', taskCheckin)
+    taskCheckin.task = req.__TASK_ITEM.id;
+    taskCheckin.userId = req.__CURRENT_USER.id;
+    taskService.checkin(taskCheckin);
   })
-  .then(result => {
+  .then(() => {
     return apiRender.renderSuccess(res)
   })
   .catch(req.__ERROR_HANDLER);
 }
+
+pub.getMyCheckinList = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+  .then((queryParam) => {
+    winston.log('info', taskCheckin)
+    taskCheckin.task = req.__TASK_ITEM.id;
+    taskCheckin.userId = req.__CURRENT_USER.id;
+    taskService.checkin(taskCheckin);
+  })
+  .then(() => {
+    return apiRender.renderSuccess(res)
+  })
+  .catch(req.__ERROR_HANDLER);
+}
+
+// pub.getMyCheckin = (req, res) => {
+//   return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
+//   .then((taskCheckin) => {
+//     winston.log('info', taskCheckin)
+//     taskCheckin.task = req.__TASK_ITEM.id;
+//     taskCheckin.userId = req.__CURRENT_USER.id;
+//     taskService.checkin(taskCheckin);
+//   })
+//   .then(() => {
+//     return apiRender.renderSuccess(res)
+//   })
+//   .catch(req.__ERROR_HANDLER);
+// }
 
 module.exports = pub;

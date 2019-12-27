@@ -81,7 +81,7 @@ router.get('/task/:taskId', taskController.getTask) //获取任务详细内容
 
 router.use('/task/:taskId', oneMiddleware.preloadTask) //预加载task对象并校验
 router.post('/task/:taskId/checkin', taskController.checkin) //完成练习
-router.get('/task/:taskId/checkin/mine') // 我的打卡列表
+router.get('/task/:taskId/checkin/mine', taskController.getMyCheckinList) // 我的打卡列表
 router.get('/task/:taskId/checkin') //获取广场内容
 router.post('/task/:taskId/checkin/:checkinId/like') //笔芯
 
