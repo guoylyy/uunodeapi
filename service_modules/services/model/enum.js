@@ -2005,6 +2005,126 @@ const advTypeEnum = {
   }
 };
 
+const lessonTypeEnum = {
+  'TECH': {
+    key: 'TECH',
+    name: '技巧'
+  },
+  'TOOL': {
+    key: 'TOOL',
+    name: '工具'
+  },
+  'EXAM': {
+    key: 'EXAM',
+    name: '考试'
+  },
+  'BEGINNER': {
+    key: 'BEGINNER',
+    name: '入门'
+  }
+}
+
+const lessonLinkTypeEnum = {
+  'HTML': {
+    key: 'HTML',
+    name: '网页内容'
+  },
+  'URL': {
+    key: 'URL',
+    name: '链接'
+  }
+}
+
+/**
+ * banner业务枚举
+ */
+const bannerBizTypeEnum = {
+  'LESSON': {
+    key: 'LESSON',
+    name: '课程相关'
+  }
+}
+
+/**
+ * banner链接类型
+ */
+const bannerLinkTypeEnum = {
+  'URL': {
+    key: 'URL',
+    name: '链接'
+  }
+}
+
+/**
+ * task 语言枚举
+ */
+const taskLanguageEnum = {
+  'EN': {
+    key: 'EN',
+    name: '英文'
+  },
+  'CN': {
+    key: 'CN',
+    name: '中文'
+  }
+}
+
+exports.taskLanguageEnum = taskLanguageEnum;
+
+const taskLevelEnum = {
+  'BASIC': {
+    key: 'BASIC',
+    name: '基础'
+  },
+  'BEGINNER': {
+    key: 'BEGINNER',
+    name: '入门'
+  }
+}
+
+exports.taskLevelEnum = taskLevelEnum;
+
+const taskThemeEnum = {
+  'ENV': {
+    key: 'ENV',
+    name: '环境'
+  },
+  'TECH': {
+    key: 'TECH',
+    name: '技术'
+  }
+}
+
+exports.taskThemeEnum = taskThemeEnum;
+
+const taskTypeEnum = {
+  'CONFERENCE': {
+    key: 'CONFERENCE',
+    name: '会议'
+  },
+  'PRESS_CONFERENCE': {
+    key: 'PRESS_CONFERENCE',
+    name: '发布会'
+  },
+  'DEBATE': {
+    key: 'DEBATE',
+    name: '辩论'
+  },
+  'HEARING': {
+    key: 'HEARING',
+    name: '耳语'
+  },
+  'INTERVIEW': {
+    key: 'INTERVIEW',
+    name: '采访'
+  },
+  'PEDAGOGICAL_MATERIAL': {
+    key: 'PEDAGOGICAL_MATERIAL',
+    name: '教学材料'
+  }
+}
+
+exports.taskTypeEnum = taskTypeEnum;
 
 //用户证书枚举字段
 const userCertificationEnum = {
@@ -2190,3 +2310,7 @@ exports.clazzExitStatusTypeEnum = withdrawStatusEnum;
 exports.userScoreTypeEnum = userScoreTypeEnum;
 exports.securityCodeTypeEnum = securityCodeTypeEnum;
 exports.userRankTypeEnum = userRankTypeEnum;
+exports.lessonTypeEnum = lessonTypeEnum;
+exports.lessonLinkTypeEnum = lessonLinkTypeEnum;
+exports.bannerBizTypeEnum = bannerBizTypeEnum;
+exports.bannerLinkTypeEnum = bannerLinkTypeEnum;

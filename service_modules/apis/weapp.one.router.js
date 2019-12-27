@@ -74,9 +74,10 @@ router.get('/account/like/tasks', accountApis.fetchUserLikeTasks); //个人笔�
 
 // @hupeng
 // 任务练习相关API
-// router.get('/task/today') //获取今日任务
-// router.get('/tasks') //往期材料搜索
-// router.get('/task/:taskId') //获取任务详细内容
+const taskController = require('./weapp.one/task.controller');
+router.get('/task/today',taskController.getTodayTask) //获取今日任务
+router.get('/tasks', taskController.getTaskList) //往期材料搜索
+router.get('/task/:taskId', taskController.getTask) //获取任务详细内容
 // router.post('/task/:taskId/checkin') //完成练习
 // router.get('/task/:taskId/checkin/:checkinId') //获取打卡内容
 // router.get('/task/:taskId/checkin/:checkinId/medias') //播放列表
@@ -87,11 +88,11 @@ router.get('/account/like/tasks', accountApis.fetchUserLikeTasks); //个人笔�
 // router.post('/task/:taskId/checkin/:checkinId/like') //笔芯
 
 // 学习材料
-// router.get('/lessons')
-// router.get('/lesson/:lessonId')
-// router.get('/lessons/banners')
+const lessonController = require('./weapp.one/lesson.controller');
 
-
+router.get('/lessons', lessonController.getLessonList)
+router.get('/lesson/:lessonId',lessonController.getLesson)
+router.get('/lessons/banners', lessonController.getBanners)
 
 // 课程相关API
 // const clazzApis = require('./weapp.one/clazz.controller');
