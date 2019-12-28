@@ -1968,6 +1968,10 @@ const securityCodeTypeEnum = {
   'RESET_PASSWORD': {
     key: 'RESET_PASSWORD',
     name: '密码重置'
+  },
+  'SMS_LOGIN':{
+    key:'SMS_LOGIN',
+    name: '短信登录'
   }
 };
 
