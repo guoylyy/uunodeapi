@@ -5,6 +5,7 @@ const winston = require("winston");
 const Promise = require("bluebird");
 const debug = require("debug")("service");
 const taskMapper = require("../dao/mongodb_mapper/task.mapper");
+const taskCheckinMapper = require("../dao/mongodb_mapper/taskCheckin.mapper");
 const pushTaskMapper = require("../dao/mongodb_mapper/pushTask.mapper");
 const attachMapper = require("../dao/mongodb_mapper/attach.mapper");
 const commonError = require("./model/common.error");
@@ -23,6 +24,9 @@ pub.queryTaskList = queryParam => {
   );
 };
 
+/**
+ * 获取任务详情
+ */
 pub.fetchById = taskId => {
   if (_.isNil(taskId)) {
     winston.error("获取任务详情失败，参数错误！！！ taskId: %s", taskId);
@@ -56,6 +60,9 @@ pub.fetchById = taskId => {
   });
 };
 
+/**
+ * 获取当日任务
+ */
 pub.fetchTodayTask = () => {
   const currentDate = new Intl.DateTimeFormat('en-US').format(new Date())
   let param = {pushAt: currentDate};
@@ -65,9 +72,101 @@ pub.fetchTodayTask = () => {
       return pub.fetchById(pushTask.taskId)
     } else {
       winston.error("今日任务为空 时间:%s", currentDate);
-      return Promise.reject(commonError.NOT_FOUND_ERROR);
+      return Promise.reject(commonError.NOT_FOUND_ERROR());
     }
   });
 };
+
+/**
+ * 打卡
+ */
+pub.checkin = (taskCheckin) => {
+  return taskCheckinMapper.checkin(taskCheckin);
+}
+
+/**
+ * 获取打卡列表
+ */
+pub.getCheckinList = (queryParam) => {
+  return taskCheckinMapper.queryCheckinList(queryParam)
+  .then(checkinList => {
+    const queryAttach = [];
+    for (let i=0; i<checkinList.length; i++) {
+      queryAttach.push(attachMapper.fetchById(checkinList[i].attach));
+    }
+    return Promise.all(queryAttach)
+    .then(attachList => {
+      for (let i=0; i<checkinList.length; i++) {
+        attachList[i].url = qiniuComponent.getAccessibleUrl(attachList[i].attachType, attachList[i].key);
+        checkinList[i].attach = attachList[i];
+      }
+      return checkinList;
+    })
+  });
+}
+
+/**
+ * 分页查询打卡列表
+ */
+pub.queryPagedCheckinList = queryParam => {
+  return taskCheckinMapper.queryPagedCheckinList(
+    queryParam,
+    queryParam.pageNumber,
+    queryParam.pageSize
+  ) .then(result => {
+    const checkinList = result.values;
+    const queryAttach = [];
+    for (let i=0; i<checkinList.length; i++) {
+      queryAttach.push(attachMapper.fetchById(checkinList[i].attach));
+    }
+    return Promise.all(queryAttach)
+    .then(attachList => {
+      for (let i=0; i<checkinList.length; i++) {
+        attachList[i].url = qiniuComponent.getAccessibleUrl(attachList[i].attachType, attachList[i].key);
+        checkinList[i].attach = attachList[i];
+      }
+      result.values = checkinList;
+      return result;
+    })
+  });
+};
+
+/**
+ * 获取打卡详情
+ */
+pub.fetchCheckinById = (checkinId) => {
+  if (_.isNil(checkinId)) {
+    winston.error("获取打卡详情失败，参数错误！！！ checkinId: %s", checkinId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return taskCheckinMapper.findById(checkinId);
+}
+
+/**
+ * 点赞打卡记录
+ */
+pub.likeCheckin = (userId, checkin) => {
+  if (_.isNil(userId)) {
+    winston.error('参数错误！！！ userId: %s', userId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  const likeArr = checkin.likeArr || [];
+  if (likeArr.includes(userId)) {
+    return Promise.reject(commonError.BIZ_FAIL_ERROR("已点赞过该打卡"));
+  } else {
+    likeArr.push(userId);
+    return taskCheckinMapper.updateById(checkin.id, {likeArr: likeArr})
+  }
+}
+
+pub.cancelLikeCheckin = (userId, checkin) => {
+  if (_.isNil(userId)) {
+    winston.error('参数错误！！！ userId: %s', userId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  const likeArr = checkin.likeArr || [];
+  likeArr.pop(userId);
+  return taskCheckinMapper.updateById(checkin.id, {likeArr: likeArr})
+}
 
 module.exports = pub;

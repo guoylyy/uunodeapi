@@ -25,6 +25,7 @@ const userService = require('../services/user.service');
 const userBindService = require('../services/userBind.service');
 const clazzAccountService = require('../services/clazzAccount.service');
 const openCourseService = require('../services/openCourse.service');
+const taskService = require('../services/task.service');
 
 const enumModel = require('../services/model/enum');
 
@@ -513,5 +514,42 @@ pub.preloadUserOpenCourseRelation = (req, res, next) => {
       })
       .catch(req.__ERROR_HANDLER);
 };
+
+/**
+ * 预加载任务
+ */
+pub.preloadTask = (req, res, next) => {
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
+  .then((taskId) => {
+    return taskService.fetchById(taskId)
+    .then(task => {
+      if (_.isNil(task)) {
+        return apiRender.renderNotFound(res);
+      }
+      req.__TASK_ITEM = task;
+      next()
+      return null;
+    })
+  }).catch(req.__ERROR_HANDLER);
+}
+
+/**
+ * 预加载任务打卡 并校验
+ */
+pub.preloadTaskCheckin = (req, res, next) => {
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.checkinId)
+  .then((checkinId) => {
+    return taskService.fetchCheckinById(checkinId)
+    .then(checkin => {
+      if (_.isNil(checkin) || !_.isEqual(checkin.task, req.params.taskId)) {
+        return apiRender.renderNotFound(res);
+      }
+      req.__TASK_CHECKIN_ITEM = checkin;
+      next()
+      return null;
+    })
+  }).catch(req.__ERROR_HANDLER);
+}
+
 
 module.exports = pub;
