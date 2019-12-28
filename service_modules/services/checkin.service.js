@@ -583,7 +583,11 @@ pub.getUserCheckinDays = (userId) => {
   return checkinMapper.sumCheckinDay(userId)
       .then((result) => {
         debug(result);
-        return result[0].count;
+        if(_.isNil(result[0])){
+          return 0;
+        }else{
+          return result[0].count;
+        }
       });
 };
 
