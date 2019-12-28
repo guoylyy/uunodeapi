@@ -83,8 +83,8 @@ pub.queryCheckinList = (req, res) => {
         _.forEach(userCheckinResult.checkins, (checkinItem) => {
           checkinItem.checkinTime = moment(checkinItem.checkinTime).format('YYYY-MM-DD');
           let keys = checkinItem.checkinFiles.fileKeys;
-          if(!_.isNil(keys) && keys.length > 0){
-            _.each(keys,(item, index)=>{
+          if (!_.isNil(keys) && keys.length > 0) {
+            _.each(keys, (item, index) => {
               checkinFileIds.push(item);
             });
           }
@@ -115,30 +115,38 @@ pub.queryCheckinList = (req, res) => {
         userCheckinResult.clazz = pickedClazzItem;
 
         const filePromise = userFileService.fetchUserFilesByIdList(checkinFileIds);
-        const resultPromise = Promise.resolve([]).then(()=>{
+        const resultPromise = Promise.resolve([]).then(() => {
           return userCheckinResult;
         });
         return Promise.all([resultPromise, filePromise])
-      }).then(([userCheckinResult, files])=>{
+      }).then(([userCheckinResult, files]) => {
         debug(files);
-        //Convert files To Map
+        //1.数据准备
         const fileMap = {};
-        _.map(files, (fileItem)=>{
-          fileMap[_.get(fileItem,'_id')] = fileItem;
+        _.map(files, (fileItem) => {
+          fileMap[_.get(fileItem, '_id')] = fileItem;
         });
         userCheckinResult['fileMap'] = fileMap;
-        //Checkin Add Files
-        _.map(userCheckinResult.checkins, (item)=>{
+
+        //2.添加相关的点赞数据，添加文件数据
+        let new_checkins = _.map(userCheckinResult.checkins, (item) => {
+          item = apiUtil.pickCheckinInfo(item, currentClazzItem.configuration.endHour);
           let fileKeys = item.checkinFiles.fileKeys;
           let itemFiles = [];
-          _.each(fileKeys, (key)=>{
+          _.each(fileKeys, (key) => {
             let f = fileMap[key];
-            if(!_.isNil(f)){
+            if (!_.isNil(f)) {
               itemFiles.push(f);
             }
           });
           item['files'] = itemFiles;
+          item['liked'] = item.likeArr.includes(req.__CURRENT_USER.id);
+          item['disliked'] = item.dislikeArr.includes(req.__CURRENT_USER.id);
+
+          return item;
         });
+
+        userCheckinResult.checkins = new_checkins;
 
         return apiRender.renderBaseResult(res, userCheckinResult);
       })
@@ -168,8 +176,8 @@ pub.queryClazzCheckins = (req, res) => {
         const filesIdList = [];
         _.map(pagedCheckinList, (checkinItem) => {
           let keys = checkinItem.checkinFiles.fileKeys;
-          if(!_.isNil(keys) && keys.length > 0){
-            _.each(keys,(item, index)=>{
+          if (!_.isNil(keys) && keys.length > 0) {
+            _.each(keys, (item, index) => {
               filesIdList.push(item);
             });
           }
@@ -205,7 +213,7 @@ pub.queryClazzCheckins = (req, res) => {
                   checkinUser.checkinCount = _.get(userCheckinCountMap, checkinUser.id, 0);
                   pickedCheckin.userInfo = checkinUser;
                 }
-                
+
                 pickedCheckin.liked = pickedCheckin.likeArr.includes(currentUserId)
                 pickedCheckin.disliked = pickedCheckin.dislikeArr.includes(currentUserId)
 
@@ -224,17 +232,17 @@ pub.queryClazzCheckins = (req, res) => {
 
         //Convert files To Map
         const fileMap = {};
-        _.map(files, (fileItem)=>{
-          fileMap[_.get(fileItem,'_id')] = fileItem;
+        _.map(files, (fileItem) => {
+          fileMap[_.get(fileItem, '_id')] = fileItem;
         });
 
         //Convert results and fill files
-        _.map(result.pickedPagedCheckinList, (item)=>{
+        _.map(result.pickedPagedCheckinList, (item) => {
           let fileKeys = item.checkinFiles.fileKeys;
           let itemFiles = [];
-          _.each(fileKeys, (key)=>{
+          _.each(fileKeys, (key) => {
             let f = fileMap[key];
-            if(!_.isNil(f)){
+            if (!_.isNil(f)) {
               itemFiles.push(f);
             }
           });
