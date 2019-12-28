@@ -143,36 +143,59 @@ pub.authWithSmsCode = (req, res) => {
               debug(userBindItem);
               debug(latestCodeItem);
 
-              if (_.isNil(userBindItem)) {
-                winston.error(`手机号 ${phoneNumber} 未注册`);
-                return Promise.reject(commonError.PARAMETER_ERROR('用户未注册'));
-              }
-
               if (!isValidSecurityCode(latestCodeItem, securityCode)) {
                 winston.error(`手机号 ${phoneNumber} 及 ${securityCode} 验证失败`);
                 return Promise.reject(commonError.PARAMETER_ERROR('验证失败'));
               }
 
-              // 签名， token
-              const userObj = { appUserId: userBindItem.userId };
+              if (_.isNil(userBindItem)) {
+                winston.error(`手机号 ${phoneNumber} 未注册`);
+                //如果用户未注册，进入注册逻辑
+                return userService.registerUserItem({
+                  name: phoneNumber,
+                  headImgUrl: systemConfig.APP_SHARK_CONFIG.DEFAULT_ICON,
+                  saltHashedPassword: '&#*(!@&#*@!#^&@*KJHJKSDHKJ*@', //使用永远不能hash的密码
+                  phoneNumber: phoneNumber,
+                  sex: 0
+                }).then((userItem)=>{
+                  const createUserBindPromise = userBindService.createBindUser(
+                      userItem.id,
+                      enumModel.userBindTypeEnum.PHONE_NUMBER.key,
+                      phoneNumber,
+                      userItem.saltHashedPassword
+                  );
+                  const userObj = {appUserId: userItem.id};
+                  const signTokenPromise = jwtUtil.sign(userObj, systemConfig.jwt_app_shark.secretKey, systemConfig.jwt_app_shark.options);
 
-              const signTokenPromise = jwtUtil.sign(userObj, systemConfig.jwt_app_shark.secretKey, systemConfig.jwt_app_shark.options);
-              const fetchUserInfoPromise = userService.fetchById(userBindItem.userId);
+                  return Promise.all([createUserBindPromise, signTokenPromise])
+                      .then(([userBindItem, token]) => {
+                        debug(userBindItem);
+                        debug(token);
 
+                        res.set('X-Auth-Token', token);
 
-              return Promise.all([signTokenPromise, fetchUserInfoPromise])
-                  .then(([token, userItem]) => {
-                    debug(token);
-                    debug(userItem);
+                        return apiRender.renderBaseResult(res, apiUtil.pickUserBasicInfo(userItem));
+                      });
+                });
+              }else{
+                // 签名， token
+                const userObj = { appUserId: userBindItem.userId };
+                const signTokenPromise = jwtUtil.sign(userObj, systemConfig.jwt_app_shark.secretKey, systemConfig.jwt_app_shark.options);
+                const fetchUserInfoPromise = userService.fetchById(userBindItem.userId);
+                return Promise.all([signTokenPromise, fetchUserInfoPromise])
+                    .then(([token, userItem]) => {
+                      debug(token);
+                      debug(userItem);
 
-                    if (_.isNil(userItem)) {
-                      return Promise.reject(commonError.BIZ_FAIL_ERROR("不存在的用户，请联系客服"));
-                    }
+                      if (_.isNil(userItem)) {
+                        return Promise.reject(commonError.BIZ_FAIL_ERROR("不存在的用户，请联系客服"));
+                      }
 
-                    res.set('X-Auth-Token', token);
+                      res.set('X-Auth-Token', token);
 
-                    return apiRender.renderBaseResult(res, apiUtil.pickUserBasicInfo(userItem));
-                  });
+                      return apiRender.renderBaseResult(res, apiUtil.pickUserBasicInfo(userItem));
+                    });
+              }
             });
       })
       .catch(req.__ERROR_HANDLER);
@@ -200,7 +223,7 @@ pub.sendLoginSmsCode = (req, res) =>{
 
               if (_.isNil(userBindItem)) {
                 winston.error(`手机号 ${phoneNumber} 未注册`);
-                return Promise.reject(commonError.PARAMETER_ERROR('您没有注册'));
+                //return Promise.reject(commonError.PARAMETER_ERROR('您没有注册'));
               }
 
               return smsSecurityCodeService.sendLoginCode(phoneNumber, 5);
