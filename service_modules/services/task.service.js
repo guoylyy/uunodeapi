@@ -70,10 +70,8 @@ pub.fetchTodayTask = () => {
   .then(pushTask => {
     if (!_.isNil(pushTask)) {
       return pub.fetchById(pushTask.taskId)
-    } else {
-      winston.error("今日任务为空 时间:%s", currentDate);
-      return Promise.reject(commonError.NOT_FOUND_ERROR());
-    }
+    } 
+    return null;
   });
 };
 
