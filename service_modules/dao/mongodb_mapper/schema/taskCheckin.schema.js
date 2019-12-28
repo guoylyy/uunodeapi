@@ -15,7 +15,9 @@ let taskCheckinSchema = new Schema({
   title: { type: String, required: true },
   attach: { type: Schema.Types.ObjectId, ref: 'Attach' },
   task: { type: Schema.Types.ObjectId, ref: 'WeTask' },
-  userId: { type: Number, required: true }
+  userId: { type: Number, required: true },
+  type: {type: Number, default: 0},
+  likeArr: [Number]
 });
 
 // create a schema named as Lesson, and collection as Lesson

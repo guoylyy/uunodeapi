@@ -515,6 +515,9 @@ pub.preloadUserOpenCourseRelation = (req, res, next) => {
       .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 预加载任务
+ */
 pub.preloadTask = (req, res, next) => {
   return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
   .then((taskId) => {
@@ -524,6 +527,24 @@ pub.preloadTask = (req, res, next) => {
         return apiRender.renderNotFound(res);
       }
       req.__TASK_ITEM = task;
+      next()
+      return null;
+    })
+  }).catch(req.__ERROR_HANDLER);
+}
+
+/**
+ * 预加载任务打卡 并校验
+ */
+pub.preloadTaskCheckin = (req, res, next) => {
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.checkinId)
+  .then((checkinId) => {
+    return taskService.fetchCheckinById(checkinId)
+    .then(checkin => {
+      if (_.isNil(checkin) || !_.isEqual(checkin.task, req.params.taskId)) {
+        return apiRender.renderNotFound(res);
+      }
+      req.__TASK_CHECKIN_ITEM = checkin;
       next()
       return null;
     })

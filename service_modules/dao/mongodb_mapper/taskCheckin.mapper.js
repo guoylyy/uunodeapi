@@ -16,6 +16,7 @@ const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "attach",
   "task",
   "userId",
+  "likeArr",
   "createAt"
 ]);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([
@@ -25,13 +26,13 @@ const QUERY_ORDER_BY = queryUtil.disposeSortBy([
 const pub = {};
 
 /**
- * 分页列出课程列表
+ * 打卡列表 分页
  * @param queryParam
  * @param pageNumber
  * @param pageSize
  * @returns {Promise.<TResult>}
  */
-pub.queryPagedTaskList = (queryParam, pageNumber = 1, pageSize = 10) => {
+pub.queryPagedCheckinList = (queryParam, pageNumber = 1, pageSize = 10) => {
   return taskCheckinSchema.queryPaged(
     queryParam,
     QUERY_SAFE_PARAMS,
@@ -43,10 +44,39 @@ pub.queryPagedTaskList = (queryParam, pageNumber = 1, pageSize = 10) => {
 };
 
 /**
+ * 打卡列表 不分页
+ */
+pub.queryCheckinList = (queryParam) => {
+  return taskCheckinSchema.queryList(
+    queryParam,
+    QUERY_SAFE_PARAMS,
+    QUERY_SELECT_COLUMNS,
+    QUERY_ORDER_BY
+  );
+}
+
+/**
  * 创建打卡
  */
 pub.checkin = (taskCheckin) => {
   return taskCheckinSchema.createItem(taskCheckin);
 }
+
+/**
+ * 根据id更新taskCheckin
+ */
+const safeUpdateParamList = ['likeArr']; // 限制可更新的字段
+pub.updateById = (taskCheckinId, taskCheckin) => {
+  const pickedCheckinItem = mongoUtil.pickUpdateParams(taskCheckin, safeUpdateParamList);
+
+  return taskCheckinSchema.updateItemById(taskCheckinId, pickedCheckinItem);
+};
+
+/**
+ * 获取打卡详情
+ */
+pub.findById = (taskCheckinId) => {
+  return taskCheckinSchema.findItemById(taskCheckinId)
+};
 
 module.exports = pub;

@@ -82,8 +82,10 @@ router.get('/task/:taskId', taskController.getTask) //获取任务详细内容
 router.use('/task/:taskId', oneMiddleware.preloadTask) //预加载task对象并校验
 router.post('/task/:taskId/checkin', taskController.checkin) //完成练习
 router.get('/task/:taskId/checkin/mine', taskController.getMyCheckinList) // 我的打卡列表
-router.get('/task/:taskId/checkin') //获取广场内容
-router.post('/task/:taskId/checkin/:checkinId/like') //笔芯
+router.get('/task/:taskId/checkin', taskController.getCheckinList) //获取广场内容
+router.use('/task/:taskId/checkin/:checkinId', oneMiddleware.preloadTaskCheckin) //预加载task对象并校验
+router.post('/task/:taskId/checkin/:checkinId/like', taskController.likeCheckin) //笔芯
+router.delete('/task/:taskId/checkin/:checkinId/like', taskController.cancelLikeCheckin) //取消笔芯
 
 // 学习材料
 const lessonController = require('./weapp.one/lesson.controller');
