@@ -107,10 +107,10 @@ pub.getMyCheckinList = (req, res) => {
 }
 
 /**
- * 获取打卡记录列表分页
+ * 获取打卡记录列表分页 广场接口
  */
 pub.getCheckinList = (req, res) => {
-  return schemaValidator.validatePromise(pagedBaseSchema, req.query)
+  return schemaValidator.validatePromise(taskSchema.checkinPagedSchema, req.query)
   .then((param) => {
     param.task = req.__TASK_ITEM.id;
     return taskService.queryPagedCheckinList(param);

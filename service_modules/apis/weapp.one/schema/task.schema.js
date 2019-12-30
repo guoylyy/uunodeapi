@@ -20,6 +20,11 @@ pub.pagedSchema = pagedBaseSchema.keys({
 pub.checkinSchema = Joi.object().keys({
   attach: commonSchema.mongoIdSchema.required(),
   title: Joi.string().required(),
+  practiceMode: Joi.string().valid(_.keys(enumModel.miniKYPracticeModeEnum)),
+});
+
+pub.checkinPagedSchema = pagedBaseSchema.keys({
+  practiceMode: Joi.string().valid(_.keys(enumModel.miniKYPracticeModeEnum))
 });
 
 module.exports = pub;
