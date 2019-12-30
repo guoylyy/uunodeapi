@@ -10,7 +10,7 @@ const taskCheckinSchema = require("./schema/taskCheckin.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 const winston = require("winston");
-const QUERY_SAFE_PARAMS = ["_id", "userId", "task"];
+const QUERY_SAFE_PARAMS = ["_id", "userId", "task", "practiceMode"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
   "attach",

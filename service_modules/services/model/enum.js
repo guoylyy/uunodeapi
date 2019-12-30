@@ -2163,7 +2163,7 @@ const userCertificationEnum = {
 };
 
 //用户小程序练习模式
-const miniKYPracticeModeEnumm = {
+const miniKYPracticeModeEnum = {
   'INTERACT_TRANSLATE': {
     key: 'INTERACT_TRANSLATE',
     name: '交传练习',
@@ -2257,7 +2257,7 @@ exports.getEnumByKey = function getEnumByKey (key, EnumObj) {
 //update at 2019-12-23
 exports.userCertificationEnum = userCertificationEnum;
 exports.userLikeTaskEnum = userLikeTaskEnum;
-exports.miniKYPracticeModeEnumm = miniKYPracticeModeEnumm;
+exports.miniKYPracticeModeEnum = miniKYPracticeModeEnum;
 
 //update at 2019-05-24
 exports.advTypeEnum = advTypeEnum;
