@@ -284,5 +284,96 @@ pub.fetchUserLikeTasks = (req, res) => {
 
 };
 
+/**
+ * 个人中心任务打卡统计数据
+ * @param req
+ * @param res
+ */
+pub.fetchTaskCheckinStatistics = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+  .then(() => {
+    const result = {};
+    result.records = [
+      {
+        "date": "2019-12-25T00:00:00.000Z",
+        "quantity" : "MORE"
+      },
+      {
+        "date": "2019-12-26T00:00:00.000Z",
+        "quantity" : "LESS"
+      },
+      {
+        "date": "2019-12-27T00:00:00.000Z",
+        "quantity" : "NORMAL"
+      },
+      {
+        "date": "2019-12-28T00:00:00.000Z",
+        "quantity" : "EMPTY"
+      },
+    ]
+    result.todayPracticeTime = 100;
+    result.totalPracticeTime = 1000;
+    result.enTask = 400;
+    result.zhTask = 600;
+    return apiRender.renderBaseResult(res, result);
+  })
+  .catch(req.__ERROR_HANDLER);
+}
+
+/**
+ * 口译记录列表 分页 按时间倒序
+ * @param req
+ * @param res
+ */
+pub.fetchTaskCheckinRecords = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+  .then(() => {
+    const result = [{
+      "title": "关于幸福的演讲",
+      "sourceDate": "2017-04-01T16:23:31.038Z",
+      "duration": 100,
+      "language": "CN",
+      "oppoLanguage": "EN",
+      "theme": "TECH",
+      "pic": "http://qiniuprivate.gambition.cn/1577262618965_oeh8LY_001.jpg_720x720@2x.png",
+      "createAt": "2019-12-23T16:23:31.038Z",
+      "updateAt": "2019-12-23T16:23:31.038Z",
+      "id": "5e007e310e992bcd972f2f4e",
+      "lastCheckinMode": "INTERACT_TRANSLATE",
+      "checkinDate": "2019-12-27T00:00:00.000Z",
+      "checkinCount": 10
+    }, {
+      "title": "关于幸福的演讲1",
+      "sourceDate": "2017-04-01T16:23:31.038Z",
+      "duration": 600,
+      "language": "CN",
+      "oppoLanguage": "EN",
+      "theme": "TECH",
+      "pic": "http://qiniuprivate.gambition.cn/1577262618965_oeh8LY_001.jpg_720x720@2x.png",
+      "createAt": "2019-12-23T16:23:31.038Z",
+      "updateAt": "2019-12-23T16:23:31.038Z",
+      "id": "5e043246bcc3100f807d3404",
+      "lastCheckinMode": "REPLAY_TRANSLATE",
+      "checkinDate": "2019-12-27T00:00:00.000Z",
+      "checkinCount": 15
+    }, {
+      "title": "关于幸福的演讲2",
+      "sourceDate": "2017-04-01T16:23:31.038Z",
+      "duration": 200,
+      "language": "CN",
+      "oppoLanguage": "EN",
+      "theme": "TECH",
+      "pic": "http://qiniuprivate.gambition.cn/1577262618965_oeh8LY_001.jpg_720x720@2x.png",
+      "createAt": "2019-12-23T16:23:31.038Z",
+      "updateAt": "2019-12-23T16:23:31.038Z",
+      "id": "5e04324ebcc3100f807d3405",
+      "lastCheckinMode": "SHADOW_SPEAK",
+      "checkinDate": "2019-12-27T00:00:00.000Z",
+      "checkinCount": 20
+    },];
+    return apiRender.renderPageResult(res, result, 100, 10, 1);
+  })
+  .catch(req.__ERROR_HANDLER);
+}
 
 module.exports = pub;

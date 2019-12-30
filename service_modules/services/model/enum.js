@@ -2218,6 +2218,32 @@ const userLikeTaskEnum = {
   }
 };
 
+// 用户打卡记录统计数据枚举
+const checkinRecordStatisticsEnum = {
+  'MORE': {
+    'key': 'MORE',
+    'name': '超过2条记录',
+    'color': 'rgba(10,202,246,1)',
+  },
+  'LESS': {
+    'key': 'LESS',
+    'name': '1条记录',
+    'color': 'rgba(10,202,246,0.35)',
+  },
+  'EMPTY': {
+    'key': 'EMPTY',
+    'name': '无记录',
+    'rgba': 'rgba(238,238,238,1)',
+  },
+  'NORMAL': {
+    'key': 'NORMAL',
+    'name': '2条记录',
+    'color': 'rgba(10,202,246,0.75)',
+  }
+}
+
+exports.checkinRecordStatisticsEnum = checkinRecordStatisticsEnum;
+
 
 // functions
 exports.getEnumByKey = function getEnumByKey (key, EnumObj) {
