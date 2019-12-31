@@ -8,6 +8,8 @@ const _ = require('lodash');
 
 const enumModel = require('../../../services/model/enum');
 
+const pagedBaseSchema = require("./paged.base.schema");
+
 const pub = {};
 
 /**
@@ -105,6 +107,14 @@ pub.userLikeRuleQuerySchema = Joi.object().keys({
  * 用户笔芯任务查看 Schema
  */
 pub.userLikeTaskQuerySchema = Joi.object().keys({
+});
+
+/**
+ * 口译记录分页列表 Schema
+ */
+pub.taskCheckinRecordsPagedSchema = pagedBaseSchema.keys({
+  month: Joi.number().integer().positive().max(12).required(),
+  year: Joi.number().integer().positive().min(2019).required()
 });
 
 module.exports = pub;
