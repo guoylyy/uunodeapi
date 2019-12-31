@@ -294,7 +294,7 @@ pub.fetchTaskCheckinStatistics = (req, res) => {
     const result = {};
     result.records = [
       {
-        "date": "2019-12-25T00:00:00.000Z",
+        "date": new Date('2019-11-25'),
         "quantity" : "MORE"
       },
       {
@@ -314,6 +314,7 @@ pub.fetchTaskCheckinStatistics = (req, res) => {
     result.totalPracticeTime = 1000;
     result.enTask = 400;
     result.zhTask = 600;
+    result.durationDays = 40;
     return apiRender.renderBaseResult(res, result);
   })
   .catch(req.__ERROR_HANDLER);
@@ -325,7 +326,7 @@ pub.fetchTaskCheckinStatistics = (req, res) => {
  * @param res
  */
 pub.fetchTaskCheckinRecords = (req, res) => {
-  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+  return schemaValidator.validatePromise(accountSchema.taskCheckinRecordsPagedSchema, req.query)
   .then(() => {
     const result = [{
       "title": "关于幸福的演讲",
