@@ -172,8 +172,7 @@ pub.updateUserPersonConfiguration = (req, res) => {
         if (configs.length == 1) {
           let item = configs[0];
           item.configValue = req.body.value;
-          return userConfigService.updateUserConfig
-          Value(item);
+          return userConfigService.updateUserConfigValue(item);
         } else if (configs.length == 0) {
           return userConfigService.saveUserConfig(req.__CURRENT_USER.id, req.params['configApp'],
               req.body.key, req.body.value);
