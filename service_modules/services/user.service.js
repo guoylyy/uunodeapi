@@ -261,12 +261,23 @@ pub.wechatSignUp = (userObject) => {
     return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息不全！'));
   }
   winston.error('用户注册信息', userObject);
+
+  //兼容微信最新接口的openId获取任务
+  let openId = userObject.openId;
+  if(_.isNil(openId)){
+    openId = userObject.openid;
+  }
+  let unionId = userObject.unionId;
+  if(_.isNil(unionId)){
+    unionId = userObject.unionid;
+  }
+
   if (global.IS_DEVLOPMENT_ENVIRONMENT === true) {
-    if (_.isNil(userObject.openId)) {
+    if (_.isNil(openId)) {
       return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息有误！'));
     }
   } else {
-    if (_.isNil(userObject.openId) && _.isNil(userObject.unionId)) {
+    if (_.isNil(openId) || _.isNil(unionId)) {
       return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息有误！'));
     }
   }
@@ -275,8 +286,8 @@ pub.wechatSignUp = (userObject) => {
   const userItem = {
     name: userObject.nickname,
     headImgUrl: userObject.headimgurl,
-    openId: userObject.openId,
-    unionid: userObject.unionId,
+    openId: openId,
+    unionid: unionId,
     sex: userObject.sex,
     city: userObject.city
   };
