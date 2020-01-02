@@ -68,8 +68,8 @@ router.get('/account/likes', accountApis.fetchUserLikes);    //用户笔芯记�
 router.get('/account/like/rules', accountApis.fetchUserLikeRules); //个人笔芯规则
 router.get('/account/like/tasks', accountApis.fetchUserLikeTasks); //个人笔芯任务获取情况
 
-// router.get('/account/statistics/checkin') //课程档案
-// router.get('/account/statistics/practise') //口译记录
+router.get('/account/statistics/checkin', accountApis.fetchTaskCheckinStatistics) //练习档案
+router.get('/account/statistics/checkinRecords', accountApis.fetchTaskCheckinRecords) //口译记录
 // router.get('/account/checkins') //个人口译记录筛选
 
 // @HuPeng

@@ -9,6 +9,7 @@ const mongoose = require('../../mongo.connection');
 const Schema = mongoose.Schema;
 
 const enumModel = require('../../../services/model/enum');
+const practiceModeEnum = enumModel.miniKYPracticeModeEnum;
 
 // create a schema
 let taskCheckinSchema = new Schema({
@@ -17,7 +18,8 @@ let taskCheckinSchema = new Schema({
   task: { type: Schema.Types.ObjectId, ref: 'WeTask' },
   userId: { type: Number, required: true },
   type: {type: Number, default: 0},
-  likeArr: [Number]
+  likeArr: [Number],
+  practiceMode: { type: String, required:true, enum: _.keys(practiceModeEnum)},
 });
 
 // create a schema named as Lesson, and collection as Lesson
