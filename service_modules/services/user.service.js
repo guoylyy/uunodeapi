@@ -260,13 +260,13 @@ pub.wechatSignUp = (userObject) => {
   if (!_.isPlainObject(userObject)) {
     return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息不全！'));
   }
-
+  winston.error('用户注册信息', userObject);
   if (global.IS_DEVLOPMENT_ENVIRONMENT === true) {
     if (_.isNil(userObject.openId)) {
       return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息有误！'));
     }
   } else {
-    if (_.isNil(userObject.openId) || _.isNil(userObject.unionId)) {
+    if (_.isNil(userObject.openId) && _.isNil(userObject.unionId)) {
       return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息有误！'));
     }
   }
