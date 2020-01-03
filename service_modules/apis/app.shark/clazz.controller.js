@@ -613,7 +613,7 @@ const matchClazzExitWithClazzAndUser = (clazzExitList, pickClazzBasicInfo = apiU
         return _.map(
             clazzExitList,
             (clazzExit) => {
-              const pickedClazzExit = _.pick(clazzExit, ['id', 'status', 'applyDate']);
+              const pickedClazzExit = _.pick(clazzExit, ['id', 'status', 'applyDate', 'userReason', 'remark']);
               pickedClazzExit.clazzInfo = pickClazzBasicInfo(_.get(clazzMap, clazzExit.clazzId));
               pickedClazzExit.userInfo = apiUtil.pickUserBasicInfo(_.get(userMap, clazzExit.userId));
 
