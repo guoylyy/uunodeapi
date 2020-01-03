@@ -315,7 +315,6 @@ pub.fetchTaskCheckinStatistics = (req, res) => {
     result.totalPracticeTime = 1000;
     result.enTask = 400;
     result.zhTask = 600;
-    result.durationDays = 40;
     return apiRender.renderBaseResult(res, result);
   })
   .catch(req.__ERROR_HANDLER);
