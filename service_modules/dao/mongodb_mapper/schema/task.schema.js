@@ -23,7 +23,6 @@ let taskSchema = new Schema({
   oppoLanguage: { type: String, required:true, enum: taskLanguageEnum},
   level: { type: String, required:true, enum: taskLevelEnum},
   theme: { type: String, required:true, enum: taskThemeEnum},
-  image: {type: String, required: true},
   description: {type: String, required: true},
   attachText: {type: String, required: true},
   pic: {type: String, required: true},

@@ -21,6 +21,8 @@ const userLikeService = require('../../services/userLike.service');
 
 const enumModel = require('../../services/model/enum');
 
+const taskService = require('../../services/task.service');
+
 const pub = {};
 
 /**
@@ -320,6 +322,51 @@ pub.fetchTaskCheckinStatistics = (req, res) => {
   .catch(req.__ERROR_HANDLER);
 }
 
+    // const result = [{
+    //   "title": "关于幸福的演讲",
+    //   "sourceDate": "2017-04-01T16:23:31.038Z",
+    //   "duration": 100,
+    //   "language": "CN",
+    //   "oppoLanguage": "EN",
+    //   "theme": "TECH",
+    //   "pic": "http://qiniuprivate.gambition.cn/1577262618965_oeh8LY_001.jpg_720x720@2x.png",
+    //   "createAt": "2019-12-23T16:23:31.038Z",
+    //   "updateAt": "2019-12-23T16:23:31.038Z",
+    //   "id": "5e007e310e992bcd972f2f4e",
+    //   "lastCheckinMode": "INTERACT_TRANSLATE",
+    //   "checkinDate": "2019-12-27T00:00:00.000Z",
+    //   "checkinCount": 10
+    // }, {
+    //   "title": "关于幸福的演讲1",
+    //   "sourceDate": "2017-04-01T16:23:31.038Z",
+    //   "duration": 600,
+    //   "language": "CN",
+    //   "oppoLanguage": "EN",
+    //   "theme": "TECH",
+    //   "pic": "http://qiniuprivate.gambition.cn/1577262618965_oeh8LY_001.jpg_720x720@2x.png",
+    //   "createAt": "2019-12-23T16:23:31.038Z",
+    //   "updateAt": "2019-12-23T16:23:31.038Z",
+    //   "id": "5e043246bcc3100f807d3404",
+    //   "lastCheckinMode": "REPLAY_TRANSLATE",
+    //   "checkinDate": "2019-12-27T00:00:00.000Z",
+    //   "checkinCount": 15
+    // }, {
+    //   "title": "关于幸福的演讲2",
+    //   "sourceDate": "2017-04-01T16:23:31.038Z",
+    //   "duration": 200,
+    //   "language": "CN",
+    //   "oppoLanguage": "EN",
+    //   "theme": "TECH",
+    //   "pic": "http://qiniuprivate.gambition.cn/1577262618965_oeh8LY_001.jpg_720x720@2x.png",
+    //   "createAt": "2019-12-23T16:23:31.038Z",
+    //   "updateAt": "2019-12-23T16:23:31.038Z",
+    //   "id": "5e04324ebcc3100f807d3405",
+    //   "lastCheckinMode": "SHADOW_SPEAK",
+    //   "checkinDate": "2019-12-27T00:00:00.000Z",
+    //   "checkinCount": 20
+    // },];
+    // return apiRender.renderPageResult(res, result, 100, 10, 1);
+
 /**
  * 口译记录列表 分页 按时间倒序
  * @param req
@@ -327,51 +374,84 @@ pub.fetchTaskCheckinStatistics = (req, res) => {
  */
 pub.fetchTaskCheckinRecords = (req, res) => {
   return schemaValidator.validatePromise(accountSchema.taskCheckinRecordsPagedSchema, req.query)
-  .then(() => {
-    const result = [{
-      "title": "关于幸福的演讲",
-      "sourceDate": "2017-04-01T16:23:31.038Z",
-      "duration": 100,
-      "language": "CN",
-      "oppoLanguage": "EN",
-      "theme": "TECH",
-      "pic": "http://qiniuprivate.gambition.cn/1577262618965_oeh8LY_001.jpg_720x720@2x.png",
-      "createAt": "2019-12-23T16:23:31.038Z",
-      "updateAt": "2019-12-23T16:23:31.038Z",
-      "id": "5e007e310e992bcd972f2f4e",
-      "lastCheckinMode": "INTERACT_TRANSLATE",
-      "checkinDate": "2019-12-27T00:00:00.000Z",
-      "checkinCount": 10
-    }, {
-      "title": "关于幸福的演讲1",
-      "sourceDate": "2017-04-01T16:23:31.038Z",
-      "duration": 600,
-      "language": "CN",
-      "oppoLanguage": "EN",
-      "theme": "TECH",
-      "pic": "http://qiniuprivate.gambition.cn/1577262618965_oeh8LY_001.jpg_720x720@2x.png",
-      "createAt": "2019-12-23T16:23:31.038Z",
-      "updateAt": "2019-12-23T16:23:31.038Z",
-      "id": "5e043246bcc3100f807d3404",
-      "lastCheckinMode": "REPLAY_TRANSLATE",
-      "checkinDate": "2019-12-27T00:00:00.000Z",
-      "checkinCount": 15
-    }, {
-      "title": "关于幸福的演讲2",
-      "sourceDate": "2017-04-01T16:23:31.038Z",
-      "duration": 200,
-      "language": "CN",
-      "oppoLanguage": "EN",
-      "theme": "TECH",
-      "pic": "http://qiniuprivate.gambition.cn/1577262618965_oeh8LY_001.jpg_720x720@2x.png",
-      "createAt": "2019-12-23T16:23:31.038Z",
-      "updateAt": "2019-12-23T16:23:31.038Z",
-      "id": "5e04324ebcc3100f807d3405",
-      "lastCheckinMode": "SHADOW_SPEAK",
-      "checkinDate": "2019-12-27T00:00:00.000Z",
-      "checkinCount": 20
-    },];
-    return apiRender.renderPageResult(res, result, 100, 10, 1);
+  .then((query) => {
+    if (!_.isNil(query.gtDuration)) {
+      query.duration = query.duration || {};
+      query.duration.$gt = query.gtDuration
+    }
+    if (!_.isNil(query.ltDuration)) {
+      query.duration = query.duration || {};
+      query.duration.$lt = query.ltDuration
+    }
+    const param = {
+      yearMonth: query.yearMonth,
+      userId: req.__CURRENT_USER.id,
+    }
+    if (query.duration) {
+      param["task.duration"] = query.duration;
+    }
+    if (query.theme) {
+      param["task.theme"] = query.theme;
+    }
+    if (query.language) {
+      param["task.language"] = query.language;
+    }
+    if (query.oppoLanguage) {
+      param["task.oppoLanguage"] = query.oppoLanguage;
+    }
+    console.log(param);
+    return taskService.queryPagedCheckinList(param);
+
+  }).then((result) => {
+    // let list = result.values;
+    const checkinList = result.values;
+    const queryCheckinCount = [];
+    for (let i=0; i<checkinList.length; i++) {
+      queryCheckinCount.push(taskService.countByParam({
+        userId: req.__CURRENT_USER.id,
+        taskId: checkinList[i].taskId
+      }));
+    }
+    return Promise.all(queryCheckinCount)
+    .then(countList => {
+      for (let i=0; i<checkinList.length; i++) {
+        checkinList[i].checkinCount = countList[i];
+      }
+      result.values = checkinList;
+      return result;
+    })
+
+  }).then ((result) => {
+    result.values = _.map(result.values, function(item) {
+      return _.pick(item, ['id', 'task', 'createdAt', 'practiceMode', 'taskId', 'checkinCount'])
+    })
+
+    // 去重
+    let set = [];
+    result.values.forEach((item) => {
+      let i=0;
+      for (; i<set.length; i++) {
+        console.log(item.createdAt.toString());
+        console.log(set[i].createdAt.toString().substring(0, 10));
+        if (_.isEqual(item.taskId, set[i].taskId) &&  _.isEqual(item.createdAt.toString().substring(0, 10), set[i].createdAt.toString().substring(0, 10))) {
+          if (item.createdAt.toString() > set[i].createdAt.toString()){
+            set[i] = item;
+          }
+          break;
+        }
+      }
+      if (i == set.length) {
+        set.push(item);
+      }
+    })
+    result.values = set;
+    return apiRender.renderPageResult(
+      res,
+      result.values,
+      result.itemSize,
+      result.pageSize,
+      result.pageNumber
+    );
   })
   .catch(req.__ERROR_HANDLER);
 }

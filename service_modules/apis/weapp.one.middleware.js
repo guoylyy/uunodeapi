@@ -541,7 +541,7 @@ pub.preloadTaskCheckin = (req, res, next) => {
   .then((checkinId) => {
     return taskService.fetchCheckinById(checkinId)
     .then(checkin => {
-      if (_.isNil(checkin) || !_.isEqual(checkin.task, req.params.taskId)) {
+      if (_.isNil(checkin) || !_.isEqual(checkin.taskId, req.params.taskId)) {
         return apiRender.renderNotFound(res);
       }
       req.__TASK_CHECKIN_ITEM = checkin;
