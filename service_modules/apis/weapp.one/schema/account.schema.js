@@ -112,9 +112,13 @@ pub.userLikeTaskQuerySchema = Joi.object().keys({
 /**
  * 口译记录分页列表 Schema
  */
-pub.taskCheckinRecordsPagedSchema = pagedBaseSchema.keys({
-  month: Joi.number().integer().positive().max(12).required(),
-  year: Joi.number().integer().positive().min(2019).required()
+pub.taskCheckinRecordsSchema = Joi.object().keys({
+  yearMonth: Joi.string().required(),
+  theme: Joi.string().valid(_.keys(enumModel.taskThemeEnum)),
+  language: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)),
+  oppoLanguage: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)),
+  gtDuration: Joi.number().integer().positive(),
+  ltDuration: Joi.number().integer().positive()
 });
 
 module.exports = pub;

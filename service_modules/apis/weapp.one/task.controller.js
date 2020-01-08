@@ -21,15 +21,14 @@ pub.getTaskList = (req, res) => {
     .validatePromise(taskSchema.pagedSchema, req.query)
     .then(queryParam => {
       if (!_.isNil(queryParam.gtDuration)) {
-        queryParam.duration = {
-          $gt: queryParam.gtDuration
-        }
+        queryParam.duration = queryParam.duration || {};
+        queryParam.duration.$gt = queryParam.gtDuration
       }
       if (!_.isNil(queryParam.ltDuration)) {
-        queryParam.duration = {
-          $lt: queryParam.ltDuration
-        }
+        queryParam.duration = queryParam.duration || {};
+        queryParam.duration.$lt = queryParam.ltDuration
       }
+      console.log(queryParam)
       return taskService.queryTaskList(queryParam);
     })
     .then(result => {
@@ -78,8 +77,7 @@ pub.getTodayTask = (req, res) => {
 pub.checkin = (req, res) => {
   return schemaValidator.validatePromise(taskSchema.checkinSchema, req.body)
   .then((taskCheckin) => {
-    winston.log('info', taskCheckin)
-    taskCheckin.task = req.__TASK_ITEM.id;
+    taskCheckin.taskId = req.__TASK_ITEM.id;
     taskCheckin.userId = req.__CURRENT_USER.id;
     return taskService.checkin(taskCheckin);
   })
@@ -96,7 +94,8 @@ pub.getMyCheckinList = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
   .then(() => {
     const param = {};
-    param.task = req.__TASK_ITEM.id;
+    param.task = {};
+    param.task.id = req.__TASK_ITEM.id;
     param.userId = req.__CURRENT_USER.id;
     return taskService.getCheckinList(param);
   })
@@ -112,7 +111,8 @@ pub.getMyCheckinList = (req, res) => {
 pub.getCheckinList = (req, res) => {
   return schemaValidator.validatePromise(taskSchema.checkinPagedSchema, req.query)
   .then((param) => {
-    param.task = req.__TASK_ITEM.id;
+    param.task = {};
+    param.task.id = req.__TASK_ITEM.id;
     return taskService.queryPagedCheckinList(param);
   })
   .then((result) => {

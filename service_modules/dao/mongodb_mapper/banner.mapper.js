@@ -10,7 +10,7 @@ const bannerSchema = require("./schema/banner.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 
-const QUERY_SAFE_PARAM_LIST = ["bizType"];
+const QUERY_SAFE_PARAM_LIST = ["bizType", "active"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
   "image",
@@ -29,6 +29,7 @@ const pub = {};
  * @returns {Promise.<TResult>}
  */
 pub.queryBannerList = (queryParam, pageNumber = 1, pageSize = 10) => {
+  queryParam.active = true;
   return bannerSchema.queryList(queryParam, QUERY_SAFE_PARAM_LIST, QUERY_SELECT_COLUMNS);
 };
 
