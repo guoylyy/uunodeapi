@@ -72,11 +72,15 @@ pub.fetchTodayTask = () => {
   let param = {pushAt: currentDate};
   return pushTaskMapper.findByParam(param)
   .then(pushTask => {
+    // task对象 打卡数量 打卡人员列表 promise all
     if (!_.isNil(pushTask)) {
-      return pub.fetchById(pushTask.taskId)
+      return Promise.all([pub.fetchById(pushTask.taskId)])
+      .then(([]) => {
+        return 
+      })
     } 
     return null;
-  });
+  })
 };
 
 /**
