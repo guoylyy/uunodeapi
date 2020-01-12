@@ -84,6 +84,8 @@ router.post('/task/:taskId/checkin', taskController.checkin) //完成练习
 router.get('/task/:taskId/checkin/mine', taskController.getMyCheckinList) // 我的打卡列表
 router.get('/task/:taskId/checkin', taskController.getCheckinList) //获取广场内容
 router.use('/task/:taskId/checkin/:checkinId', oneMiddleware.preloadTaskCheckin) //预加载task对象并校验
+router.delete('/task/:taskId/checkin/:checkinId', oneMiddleware.checkMyTaskCheckin, taskController.deleteTaskCheckin) //删除打卡记录
+router.put('/task/:taskId/checkin/:checkinId', oneMiddleware.checkMyTaskCheckin, taskController.updateTaskCheckin) //更新打卡记录标题
 router.post('/task/:taskId/checkin/:checkinId/like', taskController.likeCheckin) //笔芯
 router.delete('/task/:taskId/checkin/:checkinId/like', taskController.cancelLikeCheckin) //取消笔芯
 

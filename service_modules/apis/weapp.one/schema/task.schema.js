@@ -29,4 +29,8 @@ pub.checkinPagedSchema = pagedBaseSchema.keys({
   practiceMode: Joi.string().valid(_.keys(enumModel.miniKYPracticeModeEnum))
 });
 
+pub.updateCheckinSchema = Joi.object().keys({
+  title: Joi.string().required(),
+});
+
 module.exports = pub;

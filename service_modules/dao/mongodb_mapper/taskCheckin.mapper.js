@@ -72,7 +72,7 @@ pub.checkin = (taskCheckin) => {
 /**
  * 根据id更新taskCheckin
  */
-const safeUpdateParamList = ['likeArr']; // 限制可更新的字段
+const safeUpdateParamList = ['likeArr', 'title']; // 限制可更新的字段
 pub.updateById = (taskCheckinId, taskCheckin) => {
   const pickedCheckinItem = mongoUtil.pickUpdateParams(taskCheckin, safeUpdateParamList);
 
@@ -91,6 +91,13 @@ pub.findById = (taskCheckinId) => {
  */
 pub.countByParam = (param) => {
   return taskCheckinSchema.count(param);
+}
+
+/**
+ * 根据id删除打卡记录
+ */
+pub.deleteById = (id) => {
+  return taskCheckinSchema.destroyItem(id);
 }
 
 

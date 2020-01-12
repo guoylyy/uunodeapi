@@ -164,4 +164,32 @@ pub.cancelLikeCheckin = (req, res) => {
   .catch(req.__ERROR_HANDLER);
 }
 
+/**
+ * 删除打卡记录
+ */
+pub.deleteTaskCheckin = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+  .then(() => {
+    return taskService.deleteTaskCheckin(req.__TASK_CHECKIN_ITEM.id);
+  })
+  .then(() => {
+    return apiRender.renderSuccess(res)
+  })
+  .catch(req.__ERROR_HANDLER);
+}
+
+/**
+ * 更新打卡记录 标题
+ */
+pub.updateTaskCheckin = (req, res) => {
+  return schemaValidator.validatePromise(taskSchema.updateCheckinSchema, req.body)
+  .then((param) => {
+    return taskService.updateTaskCheckin(req.__TASK_CHECKIN_ITEM.id, param);
+  })
+  .then(() => {
+    return apiRender.renderSuccess(res)
+  })
+  .catch(req.__ERROR_HANDLER);
+}
+
 module.exports = pub;
