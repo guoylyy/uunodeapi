@@ -19,7 +19,8 @@ const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "isTop",
   "linkType",
   "createAt",
-  "linkUrl"
+  "linkUrl",
+  "description"
 ]);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([
   { column: "isTop", isDescending: true },

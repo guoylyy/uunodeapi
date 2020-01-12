@@ -36,6 +36,8 @@ let taskCheckinSchema = new Schema({
   likeArr: [Number],
   practiceMode: { type: String, required:true, enum: _.keys(practiceModeEnum)},
   yearMonth: { type: String, required: true },
+  practiceTime: Number,
+  audioDuration: Number
 });
 
 // create a schema named as Lesson, and collection as Lesson

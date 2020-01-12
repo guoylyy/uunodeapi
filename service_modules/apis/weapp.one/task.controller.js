@@ -49,7 +49,11 @@ pub.getTaskList = (req, res) => {
 pub.getTask = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
   .then(taskId => {
-    return taskService.fetchById(taskId);
+    return Promise.all([taskService.fetchById(taskId), taskService.countByParam({taskId: taskId, userId: req.__CURRENT_USER.id})])
+    .then(([task, checkinCount])=> {
+      task.myCheckinCount = checkinCount;
+      return task;
+    });
   })
   .then(result => {
     return apiRender.renderBaseResult(res, result)
