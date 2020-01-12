@@ -75,9 +75,9 @@ pub.fetchTodayTask = () => {
     // task对象 打卡数量 打卡人员列表 promise all
     if (!_.isNil(pushTask)) {
       return Promise.all([pub.fetchById(pushTask.taskId), taskCheckinMapper.countByParam({taskId: pushTask.taskId}), taskCheckinMapper.queryCheckinList({taskId: pushTask.taskId})])
-      .then(([task, checkinCount, pagedCheckin]) => {
-        task.checkinCount = checkinCount;
-        // console.log(_.map(pagedCheckin, "userId"));
+      .then(([task, checkinCount, checkinList]) => {
+        task.checkinCount = checkinCount < 10 ? 10 : checkinCount;
+        let userIdSet = new Set(_.map(checkinList, "userId"));
         return task;
       })
     } 
@@ -184,6 +184,20 @@ pub.cancelLikeCheckin = (userId, checkin) => {
 pub.countByParam = queryParam => {
   console.log(queryParam);
   return taskCheckinMapper.countByParam(queryParam);
+}
+
+/**
+ * 更新打卡记录
+ */
+pub.updateTaskCheckin = (checkinId, param) => {
+  return taskCheckinMapper.updateById(checkinId, param);
+}
+
+/**
+ * 删除打卡记录
+ */
+pub.deleteTaskCheckin = (checkinId) => {
+  return taskCheckinMapper.deleteById(checkinId);
 }
 
 module.exports = pub;
