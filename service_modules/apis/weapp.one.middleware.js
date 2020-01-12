@@ -541,7 +541,7 @@ pub.preloadTaskCheckin = (req, res, next) => {
   .then((checkinId) => {
     return taskService.fetchCheckinById(checkinId)
     .then(checkin => {
-      if (_.isNil(checkin) || !_.isEqual(checkin.taskId, req.params.taskId)) {
+      if (_.isNil(checkin) || !!checkin.isDelete || !_.isEqual(checkin.taskId, req.params.taskId)) {
         return apiRender.renderNotFound(res);
       }
       req.__TASK_CHECKIN_ITEM = checkin;
@@ -551,5 +551,16 @@ pub.preloadTaskCheckin = (req, res, next) => {
   }).catch(req.__ERROR_HANDLER);
 }
 
+/**
+ * 检查是否是当前用户的打卡记录
+ */
+pub.checkMyTaskCheckin = (req, res, next) => {
+  if (req.__TASK_CHECKIN_ITEM.userId == req.__CURRENT_USER.id) {
+    next();
+    return null;
+  } else {
+    return apiRender.renderUnauthorized(res);
+  }
+}
 
 module.exports = pub;
