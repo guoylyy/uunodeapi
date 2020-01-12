@@ -74,9 +74,11 @@ pub.fetchTodayTask = () => {
   .then(pushTask => {
     // task对象 打卡数量 打卡人员列表 promise all
     if (!_.isNil(pushTask)) {
-      return Promise.all([pub.fetchById(pushTask.taskId)])
-      .then(([]) => {
-        return 
+      return Promise.all([pub.fetchById(pushTask.taskId), taskCheckinMapper.countByParam({taskId: pushTask.taskId}), taskCheckinMapper.queryCheckinList({taskId: pushTask.taskId})])
+      .then(([task, checkinCount, pagedCheckin]) => {
+        task.checkinCount = checkinCount;
+        // console.log(_.map(pagedCheckin, "userId"));
+        return task;
       })
     } 
     return null;

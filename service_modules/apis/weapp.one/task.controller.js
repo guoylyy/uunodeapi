@@ -51,7 +51,7 @@ pub.getTask = (req, res) => {
   .then(taskId => {
     return Promise.all([taskService.fetchById(taskId), taskService.countByParam({taskId: taskId, userId: req.__CURRENT_USER.id})])
     .then(([task, checkinCount])=> {
-      task.checkinCount = checkinCount;
+      task.myCheckinCount = checkinCount;
       return task;
     });
   })
