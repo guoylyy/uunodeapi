@@ -10,17 +10,19 @@ const taskCheckinSchema = require("./schema/taskCheckin.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 const winston = require("winston");
-const QUERY_SAFE_PARAMS = ["_id", "userId", "task", "practiceMode"];
+const QUERY_SAFE_PARAMS = ["_id", "userId", "taskId", "practiceMode", "yearMonth", "task.language", "task.oppoLanguage", "task.duration", "task.theme"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
   "attach",
-  "task",
   "userId",
   "likeArr",
-  "createAt"
+  "createdAt",
+  "task",
+  "practiceMode",
+  "taskId"
 ]);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([
-  { column: "createAt", isDescending: true }
+  { column: "createdAt", isDescending: true }
 ]);
 
 const pub = {};
@@ -59,6 +61,11 @@ pub.queryCheckinList = (queryParam) => {
  * 创建打卡
  */
 pub.checkin = (taskCheckin) => {
+  const date = new Date();
+  const year = date.getFullYear(); 
+  let month = date.getMonth()+1;
+  month = (month<10 ? "0"+month : month); 
+  taskCheckin.yearMonth = (year.toString()+month.toString());
   return taskCheckinSchema.createItem(taskCheckin);
 }
 
@@ -76,7 +83,15 @@ pub.updateById = (taskCheckinId, taskCheckin) => {
  * 获取打卡详情
  */
 pub.findById = (taskCheckinId) => {
-  return taskCheckinSchema.findItemById(taskCheckinId)
+  return taskCheckinSchema.findItemById(taskCheckinId);
 };
+
+/**
+ * 
+ */
+pub.countByParam = (param) => {
+  return taskCheckinSchema.count(param);
+}
+
 
 module.exports = pub;

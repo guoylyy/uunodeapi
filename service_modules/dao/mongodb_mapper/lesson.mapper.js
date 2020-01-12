@@ -12,13 +12,15 @@ const mongoUtil = require("../util/mongoUtil");
 
 const QUERY_SAFE_PARAMS = ["_id", "type"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
+  "title",
   "type",
   "image",
   "isHot",
   "isTop",
   "linkType",
   "createAt",
-  "linkUrl"
+  "linkUrl",
+  "description"
 ]);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([
   { column: "isTop", isDescending: true },

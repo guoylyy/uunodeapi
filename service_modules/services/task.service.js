@@ -33,6 +33,10 @@ pub.fetchById = taskId => {
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
   return taskMapper.findById(taskId).then(task => {
+    if (_.isNil(task)) {
+      winston.error("获取任务详情失败，参数错误！！！ taskId: %s", taskId);
+      return Promise.reject(commonError.NOT_FOUND_ERROR("task不存在"));
+    }
     return Promise.all([
       attachMapper.fetchById(task.srcAudio),
       attachMapper.fetchById(task.srcVideo),
@@ -64,22 +68,32 @@ pub.fetchById = taskId => {
  * 获取当日任务
  */
 pub.fetchTodayTask = () => {
-  const currentDate = new Intl.DateTimeFormat('en-US').format(new Date())
+  const currentDate = new Intl.DateTimeFormat('en-US').format(new Date());
   let param = {pushAt: currentDate};
   return pushTaskMapper.findByParam(param)
   .then(pushTask => {
+    // task对象 打卡数量 打卡人员列表 promise all
     if (!_.isNil(pushTask)) {
-      return pub.fetchById(pushTask.taskId)
+      return Promise.all([pub.fetchById(pushTask.taskId), taskCheckinMapper.countByParam({taskId: pushTask.taskId}), taskCheckinMapper.queryCheckinList({taskId: pushTask.taskId})])
+      .then(([task, checkinCount, pagedCheckin]) => {
+        task.checkinCount = checkinCount;
+        // console.log(_.map(pagedCheckin, "userId"));
+        return task;
+      })
     } 
     return null;
-  });
+  })
 };
 
 /**
  * 打卡
  */
 pub.checkin = (taskCheckin) => {
-  return taskCheckinMapper.checkin(taskCheckin);
+  taskMapper.findById(taskCheckin.taskId)
+  .then((task) => {
+    taskCheckin.task = task;
+    return taskCheckinMapper.checkin(taskCheckin);
+  });
 }
 
 /**
@@ -111,7 +125,7 @@ pub.queryPagedCheckinList = queryParam => {
     queryParam,
     queryParam.pageNumber,
     queryParam.pageSize
-  ) .then(result => {
+  ).then(result => {
     const checkinList = result.values;
     const queryAttach = [];
     for (let i=0; i<checkinList.length; i++) {
@@ -165,6 +179,11 @@ pub.cancelLikeCheckin = (userId, checkin) => {
   const likeArr = checkin.likeArr || [];
   likeArr.pop(userId);
   return taskCheckinMapper.updateById(checkin.id, {likeArr: likeArr})
+}
+
+pub.countByParam = queryParam => {
+  console.log(queryParam);
+  return taskCheckinMapper.countByParam(queryParam);
 }
 
 module.exports = pub;

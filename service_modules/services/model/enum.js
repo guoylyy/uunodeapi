@@ -2233,7 +2233,7 @@ const checkinRecordStatisticsEnum = {
   'EMPTY': {
     'key': 'EMPTY',
     'name': '无记录',
-    'rgba': 'rgba(238,238,238,1)',
+    'color': 'rgba(238,238,238,1)',
   },
   'NORMAL': {
     'key': 'NORMAL',

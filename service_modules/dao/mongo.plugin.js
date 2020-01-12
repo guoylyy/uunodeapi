@@ -93,7 +93,7 @@ function paginatePlugin(schema) {
           .lean(lean);
 
       if (populate) {
-        _forEach(populate, (item) => {
+        _.forEach(populate, (item) => {
           mongoQuery.populate(item);
         });
       }
