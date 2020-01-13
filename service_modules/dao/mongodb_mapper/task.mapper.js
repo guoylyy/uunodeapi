@@ -10,7 +10,7 @@ const taskSchema = require("./schema/task.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 const winston = require("winston");
-const QUERY_SAFE_PARAMS = ["_id", "theme", "language", "oppoLanguage", "duration"];
+const QUERY_SAFE_PARAMS = ["_id", "theme", "language", "oppoLanguage", "duration", "type"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
   "sourceDate",

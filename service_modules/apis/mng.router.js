@@ -302,10 +302,11 @@ router.put('/weapp/banner/:bannerId', bannerController.updateBanner); //更新ba
 router.put('/weapp/banner/:bannerId/sort', bannerController.updateBannerSort); //更新banner状态
 
 // 2.任务推送
+const taskController = require('./mng/weapp/task.controller');
 router.post('/weapp/task/push'); // 设置推送
 router.post('/weapp/task'); //创建新任务
 router.put('/weapp/task'); //更新任务状态
-router.get('/weapp/tasks') //分页获取任务列表
+router.get('/weapp/tasks', taskController.getTaskList) //分页获取任务列表
 
 // 3.文章管理
 router.get('/weapp/lessons') //文章列表 分页
