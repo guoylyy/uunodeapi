@@ -294,5 +294,23 @@ router.delete('/admin/advEntity/:advId', advEntityController.removeAdvEntity);
 router.post('/admin/advEntity', advEntityController.createNewAdvEntity);
 router.put('/admin/advEntity/:advId', advEntityController.updateAdvEntity);
 
+// 微信小程序相关
+// 1.banner
+const bannerController = require('./mng/weapp/banner.controller');
+router.get('/weapp/banners', bannerController.getBanners); //获取banner列表
+router.put('/weapp/banner/:bannerId', bannerController.updateBanner); //更新banner状态
+router.put('/weapp/banner/:bannerId/sort', bannerController.updateBannerSort); //更新banner状态
+
+// 2.任务推送
+router.post('/weapp/task/push'); // 设置推送
+router.post('/weapp/task'); //创建新任务
+router.put('/weapp/task'); //更新任务状态
+router.get('/weapp/tasks') //分页获取任务列表
+
+// 3.文章管理
+router.get('/weapp/lessons') //文章列表 分页
+router.get('/weapp/lesson/:lessonId') // 获取文章详情
+router.put('/weapp/lesson/:lessonId') // 更新文章
+router.delete('/weapp/lesson/:lessonId') // 删除文章
 
 module.exports = router;
