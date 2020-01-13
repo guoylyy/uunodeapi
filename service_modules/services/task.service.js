@@ -95,7 +95,6 @@ pub.fetchTodayTask = () => {
         taskCheckinMapper.countByParam({ taskId: pushTask.taskId }),
         taskCheckinMapper.queryCheckinList({ taskId: pushTask.taskId })
       ]).then(([task, checkinCount, checkinList]) => {
-        task.checkinCount = checkinCount < 10 ? 10 : checkinCount;
         let fetchUser = [];
         new Set(_.map(checkinList, "userId")).forEach(userId => {
           fetchUser.push(userMapper.fetchByParam({ id: userId }));
@@ -112,6 +111,7 @@ pub.fetchTodayTask = () => {
           while (task.headImgUrlList.length < 5) {
             task.headImgUrlList.push(defaultHeadImg[task.headImgUrlList.length])
           }
+          task.checkinCount = userList.length < 10 ? 10 : userList.length;
           return task;
         });
       });
@@ -169,15 +169,26 @@ pub.queryPagedCheckinList = queryParam => {
         queryAttach.push(attachMapper.fetchById(checkinList[i].attach));
       }
       return Promise.all(queryAttach).then(attachList => {
+        const queryUser = [];
         for (let i = 0; i < checkinList.length; i++) {
           attachList[i].url = qiniuComponent.getAccessibleUrl(
             attachList[i].attachType,
             attachList[i].key
           );
-          checkinList[i].attach = attachList[i];
+          const checkin = checkinList[i];
+          checkin.viewerCount = new Set(_.map(checkin.viewLog, 'userId')).size;
+          checkin.viewLog = undefined;
+          checkin.attach = attachList[i];
+          queryUser.push(userMapper.fetchByParam({id: checkin.userId}))
         }
-        result.values = checkinList;
-        return result;
+        return Promise.all(queryUser).then(userList => {
+          for (let i = 0; i < checkinList.length; i++) {
+            const checkin = checkinList[i];
+            checkin.user = _.pick(userList[i], ['id', 'name', 'headImgUrl']);
+          }
+          result.values = checkinList;
+          return result;
+        });
       });
     });
 };
