@@ -28,7 +28,6 @@ pub.getTaskList = (req, res) => {
         queryParam.duration = queryParam.duration || {};
         queryParam.duration.$lt = queryParam.ltDuration
       }
-      console.log(queryParam)
       return taskService.queryTaskList(queryParam);
     })
     .then(result => {
@@ -124,6 +123,7 @@ pub.getCheckinList = (req, res) => {
     result.values.forEach((checkin) => {
       checkin.likeCount = (checkin.likeArr || []).length;
       checkin.liked = (checkin.likeArr || []).includes(req.__CURRENT_USER.id);
+      checkin.likeArr = undefined;
     })
     return apiRender.renderPageResult(
       res,
@@ -185,6 +185,22 @@ pub.updateTaskCheckin = (req, res) => {
   return schemaValidator.validatePromise(taskSchema.updateCheckinSchema, req.body)
   .then((param) => {
     return taskService.updateTaskCheckin(req.__TASK_CHECKIN_ITEM.id, param);
+  })
+  .then(() => {
+    return apiRender.renderSuccess(res)
+  })
+  .catch(req.__ERROR_HANDLER);
+}
+
+/**
+ * 增加观看人数
+ */
+pub.addViewLog = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
+  .then((param) => {
+    const viewLog = req.__TASK_CHECKIN_ITEM.viewLog || [];
+    viewLog.push({userId: req.__CURRENT_USER.id, createdAt: new Date()});
+    return taskService.updateTaskCheckin(req.__TASK_CHECKIN_ITEM.id, {viewLog: viewLog});
   })
   .then(() => {
     return apiRender.renderSuccess(res)

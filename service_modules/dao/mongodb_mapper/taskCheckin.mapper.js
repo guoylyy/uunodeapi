@@ -10,7 +10,18 @@ const taskCheckinSchema = require("./schema/taskCheckin.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 const winston = require("winston");
-const QUERY_SAFE_PARAMS = ["_id", "userId", "taskId", "practiceMode", "yearMonth", "task.language", "task.oppoLanguage", "task.duration", "task.theme"];
+const QUERY_SAFE_PARAMS = [
+  "_id",
+  "userId",
+  "taskId",
+  "practiceMode",
+  "yearMonth",
+  "task.language",
+  "task.oppoLanguage",
+  "task.duration",
+  "task.theme",
+  "viewLog"
+];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
   "attach",
@@ -19,7 +30,8 @@ const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "createdAt",
   "task",
   "practiceMode",
-  "taskId"
+  "taskId",
+  "viewLog"
 ]);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([
   { column: "createdAt", isDescending: true }
@@ -48,33 +60,36 @@ pub.queryPagedCheckinList = (queryParam, pageNumber = 1, pageSize = 10) => {
 /**
  * 打卡列表 不分页
  */
-pub.queryCheckinList = (queryParam) => {
+pub.queryCheckinList = queryParam => {
   return taskCheckinSchema.queryList(
     queryParam,
     QUERY_SAFE_PARAMS,
     QUERY_SELECT_COLUMNS,
     QUERY_ORDER_BY
   );
-}
+};
 
 /**
  * 创建打卡
  */
-pub.checkin = (taskCheckin) => {
+pub.checkin = taskCheckin => {
   const date = new Date();
-  const year = date.getFullYear(); 
-  let month = date.getMonth()+1;
-  month = (month<10 ? "0"+month : month); 
-  taskCheckin.yearMonth = (year.toString()+month.toString());
+  const year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  month = month < 10 ? "0" + month : month;
+  taskCheckin.yearMonth = year.toString() + month.toString();
   return taskCheckinSchema.createItem(taskCheckin);
-}
+};
 
 /**
  * 根据id更新taskCheckin
  */
-const safeUpdateParamList = ['likeArr', 'title']; // 限制可更新的字段
+const safeUpdateParamList = ["likeArr", "title", "viewLog"]; // 限制可更新的字段
 pub.updateById = (taskCheckinId, taskCheckin) => {
-  const pickedCheckinItem = mongoUtil.pickUpdateParams(taskCheckin, safeUpdateParamList);
+  const pickedCheckinItem = mongoUtil.pickUpdateParams(
+    taskCheckin,
+    safeUpdateParamList
+  );
 
   return taskCheckinSchema.updateItemById(taskCheckinId, pickedCheckinItem);
 };
@@ -82,23 +97,22 @@ pub.updateById = (taskCheckinId, taskCheckin) => {
 /**
  * 获取打卡详情
  */
-pub.findById = (taskCheckinId) => {
+pub.findById = taskCheckinId => {
   return taskCheckinSchema.findItemById(taskCheckinId);
 };
 
 /**
- * 
+ *
  */
-pub.countByParam = (param) => {
+pub.countByParam = param => {
   return taskCheckinSchema.count(param);
-}
+};
 
 /**
  * 根据id删除打卡记录
  */
-pub.deleteById = (id) => {
+pub.deleteById = id => {
   return taskCheckinSchema.destroyItem(id);
-}
-
+};
 
 module.exports = pub;
