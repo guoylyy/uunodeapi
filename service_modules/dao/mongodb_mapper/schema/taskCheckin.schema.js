@@ -17,6 +17,10 @@ let taskLanguageEnum = _.keys(enumModel.taskLanguageEnum)
 let taskThemeEnum = _.keys(enumModel.taskThemeEnum)
 let taskLevelEnum = _.keys(enumModel.taskLevelEnum)
 
+let taskCheckinViewLog = new Schema({
+  userId: {type: Number, required: true}
+})
+
 // create a schema
 let taskCheckinSchema = new Schema({
   title: { type: String, required: true },
@@ -37,7 +41,11 @@ let taskCheckinSchema = new Schema({
   practiceMode: { type: String, required:true, enum: _.keys(practiceModeEnum)},
   yearMonth: { type: String, required: true },
   practiceTime: Number,
-  audioDuration: Number
+  audioDuration: Number,
+  viewLog: [{
+    userId: {type: Number, required : true },
+    createdAt: {type: Date, required: true, default: Date.now}
+  }]
 });
 
 // create a schema named as Lesson, and collection as Lesson
