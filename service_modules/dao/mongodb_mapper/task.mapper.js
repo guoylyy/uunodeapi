@@ -53,4 +53,11 @@ pub.findById = (taskId) => {
   return taskSchema.findItemById(taskId)
 };
 
+/**
+ * 根据id删除任务
+ */
+pub.deleteById = id => {
+  return taskSchema.destroyItem(id);
+};
+
 module.exports = pub;

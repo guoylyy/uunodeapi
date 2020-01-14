@@ -249,4 +249,8 @@ pub.deleteTaskCheckin = checkinId => {
   return taskCheckinMapper.deleteById(checkinId);
 };
 
+pub.deleteTask = taskId => {
+  return taskMapper.deleteById(taskId);
+}
+
 module.exports = pub;
