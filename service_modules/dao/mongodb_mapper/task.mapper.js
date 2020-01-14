@@ -60,4 +60,11 @@ pub.deleteById = id => {
   return taskSchema.destroyItem(id);
 };
 
+/**
+ * 创建任务
+ */
+pub.createTask = task => {
+  return taskSchema.createItem(task);
+}
+
 module.exports = pub;

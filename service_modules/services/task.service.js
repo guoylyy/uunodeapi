@@ -79,8 +79,6 @@ pub.fetchById = taskId => {
   });
 };
 
-
-
 /**
  * 获取当日任务
  */
@@ -109,7 +107,9 @@ pub.fetchTodayTask = () => {
             "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJ0LP3VXv0uYuyluLNbr4ytD9TjYhzorcnLz5OdZ2FHpjTsdC72QVibeWrL4RezPoTmMfB1XxoYOXw/132"
           ];
           while (task.headImgUrlList.length < 5) {
-            task.headImgUrlList.push(defaultHeadImg[task.headImgUrlList.length])
+            task.headImgUrlList.push(
+              defaultHeadImg[task.headImgUrlList.length]
+            );
           }
           task.checkinCount = userList.length < 10 ? 10 : userList.length;
           return task;
@@ -176,15 +176,15 @@ pub.queryPagedCheckinList = queryParam => {
             attachList[i].key
           );
           const checkin = checkinList[i];
-          checkin.viewerCount = new Set(_.map(checkin.viewLog, 'userId')).size;
+          checkin.viewerCount = new Set(_.map(checkin.viewLog, "userId")).size;
           checkin.viewLog = undefined;
           checkin.attach = attachList[i];
-          queryUser.push(userMapper.fetchByParam({id: checkin.userId}))
+          queryUser.push(userMapper.fetchByParam({ id: checkin.userId }));
         }
         return Promise.all(queryUser).then(userList => {
           for (let i = 0; i < checkinList.length; i++) {
             const checkin = checkinList[i];
-            checkin.user = _.pick(userList[i], ['id', 'name', 'headImgUrl']);
+            checkin.user = _.pick(userList[i], ["id", "name", "headImgUrl"]);
           }
           result.values = checkinList;
           return result;
@@ -249,8 +249,35 @@ pub.deleteTaskCheckin = checkinId => {
   return taskCheckinMapper.deleteById(checkinId);
 };
 
+/**
+ * 删除任务
+ */
 pub.deleteTask = taskId => {
   return taskMapper.deleteById(taskId);
-}
+};
+
+/**
+ * 创建任务
+ */
+pub.createTask = task => {
+  return Promise.all([
+    attachMapper.fetchById(task.pic),
+    attachMapper.fetchById(task.bigPic)
+  ]).then(([picAttach, bigPicAttach]) => {
+    if (_.isNil(picAttach) || _.isNil(bigPicAttach)) {
+      console.log("参数错误！！！ task: %s", task);
+      return Promise.reject(commonError.PARAMETER_ERROR("图片附件id不正确"));
+    }
+    task.pic = qiniuComponent.getAccessibleUrl(
+      picAttach.attachType,
+      picAttach.key
+    );
+    task.bigPic = qiniuComponent.getAccessibleUrl(
+      bigPicAttach.attachType,
+      bigPicAttach.key
+    );
+    return taskMapper.createTask(task);
+  });
+};
 
 module.exports = pub;

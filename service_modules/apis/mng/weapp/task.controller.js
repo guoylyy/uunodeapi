@@ -32,11 +32,30 @@ pub.getTaskList = (req, res) => {
     .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 删除任务
+ */
 pub.deleteTask = (req, res) => {
   return schemaValidator
     .validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
     .then(taskId => {
       return taskService.deleteTask(taskId);
+    })
+    .then(result => {
+      console.log(result);
+      return apiRender.renderSuccess(res);
+    })
+    .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 创建任务
+ */
+pub.createTask = (req, res) => {
+  return schemaValidator
+    .validatePromise(taskSchema.createTaskSchema, req.body)
+    .then(task => {
+      return taskService.createTask(task);
     })
     .then(result => {
       console.log(result);
