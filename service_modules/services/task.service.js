@@ -11,6 +11,7 @@ const attachMapper = require("../dao/mongodb_mapper/attach.mapper");
 const commonError = require("./model/common.error");
 const qiniuComponent = require("./component/qiniu.component");
 const userMapper = require("../dao/mysql_mapper/user.mapper");
+const userFileMapper = require("../dao/mongodb_mapper/userFile.mapper");
 const moment = require('moment')
 
 const pub = {};
@@ -127,10 +128,15 @@ pub.fetchTodayTask = () => {
  * 打卡
  */
 pub.checkin = taskCheckin => {
-  taskMapper.findById(taskCheckin.taskId).then(task => {
+  return Promise.all([taskMapper.findById(taskCheckin.taskId), userFileMapper.fetchById(taskCheckin.attach)])
+  .then(([task, userFile]) => {
+    if (_.isNil(userFile)) {
+      winston.error("获取用户文件失败，参数错误！！！ taskCheckin.attach: %s", taskCheckin.attach);
+      return Promise.reject(commonError.PARAMETER_ERROR('音频附件不存在'));
+    }
     taskCheckin.task = task;
     return taskCheckinMapper.checkin(taskCheckin);
-  });
+  })
 };
 
 /**
@@ -140,14 +146,10 @@ pub.getCheckinList = queryParam => {
   return taskCheckinMapper.queryCheckinList(queryParam).then(checkinList => {
     const queryAttach = [];
     for (let i = 0; i < checkinList.length; i++) {
-      queryAttach.push(attachMapper.fetchById(checkinList[i].attach));
+      queryAttach.push(userFileMapper.fetchById(checkinList[i].attach));
     }
     return Promise.all(queryAttach).then(attachList => {
       for (let i = 0; i < checkinList.length; i++) {
-        attachList[i].url = qiniuComponent.getAccessibleUrl(
-          attachList[i].attachType,
-          attachList[i].key
-        );
         checkinList[i].attach = attachList[i];
       }
       return checkinList;
@@ -169,15 +171,11 @@ pub.queryPagedCheckinList = queryParam => {
       const checkinList = result.values;
       const queryAttach = [];
       for (let i = 0; i < checkinList.length; i++) {
-        queryAttach.push(attachMapper.fetchById(checkinList[i].attach));
+        queryAttach.push(userFileMapper.fetchById(checkinList[i].attach));
       }
       return Promise.all(queryAttach).then(attachList => {
         const queryUser = [];
         for (let i = 0; i < checkinList.length; i++) {
-          attachList[i].url = qiniuComponent.getAccessibleUrl(
-            attachList[i].attachType,
-            attachList[i].key
-          );
           const checkin = checkinList[i];
           checkin.viewerCount = new Set(_.map(checkin.viewLog, "userId")).size;
           checkin.viewLog = undefined;
