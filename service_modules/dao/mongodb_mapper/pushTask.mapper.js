@@ -46,4 +46,8 @@ pub.findByParam = (queryParam) => {
   return pushTaskSchema.findItemByParam(queryParam, QUERY_SAFE_PARAMS);
 };
 
+pub.createPushTask = pushTask => {
+  return pushTaskSchema.createItem(pushTask);
+}
+
 module.exports = pub;

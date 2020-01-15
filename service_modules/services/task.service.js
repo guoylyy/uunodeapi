@@ -11,6 +11,7 @@ const attachMapper = require("../dao/mongodb_mapper/attach.mapper");
 const commonError = require("./model/common.error");
 const qiniuComponent = require("./component/qiniu.component");
 const userMapper = require("../dao/mysql_mapper/user.mapper");
+const moment = require('moment')
 
 const pub = {};
 
@@ -83,16 +84,14 @@ pub.fetchById = taskId => {
  * 获取当日任务
  */
 pub.fetchTodayTask = () => {
-  const currentDate = new Intl.DateTimeFormat("en-US").format(new Date());
-  let param = { pushAt: currentDate };
+  let param = { pushAt: moment().format('YYYY-MM-DD') };
   return pushTaskMapper.findByParam(param).then(pushTask => {
     // task对象 打卡数量 打卡人员列表 promise all
     if (!_.isNil(pushTask)) {
       return Promise.all([
         pub.fetchById(pushTask.taskId),
-        taskCheckinMapper.countByParam({ taskId: pushTask.taskId }),
         taskCheckinMapper.queryCheckinList({ taskId: pushTask.taskId })
-      ]).then(([task, checkinCount, checkinList]) => {
+      ]).then(([task, checkinList]) => {
         let fetchUser = [];
         new Set(_.map(checkinList, "userId")).forEach(userId => {
           fetchUser.push(userMapper.fetchByParam({ id: userId }));
@@ -269,5 +268,12 @@ pub.createTask = task => {
 pub.updateTask = task => {
   return taskMapper.updateTaskById(task);
 };
+
+/**
+ * 创建每日推送任务
+ */
+pub.createPushTask = pushTask => {
+  return pushTaskMapper.createPushTask(pushTask);
+}
 
 module.exports = pub;

@@ -31,6 +31,7 @@ const userService = require('../services/user.service');
 const couponService = require('../services/coupon.service');
 const userWithdrawService = require('../services/userWithdraw.service');
 const clazzExitService = require('../services/clazzExit.servie');
+const taskService = require('../services/task.service');
 
 const enumModel = require('../services/model/enum');
 
@@ -586,5 +587,25 @@ pub.preloadUserItem = (req, res, next) => {
       })
       .catch(req.__ERROR_HANDLER);
 };
+
+
+/**
+ * 预加载weapp课程任务
+ */
+pub.preloadTask = (req, res, next) => {
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
+  .then((taskId) => {
+    return taskService.fetchById(taskId)
+    .then(task => {
+      if (_.isNil(task)) {
+        return apiRender.renderNotFound(res);
+      }
+      req.__TASK_ITEM = task;
+      next()
+      return null;
+    })
+  }).catch(req.__ERROR_HANDLER);
+}
+
 
 module.exports = pub;

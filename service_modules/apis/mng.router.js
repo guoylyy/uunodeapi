@@ -295,6 +295,7 @@ router.post('/admin/advEntity', advEntityController.createNewAdvEntity);
 router.put('/admin/advEntity/:advId', advEntityController.updateAdvEntity);
 
 // 微信小程序相关
+const weappMiddleware = middleware;
 // 1.banner
 const bannerController = require('./mng/weapp/banner.controller');
 router.get('/weapp/banners', bannerController.getBanners); //获取banner列表
@@ -303,10 +304,11 @@ router.put('/weapp/banner/:bannerId/sort', bannerController.updateBannerSort); /
 
 // 2.任务推送
 const taskController = require('./mng/weapp/task.controller');
-router.post('/weapp/task/push'); // 设置推送
-router.post('/weapp/task', taskController.createTask); //创建新任务 讲者字段不明确
-router.put('/weapp/task/:taskId', taskController.updateTask); //更新任务
+router.post('/weapp/task', taskController.createTask); //创建新任务 
 router.get('/weapp/tasks', taskController.getTaskList) //分页获取任务列表
+router.use('/weapp/task/:taskId', weappMiddleware.preloadTask)
+router.post('/weapp/task/:taskId/push', taskController.pushTask); // 设置推送
+router.put('/weapp/task/:taskId', taskController.updateTask); //更新任务
 router.delete('/weapp/task/:taskId', taskController.deleteTask); //删除任务
 
 // 3.文章管理

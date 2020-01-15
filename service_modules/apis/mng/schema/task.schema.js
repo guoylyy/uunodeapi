@@ -38,21 +38,8 @@ pub.createTaskSchema = Joi.object().keys({
   author: Joi.string()
 });
 
-
-pub.checkinSchema = Joi.object().keys({
-  attach: commonSchema.mongoIdSchema.required(),
-  title: Joi.string().required(),
-  practiceMode: Joi.string().valid(_.keys(enumModel.miniKYPracticeModeEnum)).required(),
-  practiceTime: Joi.number().integer().positive().required(),
-  audioDuration: Joi.number().integer().positive().required()
-});
-
-pub.checkinPagedSchema = pagedBaseSchema.keys({
-  practiceMode: Joi.string().valid(_.keys(enumModel.miniKYPracticeModeEnum))
-});
-
-pub.updateCheckinSchema = Joi.object().keys({
-  title: Joi.string().required(),
+pub.pushTaskSchema = Joi.object().keys({
+  pushAt: Joi.date().required(),
 });
 
 module.exports = pub;

@@ -42,8 +42,9 @@ pub.deleteTask = (req, res) => {
       return taskService.deleteTask(taskId);
     })
     .then(result => {
-      console.log(result);
-      return apiRender.renderSuccess(res);
+      return _.isNil(result)
+      ? apiRender.renderParameterError(res, "删除失败")
+      : apiRender.renderSuccess(res);
     })
     .catch(req.__ERROR_HANDLER);
 };
@@ -58,7 +59,6 @@ pub.createTask = (req, res) => {
       return taskService.createTask(task);
     })
     .then(result => {
-      console.log(result);
       return apiRender.renderSuccess(res);
     })
     .catch(req.__ERROR_HANDLER);
@@ -75,10 +75,36 @@ pub.updateTask = (req, res) => {
       return taskService.updateTask(task);
     })
     .then(result => {
-      console.log(result);
-      return apiRender.renderSuccess(res);
+      return _.isNil(result)
+        ? apiRender.renderParameterError(res, "更新失败")
+        : apiRender.renderSuccess(res);
     })
     .catch(req.__ERROR_HANDLER);
 };
+
+const moment = require('moment')
+/**
+ * 设置推送
+ */
+pub.pushTask = (req, res) => {
+  return schemaValidator
+    .validatePromise(taskSchema.pushTaskSchema, req.body)
+    .then(pushTask => {
+      pushTask.taskId = req.__TASK_ITEM.id;
+      pushTask.pushAt = moment(pushTask.pushAt).format('YYYY-MM-DD')
+      console.log(pushTask);
+      console.log(moment(pushTask.pushDate).format('YYYY-MM-DD'));
+      console.log(moment().subtract(10, 'days').format());
+      console.log(moment(pushTask.pushDate).startOf('day').format() == moment().startOf('day').format());
+      return taskService.createPushTask(pushTask);
+    })
+    .then(result => {
+      return _.isNil(result)
+        ? apiRender.renderParameterError(res, "创建推送失败")
+        : apiRender.renderSuccess(res);
+    })
+    .catch(req.__ERROR_HANDLER);
+};
+
 
 module.exports = pub;
