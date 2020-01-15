@@ -26,6 +26,7 @@ let lessonSchema = new Schema({
   description: {type: String, required: true},
   author: {type: String, required: false},
   status: { type: String, required:true, enum: lessonStatusEnum},
+  views: {type: Number, default: 0}
 });
 
 // create a schema named as Lesson, and collection as Lesson

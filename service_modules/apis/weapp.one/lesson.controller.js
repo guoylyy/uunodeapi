@@ -38,15 +38,19 @@ pub.getLesson = (req, res) => {
   .then(lessonId => {
     return lessonService.fetchById(lessonId);
   })
-  .then(result => {
-    return apiRender.renderBaseResult(res, result)
+  .then(lesson => {
+    if (_.isNil(lesson) || _.isEqual(lesson.status, 'PENDING')) {
+      return apiRender.renderNotFound(res);
+    }
+    const updateLesson = {id: lesson.id, views: (lesson.views || 0) + 1}
+    lessonService.updateLesson(updateLesson);
+    return apiRender.renderBaseResult(res, lesson)
   })
   .catch(req.__ERROR_HANDLER);
 };
 
 /**
  * 获取banner列表
- * 
  */
 pub.getBanners = (req, res) => {
   return schemaValidator

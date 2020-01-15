@@ -73,7 +73,7 @@ pub.destroy = (chckinId) => {
 
 /**
  * 创建打卡记录
- *
+*
  * @param checkinItem
  * @returns {checkinItem}
  */
