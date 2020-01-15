@@ -302,7 +302,7 @@ router.get('/weapp/banners', bannerController.getBanners); //获取banner列表
 router.put('/weapp/banner/:bannerId', bannerController.updateBanner); //更新banner状态
 router.put('/weapp/banner/:bannerId/sort', bannerController.updateBannerSort); //更新banner状态
 
-// 2.任务推送
+// 2.任务
 const taskController = require('./mng/weapp/task.controller');
 router.post('/weapp/task', taskController.createTask); //创建新任务 
 router.get('/weapp/tasks', taskController.getTaskList) //分页获取任务列表
@@ -310,6 +310,8 @@ router.use('/weapp/task/:taskId', weappMiddleware.preloadTask)
 router.post('/weapp/task/:taskId/push', taskController.pushTask); // 设置推送
 router.put('/weapp/task/:taskId', taskController.updateTask); //更新任务
 router.delete('/weapp/task/:taskId', taskController.deleteTask); //删除任务
+
+router.get('weapp/pushTasks') // 推送列表
 
 // 3.文章管理
 router.get('/weapp/lessons') //文章列表 分页

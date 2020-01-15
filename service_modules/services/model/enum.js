@@ -2132,11 +2132,11 @@ exports.taskTypeEnum = taskTypeEnum;
 
 // 任务状态
 const taskStatusEnum = {
-  'PENDING': {
+  PENDING: {
     key: 'PENDING',
     name: '草稿'
   },
-  'PUBLISHED': {
+  PUBLISHED: {
     key: 'PUBLISHED',
     name: '已发布'
   }
