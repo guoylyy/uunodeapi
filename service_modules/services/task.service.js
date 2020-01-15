@@ -318,9 +318,19 @@ pub.deletePushTask = pushTaskId => {
  * 统计200天之内的打卡统计数据
  */
 pub.fetchTaskCheckinStatistics = userId => {
-  return taskCheckinMapper.sumGroupByUserIdAndDate(userId, 200)
-  .then(result => {
-    console.log('result='+ result);
+  return Promise.all([
+    taskCheckinMapper.sumGroupByUserIdAndDate(userId, 200),
+    taskCheckinMapper.sumPracticeTime(userId),
+    taskCheckinMapper.sumTodayPracticeTime(userId),
+    taskCheckinMapper.sumPracticeTimeByLanguage(userId)
+  ])
+  .then(([records, [totalPracticeTime], [todayPracticeTime], languagePracticeTime]) => {
+    const result = {
+      records: records,
+      totalPracticeTime: (!!totalPracticeTime ? totalPracticeTime.practiceTime : 0),
+      todayPracticeTime: (!!todayPracticeTime ? todayPracticeTime.practiceTime : 0),
+      languagePracticeTime: languagePracticeTime || [],
+    };
     return result;
   });
 }

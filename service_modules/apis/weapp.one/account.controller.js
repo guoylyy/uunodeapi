@@ -298,29 +298,11 @@ pub.fetchTaskCheckinStatistics = (req, res) => {
   .then((records) => {
     const result = {};
     result.records = records;
-    // [
-    //   {
-    //     "date": new Date('2019-11-25'),
-    //     "quantity" : "MORE"
-    //   },
-    //   {
-    //     "date": "2019-12-26T00:00:00.000Z",
-    //     "quantity" : "LESS"
-    //   },
-    //   {
-    //     "date": "2019-12-27T00:00:00.000Z",
-    //     "quantity" : "NORMAL"
-    //   },
-    //   {
-    //     "date": "2019-12-28T00:00:00.000Z",
-    //     "quantity" : "EMPTY"
-    //   },
-    // ]
     result.todayPracticeTime = 100;
     result.totalPracticeTime = 1000;
     result.enTask = 400;
     result.zhTask = 600;
-    return apiRender.renderBaseResult(res, result);
+    return apiRender.renderBaseResult(res, records);
   })
   .catch(req.__ERROR_HANDLER);
 }
