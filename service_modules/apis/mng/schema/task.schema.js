@@ -35,7 +35,8 @@ pub.createTaskSchema = Joi.object().keys({
   pausePoints: Joi.array(),
   terminology: Joi.array(),
   attachText: Joi.string(),
-  author: Joi.string()
+  author: Joi.string(),
+  status: Joi.string().valid(_.keys(enumModel.taskStatusEnum)).required(),
 });
 
 pub.pushTaskSchema = Joi.object().keys({

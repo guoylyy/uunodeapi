@@ -2130,6 +2130,20 @@ const taskTypeEnum = {
 
 exports.taskTypeEnum = taskTypeEnum;
 
+// 任务状态
+const taskStatusEnum = {
+  'PENDING': {
+    key: 'PENDING',
+    name: '草稿'
+  },
+  'PUBLISHED': {
+    key: 'PUBLISHED',
+    name: '已发布'
+  }
+}
+
+exports.taskStatusEnum =taskStatusEnum;
+
 //用户证书枚举字段
 const userCertificationEnum = {
   'CET-4': {

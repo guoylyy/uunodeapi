@@ -14,6 +14,7 @@ let taskTypeEnum = _.keys(enumModel.taskTypeEnum);
 let taskLanguageEnum = _.keys(enumModel.taskLanguageEnum)
 let taskThemeEnum = _.keys(enumModel.taskThemeEnum)
 let taskLevelEnum = _.keys(enumModel.taskLevelEnum)
+let taskStatusEnum = _.keys(enumModel.taskStatusEnum)
 
 // create a schema
 let taskSchema = new Schema({
@@ -23,6 +24,7 @@ let taskSchema = new Schema({
   oppoLanguage: { type: String, required:true, enum: taskLanguageEnum},
   level: { type: String, required:true, enum: taskLevelEnum},
   theme: { type: String, required:true, enum: taskThemeEnum},
+  status: { type: String, required:true, enum: taskStatusEnum},
   description: {type: String, required: true},
   attachText: {type: String, required: true},
   pic: {type: String, required: true},

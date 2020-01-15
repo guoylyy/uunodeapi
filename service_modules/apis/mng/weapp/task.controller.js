@@ -92,10 +92,6 @@ pub.pushTask = (req, res) => {
     .then(pushTask => {
       pushTask.taskId = req.__TASK_ITEM.id;
       pushTask.pushAt = moment(pushTask.pushAt).format('YYYY-MM-DD')
-      console.log(pushTask);
-      console.log(moment(pushTask.pushDate).format('YYYY-MM-DD'));
-      console.log(moment().subtract(10, 'days').format());
-      console.log(moment(pushTask.pushDate).startOf('day').format() == moment().startOf('day').format());
       return taskService.createPushTask(pushTask);
     })
     .then(result => {
