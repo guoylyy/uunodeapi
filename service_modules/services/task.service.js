@@ -316,5 +316,16 @@ pub.deletePushTask = pushTaskId => {
   return pushTaskMapper.deleteById(pushTaskId);
 };
 
+/**
+ * 统计200天之内的打卡统计数据
+ */
+pub.fetchTaskCheckinStatistics = userId => {
+  return taskCheckinMapper.sumGroupByUserIdAndDate(userId, 200)
+  .then(result => {
+    console.log('result='+ result);
+    return result;
+  });
+}
+
 
 module.exports = pub;

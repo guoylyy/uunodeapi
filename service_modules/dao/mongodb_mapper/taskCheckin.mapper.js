@@ -115,4 +115,20 @@ pub.deleteById = id => {
   return taskCheckinSchema.destroyItem(id);
 };
 
+const moment = require('moment');
+
+/**
+ * 统计单个用户的每天打卡数量
+ */
+pub.sumGroupByUserIdAndDate = (userId, beforeDays) => {
+  const queryDate = moment().subtract('days', beforeDays).toDate();
+  return taskCheckinSchema.aggregate([
+    {$match: {'userId': userId, 'createdAt': {$gte: queryDate}}},
+    {$project: {date: {$substr: ["$createdAt", 0, 10]}}},
+    {$group: {_id: "$date", quantity: {$sum: 1}}},
+    {$project: {_id: undefined, date:'$_id', quantity:'$quantity'}},
+    {$sort: {date: 1}}
+  ]);
+};
+
 module.exports = pub;
