@@ -28,9 +28,35 @@ const pub = {};
  * @param queryParam
  * @returns {Promise.<TResult>}
  */
-pub.queryBannerList = (queryParam, pageNumber = 1, pageSize = 10) => {
+pub.queryBannerList = (queryParam) => {
   queryParam.active = true;
-  return bannerSchema.queryList(queryParam, QUERY_SAFE_PARAM_LIST, QUERY_SELECT_COLUMNS);
+  return bannerSchema.queryList(queryParam, QUERY_SAFE_PARAM_LIST, QUERY_SELECT_COLUMNS, QUERY_ORDER_BY);
 };
+
+/**
+ * 根据id更新banner
+ */
+const safeUpdateParamList = ["title", "image", "active", "linkUrl", "sort"]; // 限制可更新的字段
+pub.updateBannerById = (banner) => {
+  return bannerSchema.updateItemById(banner.id, mongoUtil.pickUpdateParams(
+    banner,
+    safeUpdateParamList
+  ));
+};
+
+/**
+ * 根据id查找banner对象
+ */
+pub.findById = (id) => {
+  return bannerSchema.findItemById(id);
+}
+
+const safeParamList = ['sort']
+/**
+ * 根据param查找banner对象
+ */
+pub.findByParam = (param) => {
+  return bannerSchema.findItemByParam(param, safeParamList);
+}
 
 module.exports = pub;

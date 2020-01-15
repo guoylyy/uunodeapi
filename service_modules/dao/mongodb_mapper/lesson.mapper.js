@@ -10,22 +10,19 @@ const lessonSchema = require("./schema/lesson.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 
-const QUERY_SAFE_PARAMS = ["_id", "type"];
+const QUERY_SAFE_PARAMS = ["_id", "types", "title", "status"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
-  "type",
   "image",
-  "isHot",
-  "isTop",
+  "types",
   "linkType",
-  "createAt",
+  "createdAt",
   "linkUrl",
-  "description"
+  "description",
+  "status"
 ]);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([
-  { column: "isTop", isDescending: true },
-  { column: "isHot", isDescending: true },
-  { column: "createAt", isDescending: true }
+  { column: "createdAt", isDescending: true }
 ]);
 
 const pub = {};
@@ -54,6 +51,27 @@ pub.queryPagedLessonList = (queryParam, pageNumber = 1, pageSize = 10) => {
  */
 pub.findById = (lessonId) => {
   return lessonSchema.findItemById(lessonId)
+}
+
+/**
+ * 创建课程
+ */
+pub.createLesson = lesson => {
+  return lessonSchema.createItem(lesson);
+}
+
+/**
+ * 更新课程
+ */
+pub.updateLessonById = lesson => {
+  return lessonSchema.updateItemById(lesson.id, lesson);
+}
+
+/**
+ * 删除课程
+ */
+pub.deleteLessonById = lesson => {
+  return lessonSchema.destroyItem(lesson);
 }
 
 module.exports = pub;

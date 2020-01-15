@@ -294,5 +294,34 @@ router.delete('/admin/advEntity/:advId', advEntityController.removeAdvEntity);
 router.post('/admin/advEntity', advEntityController.createNewAdvEntity);
 router.put('/admin/advEntity/:advId', advEntityController.updateAdvEntity);
 
+// 微信小程序相关
+const weappMiddleware = middleware;
+// 1.banner
+const bannerController = require('./mng/weapp/banner.controller');
+router.get('/weapp/banners', bannerController.getBanners); //获取banner列表
+router.put('/weapp/banner/:bannerId', bannerController.updateBanner); //更新banner状态
+router.put('/weapp/banner/:bannerId/sort', bannerController.updateBannerSort); //更新banner状态
+
+// 2.任务
+const taskController = require('./mng/weapp/task.controller');
+router.post('/weapp/task', taskController.createTask); //创建新任务 
+router.get('/weapp/tasks', taskController.getTaskList) //分页获取任务列表
+router.use('/weapp/task/:taskId', weappMiddleware.preloadTask)
+router.get('/weapp/task/:taskId', taskController.getTask)
+router.post('/weapp/task/:taskId/push', taskController.pushTask); // 设置推送
+router.put('/weapp/task/:taskId', taskController.updateTask); //更新任务
+router.delete('/weapp/task/:taskId', taskController.deleteTask); //删除任务
+
+router.get('/weapp/pushTasks', taskController.pushTaskList) // 推送列表
+router.delete('/weapp/pushTask/:pushTaskId', taskController.deletePushTask) // 删除推送
+
+// 3.文章管理
+const lessonController = require('./mng/weapp/lesson.controller');
+router.get('/weapp/lessons',lessonController.getLessonList) //文章列表 分页
+router.post('/weapp/lesson',lessonController.createLesson) //创建文章
+router.use('/weapp/lesson/:lessonId', weappMiddleware.preloadLesson)
+router.get('/weapp/lesson/:lessonId', lessonController.getLesson) // 获取文章详情
+router.put('/weapp/lesson/:lessonId', lessonController.updateLesson) // 更新文章
+router.delete('/weapp/lesson/:lessonId', lessonController.deleteLesson) // 删除文章
 
 module.exports = router;

@@ -10,7 +10,16 @@ const taskSchema = require("./schema/task.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 const winston = require("winston");
-const QUERY_SAFE_PARAMS = ["_id", "theme", "language", "oppoLanguage", "duration"];
+const QUERY_SAFE_PARAMS = [
+  "_id",
+  "theme",
+  "language",
+  "oppoLanguage",
+  "duration",
+  "type",
+  "status",
+  "title",
+];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
   "sourceDate",
@@ -49,8 +58,29 @@ pub.queryPagedTaskList = (queryParam, pageNumber = 1, pageSize = 10) => {
 /**
  * 根据课程id获取课程详情
  */
-pub.findById = (taskId) => {
-  return taskSchema.findItemById(taskId)
+pub.findById = taskId => {
+  return taskSchema.findItemById(taskId);
+};
+
+/**
+ * 根据id删除任务
+ */
+pub.deleteById = id => {
+  return taskSchema.destroyItem(id);
+};
+
+/**
+ * 创建任务
+ */
+pub.createTask = task => {
+  return taskSchema.createItem(task);
+};
+
+/**
+ * 更新任务
+ */
+pub.updateTaskById = task => {
+  return taskSchema.updateItemById(task.id, task);
 };
 
 module.exports = pub;
