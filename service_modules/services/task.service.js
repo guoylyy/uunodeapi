@@ -11,6 +11,7 @@ const attachMapper = require("../dao/mongodb_mapper/attach.mapper");
 const commonError = require("./model/common.error");
 const qiniuComponent = require("./component/qiniu.component");
 const userMapper = require("../dao/mysql_mapper/user.mapper");
+const moment = require('moment')
 
 const pub = {};
 
@@ -18,6 +19,10 @@ const pub = {};
  * 分页查询课程列表
  */
 pub.queryTaskList = queryParam => {
+  queryParam.title && (queryParam.title = {
+    $regex: RegExp(queryParam.title, 'i')
+  })
+  console.log(queryParam);
   return taskMapper.queryPagedTaskList(
     queryParam,
     queryParam.pageNumber,
@@ -79,22 +84,18 @@ pub.fetchById = taskId => {
   });
 };
 
-
-
 /**
  * 获取当日任务
  */
 pub.fetchTodayTask = () => {
-  const currentDate = new Intl.DateTimeFormat("en-US").format(new Date());
-  let param = { pushAt: currentDate };
+  let param = { pushAt: moment().format('YYYY-MM-DD') };
   return pushTaskMapper.findByParam(param).then(pushTask => {
     // task对象 打卡数量 打卡人员列表 promise all
     if (!_.isNil(pushTask)) {
       return Promise.all([
         pub.fetchById(pushTask.taskId),
-        taskCheckinMapper.countByParam({ taskId: pushTask.taskId }),
         taskCheckinMapper.queryCheckinList({ taskId: pushTask.taskId })
-      ]).then(([task, checkinCount, checkinList]) => {
+      ]).then(([task, checkinList]) => {
         let fetchUser = [];
         new Set(_.map(checkinList, "userId")).forEach(userId => {
           fetchUser.push(userMapper.fetchByParam({ id: userId }));
@@ -109,7 +110,9 @@ pub.fetchTodayTask = () => {
             "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJ0LP3VXv0uYuyluLNbr4ytD9TjYhzorcnLz5OdZ2FHpjTsdC72QVibeWrL4RezPoTmMfB1XxoYOXw/132"
           ];
           while (task.headImgUrlList.length < 5) {
-            task.headImgUrlList.push(defaultHeadImg[task.headImgUrlList.length])
+            task.headImgUrlList.push(
+              defaultHeadImg[task.headImgUrlList.length]
+            );
           }
           task.checkinCount = userList.length < 10 ? 10 : userList.length;
           return task;
@@ -176,15 +179,15 @@ pub.queryPagedCheckinList = queryParam => {
             attachList[i].key
           );
           const checkin = checkinList[i];
-          checkin.viewerCount = new Set(_.map(checkin.viewLog, 'userId')).size;
+          checkin.viewerCount = new Set(_.map(checkin.viewLog, "userId")).size;
           checkin.viewLog = undefined;
           checkin.attach = attachList[i];
-          queryUser.push(userMapper.fetchByParam({id: checkin.userId}))
+          queryUser.push(userMapper.fetchByParam({ id: checkin.userId }));
         }
         return Promise.all(queryUser).then(userList => {
           for (let i = 0; i < checkinList.length; i++) {
             const checkin = checkinList[i];
-            checkin.user = _.pick(userList[i], ['id', 'name', 'headImgUrl']);
+            checkin.user = _.pick(userList[i], ["id", "name", "headImgUrl"]);
           }
           result.values = checkinList;
           return result;
@@ -248,5 +251,70 @@ pub.updateTaskCheckin = (checkinId, param) => {
 pub.deleteTaskCheckin = checkinId => {
   return taskCheckinMapper.deleteById(checkinId);
 };
+
+/**
+ * 删除任务
+ */
+pub.deleteTask = taskId => {
+  return taskMapper.deleteById(taskId);
+};
+
+/**
+ * 创建任务
+ */
+pub.createTask = task => {
+  return taskMapper.createTask(task);
+};
+
+/**
+ * 更新任务
+ */
+pub.updateTask = task => {
+  return taskMapper.updateTaskById(task);
+};
+
+/**
+ * 创建每日推送任务
+ */
+pub.createPushTask = pushTask => {
+  return pushTaskMapper.findByParam({pushAt:pushTask.pushAt})
+  .then(item => {
+    if (!_.isNil(item)) {
+      return Promise.reject(commonError.BIZ_FAIL_ERROR(`当日已存在推送任务 pushAt: ${pushTask.pushAt}`));
+    }
+    return pushTaskMapper.createPushTask(pushTask);
+  })
+}
+
+/**
+ * 创建每日推送任务
+ */
+pub.getPushTaskList = queryParam => {
+  return pushTaskMapper.queryPagedPushTaskList(queryParam, queryParam.pageNumber, queryParam.pageSize)
+  .then(result => {
+    let taskQuery = [];
+    const pushTaskList = result.values;
+    for (let i=0; i<pushTaskList.length; i++) {
+      const pushTask = pushTaskList[i];
+      taskQuery.push(taskMapper.findById(pushTask.taskId))
+    }
+    return Promise.all(taskQuery)
+    .then(taskList => {
+      for (let i=0; i<taskList.length; i++) {
+        pushTaskList[i].task = taskList[i];
+      }
+      result.values = pushTaskList;
+      return result;
+    })
+  })
+}
+
+/**
+ * 删除推送任务
+ */
+pub.deletePushTask = pushTaskId => {
+  return pushTaskMapper.deleteById(pushTaskId);
+};
+
 
 module.exports = pub;

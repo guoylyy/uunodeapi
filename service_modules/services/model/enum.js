@@ -2039,6 +2039,21 @@ const lessonLinkTypeEnum = {
   }
 }
 
+
+// 课程状态
+const lessonStatusEnum = {
+  PENDING: {
+    key: 'PENDING',
+    name: '草稿'
+  },
+  PUBLISHED: {
+    key: 'PUBLISHED',
+    name: '已发布'
+  }
+}
+
+exports.lessonStatusEnum = lessonStatusEnum;
+
 /**
  * banner业务枚举
  */
@@ -2129,6 +2144,35 @@ const taskTypeEnum = {
 }
 
 exports.taskTypeEnum = taskTypeEnum;
+
+// 任务状态
+const taskStatusEnum = {
+  PENDING: {
+    key: 'PENDING',
+    name: '草稿'
+  },
+  PUBLISHED: {
+    key: 'PUBLISHED',
+    name: '已发布'
+  }
+}
+
+exports.taskStatusEnum =taskStatusEnum;
+
+
+// 推送任务状态
+const pushTaskStatusEnum = {
+  PENDING: {
+    key: 'PENDING',
+    name: '待推送'
+  },
+  PUBLISHED: {
+    key: 'PUSHED',
+    name: '已推送'
+  }
+}
+
+exports.pushTaskStatusEnum =pushTaskStatusEnum;
 
 //用户证书枚举字段
 const userCertificationEnum = {

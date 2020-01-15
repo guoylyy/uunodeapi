@@ -28,6 +28,7 @@ pub.getTaskList = (req, res) => {
         queryParam.duration = queryParam.duration || {};
         queryParam.duration.$lt = queryParam.ltDuration
       }
+      queryParam.status = enumModel.taskStatusEnum.PUBLISHED.key;
       return taskService.queryTaskList(queryParam);
     })
     .then(result => {
