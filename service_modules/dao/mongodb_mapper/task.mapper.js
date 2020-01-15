@@ -67,4 +67,11 @@ pub.createTask = task => {
   return taskSchema.createItem(task);
 }
 
+/**
+ * 更新任务
+ */
+pub.updateTaskById = task => {
+  return taskSchema.updateItemById(task.id, task);
+}
+
 module.exports = pub;

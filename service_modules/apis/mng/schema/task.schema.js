@@ -19,8 +19,8 @@ pub.pagedSchema = pagedBaseSchema.keys({
 pub.createTaskSchema = Joi.object().keys({
   title: Joi.string().required(),
   sourceDate: Joi.date().required(),
-  pic: commonSchema.mongoIdSchema.required(),
-  bigPic: commonSchema.mongoIdSchema.required(),
+  pic: Joi.string(),
+  bigPic: Joi.string(),
   duration: Joi.number().integer().positive().required(),
   theme: Joi.string().valid(_.keys(enumModel.taskThemeEnum)).required(),
   language: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)).required(),
@@ -33,12 +33,10 @@ pub.createTaskSchema = Joi.object().keys({
   srcVideo: commonSchema.mongoIdSchema,
   oppoVideo: commonSchema.mongoIdSchema,
   pausePoints: Joi.array(),
-  terminology: Joi.string(),
-  attachText: Joi.string()
+  terminology: Joi.array(),
+  attachText: Joi.string(),
+  author: Joi.string()
 });
-
-
-
 
 
 pub.checkinSchema = Joi.object().keys({

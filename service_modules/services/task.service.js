@@ -260,24 +260,14 @@ pub.deleteTask = taskId => {
  * 创建任务
  */
 pub.createTask = task => {
-  return Promise.all([
-    attachMapper.fetchById(task.pic),
-    attachMapper.fetchById(task.bigPic)
-  ]).then(([picAttach, bigPicAttach]) => {
-    if (_.isNil(picAttach) || _.isNil(bigPicAttach)) {
-      console.log("参数错误！！！ task: %s", task);
-      return Promise.reject(commonError.PARAMETER_ERROR("图片附件id不正确"));
-    }
-    task.pic = qiniuComponent.getAccessibleUrl(
-      picAttach.attachType,
-      picAttach.key
-    );
-    task.bigPic = qiniuComponent.getAccessibleUrl(
-      bigPicAttach.attachType,
-      bigPicAttach.key
-    );
-    return taskMapper.createTask(task);
-  });
+  return taskMapper.createTask(task);
+};
+
+/**
+ * 更新任务
+ */
+pub.updateTask = task => {
+  return taskMapper.updateTaskById(task);
 };
 
 module.exports = pub;

@@ -28,14 +28,18 @@ let taskSchema = new Schema({
   pic: {type: String, required: true},
   bigPic: {type: String, required: true},
   pausePoint: [Number],
-  terminology: { type: Schema.Types.ObjectId, ref: 'Attach' },
+  terminology: [{
+    word: {type: String, required: true},
+    notes: {type: String, required: true}
+  }],
   srcVideo: { type: Schema.Types.ObjectId, ref: 'Attach' },
   srcAudio: { type: Schema.Types.ObjectId, ref: 'Attach' },
   oppoVideo: { type: Schema.Types.ObjectId, ref: 'Attach' },
   oppoAudio: { type: Schema.Types.ObjectId, ref: 'Attach' },
   push: {type: Boolean, default: false},
   sourceDate: { type: Date, required: true},
-  duration: Number
+  duration: {type: Number, required: true},
+  author: {type: String},
 });
 
 // create a schema named as Lesson, and collection as Lesson

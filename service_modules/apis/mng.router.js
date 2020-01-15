@@ -305,7 +305,7 @@ router.put('/weapp/banner/:bannerId/sort', bannerController.updateBannerSort); /
 const taskController = require('./mng/weapp/task.controller');
 router.post('/weapp/task/push'); // 设置推送
 router.post('/weapp/task', taskController.createTask); //创建新任务 讲者字段不明确
-router.put('/weapp/task/:taskId'); //更新任务状态
+router.put('/weapp/task/:taskId', taskController.updateTask); //更新任务
 router.get('/weapp/tasks', taskController.getTaskList) //分页获取任务列表
 router.delete('/weapp/task/:taskId', taskController.deleteTask); //删除任务
 
