@@ -323,7 +323,7 @@ pub.fetchTaskCheckinStatistics = (req, res) => {
 }
 
 /**
- * 口译记录列表 分页 按时间倒序
+ * 口译记录列表 按时间倒序
  * @param req
  * @param res
  */
