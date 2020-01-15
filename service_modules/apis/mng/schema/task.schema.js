@@ -13,7 +13,8 @@ pub.pagedSchema = pagedBaseSchema.keys({
   theme: Joi.string().valid(_.keys(enumModel.taskThemeEnum)),
   language: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)),
   type: Joi.string().valid(_.keys(enumModel.taskTypeEnum)),
-  status: Joi.string()
+  status: Joi.string(),
+  title: Joi.string(),
 });
 
 pub.createTaskSchema = Joi.object().keys({

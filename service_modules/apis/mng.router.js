@@ -320,9 +320,8 @@ const lessonController = require('./mng/weapp/lesson.controller');
 router.get('/weapp/lessons',lessonController.getLessonList) //文章列表 分页
 router.post('/weapp/lesson',lessonController.createLesson) //创建文章
 router.use('/weapp/lesson/:lessonId', weappMiddleware.preloadLesson)
-router.get('/weapp/lesson/:lessonId') // 获取文章详情
-router.get('/weapp/lesson/:lessonId') // 获取文章详情
-router.put('/weapp/lesson/:lessonId') // 更新文章
-router.delete('/weapp/lesson/:lessonId') // 删除文章
+router.get('/weapp/lesson/:lessonId', lessonController.getLesson) // 获取文章详情
+router.put('/weapp/lesson/:lessonId', lessonController.updateLesson) // 更新文章
+router.delete('/weapp/lesson/:lessonId', lessonController.deleteLesson) // 删除文章
 
 module.exports = router;

@@ -619,7 +619,7 @@ pub.preloadLesson = (req, res, next) => {
       if (_.isNil(lesson)) {
         return apiRender.renderNotFound(res);
       }
-      req.__LESSON_ITEM = task;
+      req.__LESSON_ITEM = lesson;
       next()
       return null;
     })

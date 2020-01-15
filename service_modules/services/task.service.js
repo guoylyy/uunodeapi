@@ -19,6 +19,10 @@ const pub = {};
  * 分页查询课程列表
  */
 pub.queryTaskList = queryParam => {
+  queryParam.title && (queryParam.title = {
+    $regex: RegExp(queryParam.title, 'i')
+  })
+  console.log(queryParam);
   return taskMapper.queryPagedTaskList(
     queryParam,
     queryParam.pageNumber,
