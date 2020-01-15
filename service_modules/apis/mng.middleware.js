@@ -32,6 +32,7 @@ const couponService = require('../services/coupon.service');
 const userWithdrawService = require('../services/userWithdraw.service');
 const clazzExitService = require('../services/clazzExit.servie');
 const taskService = require('../services/task.service');
+const lessonService = require('../services/lesson.service');
 
 const enumModel = require('../services/model/enum');
 
@@ -601,6 +602,24 @@ pub.preloadTask = (req, res, next) => {
         return apiRender.renderNotFound(res);
       }
       req.__TASK_ITEM = task;
+      next()
+      return null;
+    })
+  }).catch(req.__ERROR_HANDLER);
+}
+
+/**
+ * 预加载weapp文章
+ */
+pub.preloadLesson = (req, res, next) => {
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.lessonId)
+  .then((lessonId) => {
+    return lessonService.fetchById(lessonId)
+    .then(lesson => {
+      if (_.isNil(lesson)) {
+        return apiRender.renderNotFound(res);
+      }
+      req.__LESSON_ITEM = task;
       next()
       return null;
     })

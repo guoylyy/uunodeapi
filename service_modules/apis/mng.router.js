@@ -307,6 +307,7 @@ const taskController = require('./mng/weapp/task.controller');
 router.post('/weapp/task', taskController.createTask); //创建新任务 
 router.get('/weapp/tasks', taskController.getTaskList) //分页获取任务列表
 router.use('/weapp/task/:taskId', weappMiddleware.preloadTask)
+router.get('/weapp/task/:taskId', taskController.getTask)
 router.post('/weapp/task/:taskId/push', taskController.pushTask); // 设置推送
 router.put('/weapp/task/:taskId', taskController.updateTask); //更新任务
 router.delete('/weapp/task/:taskId', taskController.deleteTask); //删除任务
@@ -315,7 +316,11 @@ router.get('/weapp/pushTasks', taskController.pushTaskList) // 推送列表
 router.delete('/weapp/pushTask/:pushTaskId', taskController.deletePushTask) // 删除推送
 
 // 3.文章管理
-router.get('/weapp/lessons') //文章列表 分页
+const lessonController = require('./mng/weapp/lesson.controller');
+router.get('/weapp/lessons',lessonController.getLessonList) //文章列表 分页
+router.post('/weapp/lesson',lessonController.createLesson) //创建文章
+router.use('/weapp/lesson/:lessonId', weappMiddleware.preloadLesson)
+router.get('/weapp/lesson/:lessonId') // 获取文章详情
 router.get('/weapp/lesson/:lessonId') // 获取文章详情
 router.put('/weapp/lesson/:lessonId') // 更新文章
 router.delete('/weapp/lesson/:lessonId') // 删除文章

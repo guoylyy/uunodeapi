@@ -2039,6 +2039,21 @@ const lessonLinkTypeEnum = {
   }
 }
 
+
+// 课程状态
+const lessonStatusEnum = {
+  PENDING: {
+    key: 'PENDING',
+    name: '草稿'
+  },
+  PUBLISHED: {
+    key: 'PUBLISHED',
+    name: '已发布'
+  }
+}
+
+exports.lessonStatusEnum = lessonStatusEnum;
+
 /**
  * banner业务枚举
  */

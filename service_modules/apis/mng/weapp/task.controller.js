@@ -32,6 +32,21 @@ pub.getTaskList = (req, res) => {
     .catch(req.__ERROR_HANDLER);
 };
 
+
+/**
+ * 查询任务详情
+ */
+pub.getTask = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
+  .then(taskId => {
+    return taskService.fetchById(taskId);
+  })
+  .then(result => {
+    return apiRender.renderBaseResult(res, result)
+  })
+  .catch(req.__ERROR_HANDLER);
+};
+
 /**
  * 删除任务
  */
