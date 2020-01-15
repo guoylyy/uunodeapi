@@ -19,7 +19,8 @@ const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "createdAt",
   "linkUrl",
   "description",
-  "status"
+  "status",
+  "views"
 ]);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([
   { column: "createdAt", isDescending: true }
@@ -57,6 +58,7 @@ pub.findById = (lessonId) => {
  * 创建课程
  */
 pub.createLesson = lesson => {
+  lesson.views = 0;
   return lessonSchema.createItem(lesson);
 }
 
