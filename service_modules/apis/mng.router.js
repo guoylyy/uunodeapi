@@ -311,7 +311,8 @@ router.post('/weapp/task/:taskId/push', taskController.pushTask); // 设置推�
 router.put('/weapp/task/:taskId', taskController.updateTask); //更新任务
 router.delete('/weapp/task/:taskId', taskController.deleteTask); //删除任务
 
-router.get('weapp/pushTasks') // 推送列表
+router.get('/weapp/pushTasks', taskController.pushTaskList) // 推送列表
+router.delete('/weapp/pushTask/:pushTaskId', taskController.deletePushTask) // 删除推送
 
 // 3.文章管理
 router.get('/weapp/lessons') //文章列表 分页

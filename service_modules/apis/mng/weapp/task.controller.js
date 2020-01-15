@@ -91,7 +91,7 @@ pub.pushTask = (req, res) => {
     .validatePromise(taskSchema.pushTaskSchema, req.body)
     .then(pushTask => {
       pushTask.taskId = req.__TASK_ITEM.id;
-      pushTask.pushAt = moment(pushTask.pushAt).format('YYYY-MM-DD')
+      pushTask.pushAt = moment(pushTask.pushAt).format('YYYY-MM-DD');
       return taskService.createPushTask(pushTask);
     })
     .then(result => {
@@ -102,5 +102,43 @@ pub.pushTask = (req, res) => {
     .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 获取推送任务列表
+ */
+pub.pushTaskList = (req, res) => {
+  return schemaValidator
+    .validatePromise(pagedBaseSchema, req.query)
+    .then((queryParam) => {
+      return taskService.getPushTaskList(queryParam);
+    })
+    .then(result => {
+      return apiRender.renderPageResult(
+        res,
+        result.values,
+        result.itemSize,
+        result.pageSize,
+        result.pageNumber
+      );
+    })
+    .catch(req.__ERROR_HANDLER);
+}
+
+
+/**
+ * 删除任务
+ */
+pub.deletePushTask = (req, res) => {
+  return schemaValidator
+    .validatePromise(commonSchema.mongoIdSchema, req.params.pushTaskId)
+    .then(pushTaskId => {
+      return taskService.deletePushTask(pushTaskId);
+    })
+    .then(result => {
+      return _.isNil(result)
+      ? apiRender.renderParameterError(res, "删除失败")
+      : apiRender.renderSuccess(res);
+    })
+    .catch(req.__ERROR_HANDLER);
+};
 
 module.exports = pub;

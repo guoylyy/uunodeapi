@@ -273,7 +273,44 @@ pub.updateTask = task => {
  * 创建每日推送任务
  */
 pub.createPushTask = pushTask => {
-  return pushTaskMapper.createPushTask(pushTask);
+  return pushTaskMapper.findByParam({pushAt:pushTask.pushAt})
+  .then(item => {
+    if (!_.isNil(item)) {
+      return Promise.reject(commonError.BIZ_FAIL_ERROR(`当日已存在推送任务 pushAt: ${pushTask.pushAt}`));
+    }
+    return pushTaskMapper.createPushTask(pushTask);
+  })
 }
+
+/**
+ * 创建每日推送任务
+ */
+pub.getPushTaskList = queryParam => {
+  return pushTaskMapper.queryPagedPushTaskList(queryParam, queryParam.pageNumber, queryParam.pageSize)
+  .then(result => {
+    let taskQuery = [];
+    const pushTaskList = result.values;
+    for (let i=0; i<pushTaskList.length; i++) {
+      const pushTask = pushTaskList[i];
+      taskQuery.push(taskMapper.findById(pushTask.taskId))
+    }
+    return Promise.all(taskQuery)
+    .then(taskList => {
+      for (let i=0; i<taskList.length; i++) {
+        pushTaskList[i].task = taskList[i];
+      }
+      result.values = pushTaskList;
+      return result;
+    })
+  })
+}
+
+/**
+ * 删除推送任务
+ */
+pub.deletePushTask = pushTaskId => {
+  return pushTaskMapper.deleteById(pushTaskId);
+};
+
 
 module.exports = pub;

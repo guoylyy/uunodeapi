@@ -9,16 +9,17 @@ const debug = require("debug")("mapper");
 const pushTaskSchema = require("./schema/pushTask.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
-
+const enumModel = require('../../services/model/enum');
 const QUERY_SAFE_PARAMS = ["_id", "pushAt"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "taskId",
   "pushAt",
-  "createAt",
-  "updateAt"
+  "createdAt",
+  "updatedAt",
+  "status"
 ]);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([
-  { column: "createAt", isDescending: true }
+  { column: "pushAt", isDescending: true }
 ]);
 
 const pub = {};
@@ -30,7 +31,7 @@ const pub = {};
  * @param pageSize
  * @returns {Promise.<TResult>}
  */
-pub.queryPagedTaskList = (queryParam, pageNumber = 1, pageSize = 10) => {
+pub.queryPagedPushTaskList = (queryParam, pageNumber = 1, pageSize = 10) => {
   debug(queryParam);
   return pushTaskSchema.queryPaged(
     queryParam,
@@ -47,7 +48,16 @@ pub.findByParam = (queryParam) => {
 };
 
 pub.createPushTask = pushTask => {
+  // 默认状态待推送
+  pushTask.status = enumModel.pushTaskStatusEnum.PENDING.key;
   return pushTaskSchema.createItem(pushTask);
+}
+
+/**
+ * 删除推送
+ */
+pub.deleteById = pushTaskId => {
+  return pushTaskSchema.destroyItem(pushTaskId);
 }
 
 module.exports = pub;

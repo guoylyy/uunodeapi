@@ -2144,6 +2144,21 @@ const taskStatusEnum = {
 
 exports.taskStatusEnum =taskStatusEnum;
 
+
+// 推送任务状态
+const pushTaskStatusEnum = {
+  PENDING: {
+    key: 'PENDING',
+    name: '待推送'
+  },
+  PUBLISHED: {
+    key: 'PUSHED',
+    name: '已推送'
+  }
+}
+
+exports.pushTaskStatusEnum =pushTaskStatusEnum;
+
 //用户证书枚举字段
 const userCertificationEnum = {
   'CET-4': {
