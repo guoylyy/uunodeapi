@@ -339,17 +339,6 @@ pub.fetchEasemobUserBindById = (userBindId) => {
  */
 pub.pagedQuery = (queryParam) => {
   return userBindMapper.queryPaged(queryParam, queryParam.pageSize, queryParam.pageNumber)
-  // .then(result => {
-    // const fetchUserList = _.map(result.values, (userBind) => {
-    //   return userMapper.fetchByParam(userBind.userId);
-    // });
-    // return Promise.all(fetchUserList)
-    // .then(userList => {
-    //   result.values = userList;
-    //   return result;
-    // });
-  // })
-  
 }
 
 module.exports = pub;

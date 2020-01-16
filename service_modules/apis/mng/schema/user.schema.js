@@ -24,7 +24,7 @@ pub.clazzUserScoreUpdateSchema = Joi.object().keys({
  * 用户分页查询
  */
 pub.pagedQuerySchema = pagedBaseSchema.keys({
-  name: Joi.string(),
+  keyword: Joi.string(),
 });
 
 module.exports = pub;
