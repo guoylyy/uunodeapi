@@ -295,14 +295,20 @@ pub.fetchTaskCheckinStatistics = (req, res) => {
   .then(() => {
     return taskService.fetchTaskCheckinStatistics(req.__CURRENT_USER.id);
   })
-  .then((records) => {
-    const result = {};
-    result.records = records;
-    result.todayPracticeTime = 100;
-    result.totalPracticeTime = 1000;
-    result.enTask = 400;
-    result.zhTask = 600;
-    return apiRender.renderBaseResult(res, records);
+  .then((result) => {
+    result.records = _.map(result.records, (record) => {
+      if (record.quantity == 0) {
+        record.quantity = enumModel.checkinRecordStatisticsEnum.EMPTY.key;
+      } else if (record.quantity == 1) {
+        record.quantity = enumModel.checkinRecordStatisticsEnum.LESS.key;
+      } else if (record.quantity == 2) {
+        record.quantity = enumModel.checkinRecordStatisticsEnum.NORMAL.key;
+      }  else if (record.quantity > 2) {
+        record.quantity = enumModel.checkinRecordStatisticsEnum.MORE.key;
+      }
+      return record;
+    });
+    return apiRender.renderBaseResult(res, result);
   })
   .catch(req.__ERROR_HANDLER);
 }

@@ -326,7 +326,7 @@ pub.fetchTaskCheckinStatistics = userId => {
   ])
   .then(([records, [totalPracticeTime], [todayPracticeTime], languagePracticeTime]) => {
     const result = {
-      records: records,
+      records: records || [],
       totalPracticeTime: (!!totalPracticeTime ? totalPracticeTime.practiceTime : 0),
       todayPracticeTime: (!!todayPracticeTime ? todayPracticeTime.practiceTime : 0),
       languagePracticeTime: languagePracticeTime || [],

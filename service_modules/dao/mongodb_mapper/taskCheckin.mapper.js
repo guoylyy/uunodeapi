@@ -10,6 +10,7 @@ const taskCheckinSchema = require("./schema/taskCheckin.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 const winston = require("winston");
+const moment = require('moment');
 const QUERY_SAFE_PARAMS = [
   "_id",
   "userId",
@@ -73,11 +74,7 @@ pub.queryCheckinList = queryParam => {
  * 创建打卡
  */
 pub.checkin = taskCheckin => {
-  const date = new Date();
-  const year = date.getFullYear();
-  let month = date.getMonth() + 1;
-  month = month < 10 ? "0" + month : month;
-  taskCheckin.yearMonth = year.toString() + month.toString();
+  taskCheckin.yearMonth = moment().format('YYYYMM');
   return taskCheckinSchema.createItem(taskCheckin);
 };
 
@@ -115,7 +112,6 @@ pub.deleteById = id => {
   return taskCheckinSchema.destroyItem(id);
 };
 
-const moment = require('moment');
 
 /**
  * 统计单个用户的每天打卡数量
