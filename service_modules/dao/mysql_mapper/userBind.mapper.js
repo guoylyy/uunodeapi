@@ -71,14 +71,22 @@ pub.queryAll = (queryParam) => {
  * @returns {Promise.<TResult>|Promise}
  */
 pub.queryPaged = (queryParam, pageSize, pageNumber) => {
-
-  return postSchema.query(
+  console.log(queryParam);
+  return userBindSchema.query(
       (query) => {
+        query = query.leftJoin(
+          'user',
+          'user.id',
+          'user_bind.userId'
+        )
+        if (queryParam.name) {
+          query.where('name', 'LIKE', '%' + queryParam.name + '%')
+        }
         queryUtil.filterMysqlQueryParam(query, queryParam, QUERY_SAFE_PARAMS);
       })
-      .orderBy('createdAt', 'desc')
+      .orderBy('user.createdAt', 'desc')
       .fetchPage({
-        columns: QUERY_SELECT_COLUMNS,
+        columns: ['user.*'],
         page: pageNumber,
         pageSize: pageSize
       })

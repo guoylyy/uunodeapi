@@ -334,4 +334,22 @@ pub.fetchEasemobUserBindById = (userBindId) => {
   });
 };
 
+/**
+ * 第三方账号信息分页查询用户信息
+ */
+pub.pagedQuery = (queryParam) => {
+  return userBindMapper.queryPaged(queryParam, queryParam.pageSize, queryParam.pageNumber)
+  // .then(result => {
+    // const fetchUserList = _.map(result.values, (userBind) => {
+    //   return userMapper.fetchByParam(userBind.userId);
+    // });
+    // return Promise.all(fetchUserList)
+    // .then(userList => {
+    //   result.values = userList;
+    //   return result;
+    // });
+  // })
+  
+}
+
 module.exports = pub;
