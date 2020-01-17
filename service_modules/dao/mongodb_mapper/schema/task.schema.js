@@ -29,7 +29,8 @@ let taskSchema = new Schema({
   attachText: {type: String, required: true},
   pic: {type: String, required: true},
   bigPic: {type: String, required: true},
-  pausePoint: [Number],
+  pausePoints: [Number],
+  oppoPausePoints: [Number],
   terminology: [{
     word: {type: String, required: true},
     notes: {type: String, required: true}

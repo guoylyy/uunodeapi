@@ -18,7 +18,7 @@ pub.pagedSchema = pagedBaseSchema.keys({
 });
 
 pub.createTaskSchema = Joi.object().keys({
-  title: Joi.string().required(),
+  title: Joi.string().max(20).required(),
   sourceDate: Joi.date().required(),
   pic: Joi.string(),
   bigPic: Joi.string(),
@@ -28,17 +28,20 @@ pub.createTaskSchema = Joi.object().keys({
   oppoLanguage: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)).required(),
   type: Joi.string().valid(_.keys(enumModel.taskTypeEnum)).required(),
   level: Joi.string().valid(_.keys(enumModel.taskLevelEnum)).required(),
-  description: Joi.string().required(),
+  description: Joi.string().max(100).required(),
   srcAudio: commonSchema.mongoIdSchema,
   oppoAudio: commonSchema.mongoIdSchema,
   srcVideo: commonSchema.mongoIdSchema,
   oppoVideo: commonSchema.mongoIdSchema,
-  pausePoints: Joi.array(),
-  terminology: Joi.array(),
-  attachText: Joi.string(),
-  author: Joi.string(),
+  pausePoints: Joi.array().items(Joi.number().integer().positive().max(Joi.ref('duration'))).required(),
+  oppoPausePoints: Joi.array().items(Joi.number().integer().positive().max(Joi.ref('duration'))).required(),
+  terminology: Joi.array().items(Joi.object().keys({word: Joi.string(), notes:Joi.string()})),
+  attachText: Joi.string().required(),
+  author: Joi.string().max(20),
   status: Joi.string().valid(_.keys(enumModel.taskStatusEnum)).required(),
-});
+})
+.with('srcVideo', 'oppoVideo')
+.with('srcAudio', 'oppoAudio');
 
 pub.pushTaskSchema = Joi.object().keys({
   pushAt: Joi.date().required(),

@@ -74,7 +74,9 @@ pub.createTask = (req, res) => {
       return taskService.createTask(task);
     })
     .then(result => {
-      return apiRender.renderSuccess(res);
+      return _.isNil(result)
+      ? apiRender.renderParameterError(res, "创建失败")
+      : apiRender.renderSuccess(res);
     })
     .catch(req.__ERROR_HANDLER);
 };
