@@ -17,7 +17,7 @@ const apiUtil = require("../../util/api.util");
 const bannerService = require("../../../services/banner.service");
 const enumModel = require("../../../services/model/enum");
 const bannerBizTypeEnum = enumModel.bannerBizTypeEnum;
-
+const pagedBaseSchema = require('../schema/paged.base.schema');
 const bannerSchema = require("../schema/banner.schema");
 
 const pub = {};
@@ -29,12 +29,19 @@ const pub = {};
  */
 pub.getBanners = (req, res) => {
   return schemaValidator
-    .validatePromise(commonSchema.emptySchema, req.query)
-    .then(() => {
-      return bannerService.queryBannerList(bannerBizTypeEnum.LESSON.key);
+    .validatePromise(pagedBaseSchema, req.query)
+    .then((param) => {
+      param.bizType = bannerBizTypeEnum.LESSON.key;
+      return bannerService.queryPagedBannerList(param);
     })
     .then(result => {
-      return apiRender.renderBaseResult(res, result);
+      return apiRender.renderPageResult(
+        res,
+        result.values,
+        result.itemSize,
+        result.pageSize,
+        result.pageNumber
+      );
     })
     .catch(req.__ERROR_HANDLER);
 };
@@ -52,7 +59,13 @@ pub.updateBanner = (req, res) => {
       return bannerService.updateBanner(banner);
     })
     .then(result => {
-      return apiRender.renderBaseResult(res, result);
+      return apiRender.renderPageResult(
+        res,
+        result.values,
+        result.itemSize,
+        result.pageSize,
+        result.pageNumber
+      );
     })
     .catch(req.__ERROR_HANDLER);
 };
