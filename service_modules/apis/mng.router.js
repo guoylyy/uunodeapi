@@ -299,6 +299,7 @@ const weappMiddleware = middleware;
 // 1.banner
 const bannerController = require('./mng/weapp/banner.controller');
 router.get('/weapp/banners', bannerController.getBanners); //获取banner列表
+router.post('/weapp/banner', bannerController.createBanner); //创建banner
 router.put('/weapp/banner/:bannerId', bannerController.updateBanner); //更新banner状态
 router.put('/weapp/banner/:bannerId/sort', bannerController.updateBannerSort); //更新banner状态
 

@@ -9,12 +9,11 @@ const pub = {};
 /**
  * 更新banner
  */
-pub.updateBannerSchema = Joi.object().keys({
-  title: Joi.string(),
-  image: Joi.string(),
-  active: Joi.boolean(),
-  image: commonSchema.mongoIdSchema,
-  linkUrl: Joi.string()
+pub.bannerSchema = Joi.object().keys({
+  title: Joi.string().required(),
+  image: Joi.string().required(),
+  active: Joi.boolean().required(),
+  linkUrl: Joi.string().required()
 });
 
 module.exports = pub;

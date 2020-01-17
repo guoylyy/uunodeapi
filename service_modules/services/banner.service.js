@@ -38,6 +38,13 @@ pub.updateBanner = banner => {
 };
 
 /**
+ * 创建banner
+ */
+pub.createBanner = banner => {
+  return bannerMapper.createBanner(banner);
+}
+
+/**
  * 更新banner顺序 上移
  */
 pub.updateBannerSort = bannerId => {

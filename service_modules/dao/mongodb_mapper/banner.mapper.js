@@ -66,6 +66,13 @@ pub.updateBannerById = banner => {
 };
 
 /**
+ * 创建banner
+ */
+pub.createBanner = banner =>{
+  return bannerSchema.createItem(banner);
+}
+
+/**
  * 根据id查找banner对象
  */
 pub.findById = id => {

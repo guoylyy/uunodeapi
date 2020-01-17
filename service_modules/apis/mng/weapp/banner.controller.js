@@ -53,19 +53,15 @@ pub.getBanners = (req, res) => {
  */
 pub.updateBanner = (req, res) => {
   return schemaValidator
-    .validatePromise(bannerSchema.updateBannerSchema, req.body)
+    .validatePromise(bannerSchema.bannerSchema, req.body)
     .then(banner => {
       banner.id = req.params.bannerId;
       return bannerService.updateBanner(banner);
     })
-    .then(result => {
-      return apiRender.renderPageResult(
-        res,
-        result.values,
-        result.itemSize,
-        result.pageSize,
-        result.pageNumber
-      );
+    .then((result) => {
+      return result 
+      ? apiRender.renderSuccess(res)
+      : apiRender.renderBizFail(res, "更新失败");
     })
     .catch(req.__ERROR_HANDLER);
 };
@@ -76,10 +72,33 @@ pub.updateBannerSort = (req, res) => {
   .then((bannerId) => {
     return bannerService.updateBannerSort(bannerId);
   })
-  .then(() => {
-    return apiRender.renderSuccess(res);
+  .then((result) => {
+    return result 
+    ? apiRender.renderSuccess(res)
+    : apiRender.renderBizFail(res, "上移失败");
   })
   .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 新增banner
+ * @param req
+ * @param res
+ */
+pub.createBanner = (req, res) => {
+  return schemaValidator
+    .validatePromise(bannerSchema.bannerSchema, req.body)
+    .then(banner => {
+      banner.linkType = enumModel.bannerLinkTypeEnum.URL.key;
+      banner.bizType = bannerBizTypeEnum.LESSON.key;
+      return bannerService.createBanner(banner);
+    })
+    .then(result => {
+      return result 
+      ? apiRender.renderSuccess(res)
+      : apiRender.renderBizFail(res, "创建失败");
+    })
+    .catch(req.__ERROR_HANDLER);
 };
 
 module.exports = pub;
