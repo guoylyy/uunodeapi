@@ -99,9 +99,10 @@ pub.findById = taskCheckinId => {
 };
 
 /**
- *
+ *  统计数量 未删除
  */
 pub.countByParam = param => {
+  param.isDelete = false;
   return taskCheckinSchema.count(param);
 };
 
