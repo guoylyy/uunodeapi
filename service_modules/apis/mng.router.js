@@ -324,4 +324,8 @@ router.get('/weapp/lesson/:lessonId', lessonController.getLesson) // 获取文�
 router.put('/weapp/lesson/:lessonId', lessonController.updateLesson) // 更新文章
 router.delete('/weapp/lesson/:lessonId', lessonController.deleteLesson) // 删除文章
 
+// 4.用户管理
+const weappUserController = require('./mng/weapp/user.controller');
+router.get('/weapp/users',weappUserController.getUserList) //小程序用户列表 分页
+
 module.exports = router;

@@ -72,7 +72,6 @@ pub.fetchByParam = (queryParam, orderByColumn = '-updatedAt') => {
             if (_.isNil(userItem)) {
               return null;
             }
-
             return parseUserFields(userItem.toJSON());
           }
       )

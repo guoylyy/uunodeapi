@@ -334,4 +334,11 @@ pub.fetchEasemobUserBindById = (userBindId) => {
   });
 };
 
+/**
+ * 第三方账号信息分页查询用户信息
+ */
+pub.pagedQuery = (queryParam) => {
+  return userBindMapper.queryPaged(queryParam, queryParam.pageSize, queryParam.pageNumber)
+}
+
 module.exports = pub;

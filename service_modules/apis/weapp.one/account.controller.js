@@ -293,36 +293,28 @@ pub.fetchUserLikeTasks = (req, res) => {
 pub.fetchTaskCheckinStatistics = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
   .then(() => {
-    const result = {};
-    result.records = [
-      {
-        "date": new Date('2019-11-25'),
-        "quantity" : "MORE"
-      },
-      {
-        "date": "2019-12-26T00:00:00.000Z",
-        "quantity" : "LESS"
-      },
-      {
-        "date": "2019-12-27T00:00:00.000Z",
-        "quantity" : "NORMAL"
-      },
-      {
-        "date": "2019-12-28T00:00:00.000Z",
-        "quantity" : "EMPTY"
-      },
-    ]
-    result.todayPracticeTime = 100;
-    result.totalPracticeTime = 1000;
-    result.enTask = 400;
-    result.zhTask = 600;
+    return taskService.fetchTaskCheckinStatistics(req.__CURRENT_USER.id);
+  })
+  .then((result) => {
+    result.records = _.map(result.records, (record) => {
+      if (record.quantity == 0) {
+        record.quantity = enumModel.checkinRecordStatisticsEnum.EMPTY.key;
+      } else if (record.quantity == 1) {
+        record.quantity = enumModel.checkinRecordStatisticsEnum.LESS.key;
+      } else if (record.quantity == 2) {
+        record.quantity = enumModel.checkinRecordStatisticsEnum.NORMAL.key;
+      }  else if (record.quantity > 2) {
+        record.quantity = enumModel.checkinRecordStatisticsEnum.MORE.key;
+      }
+      return record;
+    });
     return apiRender.renderBaseResult(res, result);
   })
   .catch(req.__ERROR_HANDLER);
 }
 
 /**
- * 口译记录列表 分页 按时间倒序
+ * 口译记录列表 按时间倒序
  * @param req
  * @param res
  */

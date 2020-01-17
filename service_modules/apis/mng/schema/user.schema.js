@@ -1,7 +1,7 @@
 'use strict';
 
 const Joi = require('joi');
-
+const pagedBaseSchema = require("./paged.base.schema");
 const pub = {};
 
 /**
@@ -18,6 +18,13 @@ pub.userCheckinReviewScoreSchema = Joi.object().keys({
 pub.clazzUserScoreUpdateSchema = Joi.object().keys({
   score: Joi.number().integer().min(0).max(1000).required(),
   remark: Joi.string().max(256).required()
+});
+
+/**
+ * 用户分页查询
+ */
+pub.pagedQuerySchema = pagedBaseSchema.keys({
+  keyword: Joi.string(),
 });
 
 module.exports = pub;

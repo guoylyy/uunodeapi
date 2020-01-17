@@ -10,6 +10,7 @@ const taskCheckinSchema = require("./schema/taskCheckin.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 const winston = require("winston");
+const moment = require('moment');
 const QUERY_SAFE_PARAMS = [
   "_id",
   "userId",
@@ -73,11 +74,7 @@ pub.queryCheckinList = queryParam => {
  * 创建打卡
  */
 pub.checkin = taskCheckin => {
-  const date = new Date();
-  const year = date.getFullYear();
-  let month = date.getMonth() + 1;
-  month = month < 10 ? "0" + month : month;
-  taskCheckin.yearMonth = year.toString() + month.toString();
+  taskCheckin.yearMonth = moment().format('YYYYMM');
   return taskCheckinSchema.createItem(taskCheckin);
 };
 
@@ -102,9 +99,10 @@ pub.findById = taskCheckinId => {
 };
 
 /**
- *
+ *  统计数量 未删除
  */
 pub.countByParam = param => {
+  param.isDelete = false;
   return taskCheckinSchema.count(param);
 };
 
@@ -114,5 +112,59 @@ pub.countByParam = param => {
 pub.deleteById = id => {
   return taskCheckinSchema.destroyItem(id);
 };
+
+
+/**
+ * 统计单个用户的每天打卡数量
+ */
+pub.sumGroupByUserIdAndDate = (userId, beforeDays) => {
+  const queryDate = moment().subtract('days', beforeDays).toDate();
+  return taskCheckinSchema.aggregate([
+    {$match: {'userId': userId, 'createdAt': {$gte: queryDate}}},
+    {$project: {'date': {$dateToString: {format: "%Y-%m-%d", date: {$add: ["$createdAt", 8 * 3600000]}}}}},
+    {$group: {_id: "$date", quantity: {$sum: 1}}},
+    {$project: {_id: null, date:'$_id', quantity:'$quantity'}},
+    {$sort: {date: 1}}
+  ]);
+};
+
+/**
+ * 统计某天练习时长
+ */
+pub.sumTodayPracticeTime = (userId) => {
+  const queryDate = moment().format('YYYY-MM-DD');
+  return taskCheckinSchema.aggregate([
+    {$match: {'userId': userId}},
+    {$project: 
+			{
+				'date': {$dateToString: {format: "%Y-%m-%d", date: {$add: ["$createdAt", 8 * 3600000]}}}, 
+				'practiceTime': '$practiceTime'
+			}
+		},
+		{$match: {'date': queryDate}},
+    {$group: {_id: null, practiceTime: {$sum: '$practiceTime'}}},
+  ]);
+}
+
+/**
+ * 统计练习时长
+ */
+pub.sumPracticeTime = (userId) => {
+	return taskCheckinSchema.aggregate([
+    {$match: {'userId': userId}},
+    {$group: {_id: null, practiceTime: {$sum: '$practiceTime'}}},
+  ]);
+}
+
+/**
+ * 根据源语统计练习时长
+ */
+pub.sumPracticeTimeByLanguage = userId => {
+  return taskCheckinSchema.aggregate([
+    {$match: {'userId': userId}},
+    {$group: {_id: "$task.language", practiceTime: {$sum: '$practiceTime'}}},
+    {$project: {_id: null, language:'$_id', practiceTime:'$practiceTime'}},
+  ]);
+}
 
 module.exports = pub;

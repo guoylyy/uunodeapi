@@ -63,6 +63,24 @@ pub.queryAll = (queryParam) => {
 };
 
 /**
+ * 处理关键词查询
+ * 构造 学号 或 姓名 like keyword
+ *
+ * @param query     knex query builder
+ * @param keyword   关键词
+ */
+const digestUserKeyword = (query, keyword) => {
+  if (keyword && _.isString(keyword)) {
+    let likeKeyWord = '%' + keyword + '%';
+    query.andWhere(function () {
+      this.where('user.studentNumber', 'LIKE', likeKeyWord)
+          .orWhere('user.name', 'LIKE', likeKeyWord);
+    });
+  }
+  return query;
+};
+
+/**
  * 分页查询第三方用户列表
  *
  * @param queryParam
@@ -71,14 +89,20 @@ pub.queryAll = (queryParam) => {
  * @returns {Promise.<TResult>|Promise}
  */
 pub.queryPaged = (queryParam, pageSize, pageNumber) => {
-
-  return postSchema.query(
+  console.log(queryParam);
+  return userBindSchema.query(
       (query) => {
+        query = query.leftJoin(
+          'user',
+          'user.id',
+          'user_bind.userId'
+        )
+        digestUserKeyword(query, queryParam.keyword);
         queryUtil.filterMysqlQueryParam(query, queryParam, QUERY_SAFE_PARAMS);
       })
-      .orderBy('createdAt', 'desc')
+      .orderBy('user.createdAt', 'desc')
       .fetchPage({
-        columns: QUERY_SELECT_COLUMNS,
+        columns: ['user.*'],
         page: pageNumber,
         pageSize: pageSize
       })
