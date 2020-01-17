@@ -16,9 +16,12 @@ const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "image",
   "linkType",
   "linkUrl",
-  "active"
+  "active",
+  "sort"
 ]);
-const QUERY_ORDER_BY = queryUtil.disposeSortBy([{ column: "sort" }]);
+const QUERY_ORDER_BY = queryUtil.disposeSortBy([
+  { column: "sort"}
+]);
 
 const pub = {};
 
@@ -68,9 +71,9 @@ pub.updateBannerById = banner => {
 /**
  * 创建banner
  */
-pub.createBanner = banner =>{
+pub.createBanner = banner => {
   return bannerSchema.createItem(banner);
-}
+};
 
 /**
  * 根据id查找banner对象
@@ -86,5 +89,32 @@ const safeParamList = ["sort"];
 pub.findByParam = param => {
   return bannerSchema.findItemByParam(param, safeParamList);
 };
+
+/**
+ * 获取当前最大的排序编号
+ * 如果{sort}存在 获取比sort小的最大编号
+ */
+pub.getMaxSortBanner = sort => {
+  return (sort
+    ? bannerSchema.aggregate([
+      { $match: { sort: { $lt: sort }, isDelete: false, active: true } },
+      { $group: { _id: null, sort: { $max: "$sort" }} }
+    ])
+    : bannerSchema.aggregate([
+      { $match: { isDelete: false, active: true } },
+      { $group: { _id: null, sort: { $max: "$sort" }} }
+    ])
+  ).then(result => {
+    if (!_.isEmpty(result)) {
+      return pub.findByParam({sort: result[0].sort});
+    } else {
+      return null;
+    }
+  });
+};
+
+pub.deleteById = bannerId => {
+  return bannerSchema.destroyItem(bannerId);
+}
 
 module.exports = pub;

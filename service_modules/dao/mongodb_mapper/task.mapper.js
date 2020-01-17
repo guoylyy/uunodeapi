@@ -28,11 +28,13 @@ const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "oppoLanguage",
   "theme",
   "pic",
-  "createAt",
-  "updateAt"
+  "type",
+  "status",
+  "createdAt",
+  "updatedAt"
 ]);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([
-  { column: "createAt", isDescending: true }
+  { column: "createdAt", isDescending: true }
 ]);
 
 const pub = {};

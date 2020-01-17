@@ -17,7 +17,7 @@ const apiUtil = require("../../util/api.util");
 const bannerService = require("../../../services/banner.service");
 const enumModel = require("../../../services/model/enum");
 const bannerBizTypeEnum = enumModel.bannerBizTypeEnum;
-const pagedBaseSchema = require('../schema/paged.base.schema');
+const pagedBaseSchema = require("../schema/paged.base.schema");
 const bannerSchema = require("../schema/banner.schema");
 
 const pub = {};
@@ -30,7 +30,7 @@ const pub = {};
 pub.getBanners = (req, res) => {
   return schemaValidator
     .validatePromise(pagedBaseSchema, req.query)
-    .then((param) => {
+    .then(param => {
       param.bizType = bannerBizTypeEnum.LESSON.key;
       return bannerService.queryPagedBannerList(param);
     })
@@ -58,26 +58,27 @@ pub.updateBanner = (req, res) => {
       banner.id = req.params.bannerId;
       return bannerService.updateBanner(banner);
     })
-    .then((result) => {
-      return result 
-      ? apiRender.renderSuccess(res)
-      : apiRender.renderBizFail(res, "更新失败");
+    .then(result => {
+      return result
+        ? apiRender.renderSuccess(res)
+        : apiRender.renderParameterError(res, "更新失败");
     })
     .catch(req.__ERROR_HANDLER);
 };
 
-pub.updateBannerSort = (req, res) => {
+/**
+ * 上移banner
+ */
+pub.moveUpBanner = (req, res) => {
   return schemaValidator
-  .validatePromise(commonSchema.mongoIdSchema, req.params.bannerId)
-  .then((bannerId) => {
-    return bannerService.updateBannerSort(bannerId);
-  })
-  .then((result) => {
-    return result 
-    ? apiRender.renderSuccess(res)
-    : apiRender.renderBizFail(res, "上移失败");
-  })
-  .catch(req.__ERROR_HANDLER);
+    .validatePromise(commonSchema.mongoIdSchema, req.params.bannerId)
+    .then(bannerId => {
+      return bannerService.updateBannerSort(bannerId);
+    })
+    .then(result => {
+      return apiRender.renderSuccess(res);
+    })
+    .catch(req.__ERROR_HANDLER);
 };
 
 /**
@@ -94,11 +95,25 @@ pub.createBanner = (req, res) => {
       return bannerService.createBanner(banner);
     })
     .then(result => {
-      return result 
-      ? apiRender.renderSuccess(res)
-      : apiRender.renderBizFail(res, "创建失败");
+      return apiRender.renderSuccess(res)
     })
     .catch(req.__ERROR_HANDLER);
 };
+
+/**
+ * 删除banner
+ */
+pub.deleteBanner = (req, res) => {
+  return schemaValidator
+    .validatePromise(commonSchema.mongoIdSchema, req.params.bannerId)
+    .then(bannerId => {
+      return bannerService.deleteBanner(bannerId);
+    })
+    .then(result => {
+      return apiRender.renderSuccess(res);
+    })
+    .catch(req.__ERROR_HANDLER);
+};
+
 
 module.exports = pub;
