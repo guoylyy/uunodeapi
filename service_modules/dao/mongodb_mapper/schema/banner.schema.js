@@ -20,7 +20,8 @@ let bannerSchema = new Schema({
     linkType: { type: String, required:true, enum: bannerLinkTypeEnum},
     image: {type: String, required: true},
     linkUrl: {type: String, required: false, default: ''},
-    sort: {type: Number}
+    sort: {type: Number, required: true},
+    active: {type: Boolean, required: true}
 });
 
 // create a schema named as Banner, and collection as Banner

@@ -120,7 +120,7 @@ pub.deleteById = id => {
 pub.sumGroupByUserIdAndDate = (userId, beforeDays) => {
   const queryDate = moment().subtract('days', beforeDays).toDate();
   return taskCheckinSchema.aggregate([
-    {$match: {'userId': userId, 'createdAt': {$gte: queryDate}}},
+    {$match: {'userId': userId, 'createdAt': {$gte: queryDate}, 'isDelete': false}},
     {$project: {'date': {$dateToString: {format: "%Y-%m-%d", date: {$add: ["$createdAt", 8 * 3600000]}}}}},
     {$group: {_id: "$date", quantity: {$sum: 1}}},
     {$project: {_id: null, date:'$_id', quantity:'$quantity'}},
@@ -134,7 +134,7 @@ pub.sumGroupByUserIdAndDate = (userId, beforeDays) => {
 pub.sumTodayPracticeTime = (userId) => {
   const queryDate = moment().format('YYYY-MM-DD');
   return taskCheckinSchema.aggregate([
-    {$match: {'userId': userId}},
+    {$match: {'userId': userId, 'isDelete': false}},
     {$project: 
 			{
 				'date': {$dateToString: {format: "%Y-%m-%d", date: {$add: ["$createdAt", 8 * 3600000]}}}, 
@@ -151,7 +151,7 @@ pub.sumTodayPracticeTime = (userId) => {
  */
 pub.sumPracticeTime = (userId) => {
 	return taskCheckinSchema.aggregate([
-    {$match: {'userId': userId}},
+    {$match: {'userId': userId, 'isDelete': false}},
     {$group: {_id: null, practiceTime: {$sum: '$practiceTime'}}},
   ]);
 }
@@ -161,7 +161,7 @@ pub.sumPracticeTime = (userId) => {
  */
 pub.sumPracticeTimeByLanguage = userId => {
   return taskCheckinSchema.aggregate([
-    {$match: {'userId': userId}},
+    {$match: {'userId': userId, 'isDelete': false}},
     {$group: {_id: "$task.language", practiceTime: {$sum: '$practiceTime'}}},
     {$project: {_id: null, language:'$_id', practiceTime:'$practiceTime'}},
   ]);
