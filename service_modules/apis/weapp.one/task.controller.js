@@ -116,7 +116,7 @@ pub.getCheckinList = (req, res) => {
   return schemaValidator.validatePromise(taskSchema.checkinPagedSchema, req.query)
   .then((param) => {
     param.task = {};
-    param.task.id = req.__TASK_ITEM.id;
+    param.taskId = req.__TASK_ITEM.id;
     return taskService.queryPagedCheckinList(param);
   })
   .then((result) => {
