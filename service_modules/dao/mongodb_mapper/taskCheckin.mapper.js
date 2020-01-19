@@ -183,4 +183,56 @@ pub.sumCheckinDaysByUserId = userId => {
   ])
 }
 
+/**
+ * 打卡周排行榜
+ */
+pub.checkinWeekRank = (limit = 100)=> {
+  return taskCheckinSchema.aggregate([
+    {$match: {'isDelete': false}},
+    {$project: {
+      yearWeek: {
+        $dateToString: {
+          format: "%Y-%V", 
+          date: {
+            $add: ["$createdAt", 8 * 3600000]
+          }
+        }
+      },
+      practiceTime: '$practiceTime',
+      userId: '$userId'
+    }},
+    {$match: {'yearWeek': moment().format('YYYY-WW')}},
+    {$group: {_id: "$userId", practiceTime: {$sum: '$practiceTime'}}},
+    {$sort: {'practiceTime': -1}},
+    {$limit: limit }
+  ]);
+}
+
+/**
+ * 笔芯周排行榜
+ */
+pub.likeCountWeekRank = (limit = 100) =>{
+  return taskCheckinSchema.aggregate([ 
+    {$match: {'isDelete': false}},
+    {$project: {
+      yearWeek: {
+        $dateToString: {
+          format: "%Y-%V", 
+          date: {
+            $add: ["$createdAt", 8 * 3600000]
+          }
+        }
+      },
+      likeCount: {$size: '$likeArr'},
+      userId: '$userId'
+    }},
+    {$match: {'yearWeek': moment().format('YYYY-WW')}},
+    {$group: {_id: "$userId", likeCount: {$sum: '$likeCount'}}},
+    {$sort: {'likeCount': -1}},
+    {$limit: limit }
+  ])
+}
+
+pub.myCheckinWeekData = (userId) => {}
+
 module.exports = pub;

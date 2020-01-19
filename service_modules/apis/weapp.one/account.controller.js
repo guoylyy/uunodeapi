@@ -392,4 +392,20 @@ pub.fetchTaskCheckinRecords = (req, res) => {
   .catch(req.__ERROR_HANDLER);
 }
 
+/**
+ * 个人中心任务打卡统计数据
+ * @param req
+ * @param res
+ */
+pub.fetchCheckinWeekRank = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+  .then(() => {
+    return taskService.checkinWeekRank();
+  })
+  .then((result) => {
+    return apiRender.renderBaseResult(res, result);
+  })
+  .catch(req.__ERROR_HANDLER);
+}
+
 module.exports = pub;

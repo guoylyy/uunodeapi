@@ -12,7 +12,7 @@ const commonError = require("./model/common.error");
 const qiniuComponent = require("./component/qiniu.component");
 const userMapper = require("../dao/mysql_mapper/user.mapper");
 const userFileMapper = require("../dao/mongodb_mapper/userFile.mapper");
-const moment = require('moment')
+const moment = require("moment");
 
 const pub = {};
 
@@ -20,9 +20,10 @@ const pub = {};
  * 分页查询课程列表
  */
 pub.queryTaskList = queryParam => {
-  queryParam.title && (queryParam.title = {
-    $regex: RegExp(queryParam.title, 'i')
-  })
+  queryParam.title &&
+    (queryParam.title = {
+      $regex: RegExp(queryParam.title, "i")
+    });
   console.log(queryParam);
   return taskMapper.queryPagedTaskList(
     queryParam,
@@ -89,7 +90,7 @@ pub.fetchById = taskId => {
  * 获取当日任务
  */
 pub.fetchTodayTask = () => {
-  let param = { pushAt: moment().format('YYYY-MM-DD') };
+  let param = { pushAt: moment().format("YYYY-MM-DD") };
   return pushTaskMapper.findByParam(param).then(pushTask => {
     // task对象 打卡数量 打卡人员列表 promise all
     if (!_.isNil(pushTask)) {
@@ -128,15 +129,20 @@ pub.fetchTodayTask = () => {
  * 打卡
  */
 pub.checkin = taskCheckin => {
-  return Promise.all([taskMapper.findById(taskCheckin.taskId), userFileMapper.fetchById(taskCheckin.attach)])
-  .then(([task, userFile]) => {
+  return Promise.all([
+    taskMapper.findById(taskCheckin.taskId),
+    userFileMapper.fetchById(taskCheckin.attach)
+  ]).then(([task, userFile]) => {
     if (_.isNil(userFile)) {
-      winston.error("获取用户文件失败，参数错误！！！ taskCheckin.attach: %s", taskCheckin.attach);
-      return Promise.reject(commonError.PARAMETER_ERROR('音频附件不存在'));
+      winston.error(
+        "获取用户文件失败，参数错误！！！ taskCheckin.attach: %s",
+        taskCheckin.attach
+      );
+      return Promise.reject(commonError.PARAMETER_ERROR("音频附件不存在"));
     }
     taskCheckin.task = task;
     return taskCheckinMapper.checkin(taskCheckin);
-  })
+  });
 };
 
 /**
@@ -275,37 +281,44 @@ pub.updateTask = task => {
  * 创建每日推送任务
  */
 pub.createPushTask = pushTask => {
-  return pushTaskMapper.findByParam({pushAt:pushTask.pushAt})
-  .then(item => {
+  return pushTaskMapper.findByParam({ pushAt: pushTask.pushAt }).then(item => {
     if (!_.isNil(item)) {
-      return Promise.reject(commonError.BIZ_FAIL_ERROR(`当日已存在推送任务 pushAt: ${pushTask.pushAt}`));
+      return Promise.reject(
+        commonError.BIZ_FAIL_ERROR(
+          `当日已存在推送任务 pushAt: ${pushTask.pushAt}`
+        )
+      );
     }
     return pushTaskMapper.createPushTask(pushTask);
-  })
-}
+  });
+};
 
 /**
  * 创建每日推送任务
  */
 pub.getPushTaskList = queryParam => {
-  return pushTaskMapper.queryPagedPushTaskList(queryParam, queryParam.pageNumber, queryParam.pageSize)
-  .then(result => {
-    let taskQuery = [];
-    const pushTaskList = result.values;
-    for (let i=0; i<pushTaskList.length; i++) {
-      const pushTask = pushTaskList[i];
-      taskQuery.push(taskMapper.findById(pushTask.taskId))
-    }
-    return Promise.all(taskQuery)
-    .then(taskList => {
-      for (let i=0; i<taskList.length; i++) {
-        pushTaskList[i].task = taskList[i];
+  return pushTaskMapper
+    .queryPagedPushTaskList(
+      queryParam,
+      queryParam.pageNumber,
+      queryParam.pageSize
+    )
+    .then(result => {
+      let taskQuery = [];
+      const pushTaskList = result.values;
+      for (let i = 0; i < pushTaskList.length; i++) {
+        const pushTask = pushTaskList[i];
+        taskQuery.push(taskMapper.findById(pushTask.taskId));
       }
-      result.values = pushTaskList;
-      return result;
-    })
-  })
-}
+      return Promise.all(taskQuery).then(taskList => {
+        for (let i = 0; i < taskList.length; i++) {
+          pushTaskList[i].task = taskList[i];
+        }
+        result.values = pushTaskList;
+        return result;
+      });
+    });
+};
 
 /**
  * 删除推送任务
@@ -324,18 +337,39 @@ pub.fetchTaskCheckinStatistics = userId => {
     taskCheckinMapper.sumTodayPracticeTime(userId),
     taskCheckinMapper.sumPracticeTimeByLanguage(userId),
     taskCheckinMapper.sumCheckinDaysByUserId(userId)
-  ])
-  .then(([records, [totalPracticeTime], [todayPracticeTime], languagePracticeTime, [checkinDays]]) => {
-    const result = {
-      records: records || [],
-      totalPracticeTime: (!!totalPracticeTime ? totalPracticeTime.practiceTime : 0),
-      todayPracticeTime: (!!todayPracticeTime ? todayPracticeTime.practiceTime : 0),
-      languagePracticeTime: languagePracticeTime || [],
-      checkinDays: (!!checkinDays ? checkinDays.count : 0)
-    };
-    return result;
-  });
-}
+  ]).then(
+    ([
+      records,
+      [totalPracticeTime],
+      [todayPracticeTime],
+      languagePracticeTime,
+      [checkinDays]
+    ]) => {
+      const result = {
+        records: records || [],
+        totalPracticeTime: !!totalPracticeTime
+          ? totalPracticeTime.practiceTime
+          : 0,
+        todayPracticeTime: !!todayPracticeTime
+          ? todayPracticeTime.practiceTime
+          : 0,
+        languagePracticeTime: languagePracticeTime || [],
+        checkinDays: !!checkinDays ? checkinDays.count : 0
+      };
+      return result;
+    }
+  );
+};
 
+/**
+ *
+ */
+pub.checkinWeekRank = () => {
+  return taskCheckinMapper.checkinWeekRank()
+  .then(checkinRank => {
+    console.log(checkinRank);
+    return checkinRank;
+  });
+};
 
 module.exports = pub;
