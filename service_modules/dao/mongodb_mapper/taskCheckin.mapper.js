@@ -167,4 +167,20 @@ pub.sumPracticeTimeByLanguage = userId => {
   ]);
 }
 
+/**
+ * 统计打卡天数
+ */
+pub.sumCheckinDaysByUserId = userId => {
+  return taskCheckinSchema.aggregate([
+    {$match: {'userId': userId, 'isDelete': false}},
+    {$project: 
+      {
+        'date': {$dateToString: {format: "%Y-%m-%d", date: {$add: ["$createdAt", 8 * 3600000]}}}, 
+      }
+    },
+    {$group: {_id: "$date"}},
+    {$group: {_id: null, count: {$sum: 1}}}
+  ])
+}
+
 module.exports = pub;

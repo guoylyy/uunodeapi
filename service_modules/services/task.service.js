@@ -322,14 +322,16 @@ pub.fetchTaskCheckinStatistics = userId => {
     taskCheckinMapper.sumGroupByUserIdAndDate(userId, 200),
     taskCheckinMapper.sumPracticeTime(userId),
     taskCheckinMapper.sumTodayPracticeTime(userId),
-    taskCheckinMapper.sumPracticeTimeByLanguage(userId)
+    taskCheckinMapper.sumPracticeTimeByLanguage(userId),
+    taskCheckinMapper.sumCheckinDaysByUserId(userId)
   ])
-  .then(([records, [totalPracticeTime], [todayPracticeTime], languagePracticeTime]) => {
+  .then(([records, [totalPracticeTime], [todayPracticeTime], languagePracticeTime, [checkinDays]]) => {
     const result = {
       records: records || [],
       totalPracticeTime: (!!totalPracticeTime ? totalPracticeTime.practiceTime : 0),
       todayPracticeTime: (!!todayPracticeTime ? todayPracticeTime.practiceTime : 0),
       languagePracticeTime: languagePracticeTime || [],
+      checkinDays: (!!checkinDays ? checkinDays.count : 0)
     };
     return result;
   });
