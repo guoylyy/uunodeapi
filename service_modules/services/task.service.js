@@ -362,14 +362,78 @@ pub.fetchTaskCheckinStatistics = userId => {
 };
 
 /**
- *
+ * 获取周打卡排行榜和个人信息
  */
-pub.checkinWeekRank = () => {
+pub.getCheckinWeekRank = (userId) => {
   return taskCheckinMapper.checkinWeekRank()
   .then(checkinRank => {
-    console.log(checkinRank);
-    return checkinRank;
+    const fetchUser = [];
+    checkinRank.forEach(item => {
+      fetchUser.push(userMapper.fetchByParam({id: item._id}));
+    })
+    return Promise.all(fetchUser)
+    .then(userList => {
+      for (let i=0; i<userList.length; i++) {
+        checkinRank[i].user = userList[i] || {};
+      }
+      return checkinRank;
+    });
   });
 };
+
+/**
+ * 我的打卡排行榜的个人信息
+ */
+pub.getMyCheckinWeekData = (userId) => {
+  return taskCheckinMapper.myCheckinWeekData(userId)
+    .then(([myCheckinWeekData]) => {
+      console.log(myCheckinWeekData);
+      if (_.isNil(myCheckinWeekData)) {
+        return {
+          "_id" : userId,
+          rank: 99999,
+          practiceTime: 0,
+        }
+      }
+      return myCheckinWeekData;
+    });
+}
+
+/**
+ * 我的排行榜-笔芯榜
+ */
+pub.getLikeCountWeekRank = () => {
+  return taskCheckinMapper.likeCountWeekRank()
+    .then(likeCountWeekRank => {
+      const fetchUser = [];
+      likeCountWeekRank.forEach(item => {
+        fetchUser.push(userMapper.fetchByParam({id: item._id}));
+      })
+      return Promise.all(fetchUser)
+      .then(userList => {
+        for (let i=0; i<userList.length; i++) {
+          likeCountWeekRank[i].user = userList[i] || {};
+        }
+        return likeCountWeekRank;
+      });
+    });
+}
+
+/**
+ * 我的排行榜-笔芯榜 我的信息
+ */
+pub.getMyLikeCountWeekData = (userId) => {
+  return taskCheckinMapper.myLikeCountWeekData(userId)
+    .then(([myLikeCountWeekData]) => {
+      if (_.isNil(myLikeCountWeekData)) {
+        return {
+          "_id" : userId,
+          rank: 99999,
+          likeCount: 0
+        }
+      }
+      return myLikeCountWeekData;
+    });
+}
 
 module.exports = pub;

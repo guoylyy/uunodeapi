@@ -70,7 +70,8 @@ router.get('/account/like/tasks', accountApis.fetchUserLikeTasks); //个人笔�
 
 router.get('/account/statistics/checkin', accountApis.fetchTaskCheckinStatistics) //练习档案
 router.get('/account/statistics/checkinRecords', accountApis.fetchTaskCheckinRecords) //口译记录
-router.get('/account/statistics/checkinWeekRank', accountApis.fetchCheckinWeekRank) //排行榜
+router.get('/account/statistics/checkinWeekRank', accountApis.fetchCheckinWeekRank) //我的排行榜-努力榜
+router.get('/account/statistics/likeCountWeekRank', accountApis.fetchLikeCountWeekRank) //我的排行榜-笔芯榜
 // router.get('/account/checkins') //个人口译记录筛选
 
 // @HuPeng
