@@ -2103,6 +2103,30 @@ const taskLevelEnum = {
 
 exports.taskLevelEnum = taskLevelEnum;
 
+/**
+ * 
+ *  Environment  环境
+    Technology  科技
+    Education  教育
+    Life  人生
+    Politics  政治
+    Economy  经济
+    Culture  文化
+    Diplomacy  外交
+    Tourism  旅游
+    Art  艺术
+    History  历史
+    Health  健康
+    Society  社会
+    Business  商业
+    Design  设计
+    Psychology  心理
+    Law  法律
+    Agriculture  农业
+    Sport  体育
+    Trade  贸易
+    Other  其他
+ */
 const taskThemeEnum = {
   'ENV': {
     key: 'ENV',
@@ -2111,6 +2135,78 @@ const taskThemeEnum = {
   'TECH': {
     key: 'TECH',
     name: '技术'
+  },
+  'EDU': {
+    key: 'EDU',
+    name: '教育'
+  },
+  'LIFE': {
+    key: 'LIFE',
+    name: '人生'
+  },
+  'POLITICS': {
+    key: 'POLITICS',
+    name: '政治'
+  },
+  'ECONOMY': {
+    key: 'ECONOMY',
+    name: '经济'
+  },
+  'CULTURE': {
+    key: 'CULTURE',
+    name: '文化'
+  },
+  'DIPLOMACY': {
+    key: 'DIPLOMACY',
+    name: '外交'
+  },
+  'TOUR': {
+    key: 'TOUR',
+    name: '旅游'
+  },
+  'ART': {
+    key: 'ART',
+    name: '艺术'
+  },
+  'HEALTH': {
+    key: 'HEALTH',
+    name: '健康'
+  },
+  'SOCIETY': {
+    key: 'SOCIETY',
+    name: '社会'
+  },
+  'BUSINESS': {
+    key: 'BUSINESS',
+    name: '商业'
+  },
+  'DESIGN': {
+    key: 'DESIGN',
+    name: '设计'
+  },
+  'PSYCHOLOGY': {
+    key: 'PSYCHOLOGY',
+    name: '心理'
+  },
+  'LAW': {
+    key: 'LAW',
+    name: '法律'
+  },
+  'AGRICULTURE': {
+    key: 'AGRICULTURE',
+    name: '农业'
+  },
+  'TRADE': {
+    key: 'TRADE',
+    name: '贸易'
+  },
+  'SPORT': {
+    key: 'SPORT',
+    name: '体育'
+  },
+  'OTHER': {
+    key: 'OTHER',
+    name: '其他'
   }
 }
 
@@ -2140,6 +2236,14 @@ const taskTypeEnum = {
   'PEDAGOGICAL_MATERIAL': {
     key: 'PEDAGOGICAL_MATERIAL',
     name: '教学材料'
+  },
+  'SPEECH': {
+    key: 'SPEECH',
+    name: '演讲'
+  },
+  'OTHER': {
+    key: 'OTHER',
+    name: '其他'
   }
 }
 
