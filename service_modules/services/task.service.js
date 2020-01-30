@@ -106,10 +106,10 @@ pub.fetchTodayTask = () => {
           task.headImgUrlList = _.map(userList, "headImgUrl");
           const defaultHeadImg = [
             "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJrjwowQB5WFKosOe4TSbhaDIicmKZ3PZR6LQ1T9NFAhyibFuMvdjDCYOqHFWCuAuY0IicBeKqklMtgQ/132",
-            "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKbRGQDP3eIEu1iabJGFw2xz7ibJzRlHZz8d3oJxSwjmJqLaQbf6gYmz79PicT5RsPfF3EhZVraKqLoA/132",
-            "https://thirdwx.qlogo.cn/mmopen/KydxAIB52xmUibXYsmaaadCibBOFSnMgGdPiaFwrO39GwSoVF1kTv1hYQPJWrV3WgIIM9HPpvY8fJPDkl51GNHic1w/132",
-            "https://thirdwx.qlogo.cn/mmopen/vi_32/Q3auHgzwzM7Z3yA0gicP9mMezG57KibEpCWAt1baSAtUFYiavRKDyotNGHicjiaeRIjxanHSjbyEHibibAicAhdib2JAY0A/132",
-            "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJ0LP3VXv0uYuyluLNbr4ytD9TjYhzorcnLz5OdZ2FHpjTsdC72QVibeWrL4RezPoTmMfB1XxoYOXw/132"
+            "https://wx.qlogo.cn/mmopen/BaibzQDtAJbLBrdHeT4GbLJiaGgpzNeqnv3uZNcZZeRbs0piciaToPnXmM5ZYcApkBX9gYnHymIhT9YbdqkoxEcian9RTlKQibppdC/0",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1580386008061&di=deae1a23df019332e31e9774d324161b&imgtype=0&src=http%3A%2F%2Fwww.vvfeng.com%2Fdata%2Fupload%2Fueditor%2F20181121%2F5bf4f3f00b53d.jpg",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1580386008060&di=5bec0c942cc32c61654f8ccf5a15fe9d&imgtype=0&src=http%3A%2F%2Fpic.9ht.com%2Fup%2F2018-7%2F15312794628096861.jpg",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1580386008060&di=3d307b8bd3ebc4af6873118a0dfbd0c1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180801%2F21%2F1533129201-eRalzJBYUH.jpg"
           ];
           while (task.headImgUrlList.length < 5) {
             task.headImgUrlList.push(
