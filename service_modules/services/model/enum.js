@@ -2227,7 +2227,7 @@ const taskTypeEnum = {
   },
   'HEARING': {
     key: 'HEARING',
-    name: '耳语'
+    name: '听证会'
   },
   'INTERVIEW': {
     key: 'INTERVIEW',
