@@ -18,7 +18,7 @@ pub.getLessonList = (req, res) => {
   return schemaValidator
     .validatePromise(lessonSchema.queryLessonListSchema, req.query)
     .then(queryParam => {
-      debug(queryParam);
+      queryParam.status = enumModel.lessonStatusEnum.PUBLISHED;
       return lessonService.queryLessonList(queryParam);
     })
     .then(result => {

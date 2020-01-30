@@ -460,7 +460,6 @@ pub.fetchTaskCheckinRecords = (req, res) => {
     .catch(req.__ERROR_HANDLER);
 };
 
-
 const userViewColumns = ['id', 'name', 'headImgUrl', 'school'];
 /**
  * 我的排行榜-努力榜
