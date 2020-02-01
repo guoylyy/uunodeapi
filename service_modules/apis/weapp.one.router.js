@@ -37,6 +37,11 @@ router.get('/system/enums', commonApis.getSystemEnums);
 
 // router.post('/wechat/pay', commonMiddleware.wechatXmlParser, wechatApi.wechatPaymentCallbackHandler);
 
+const shareController = require('./weapp.one/share.controller');
+// 分享相关接口
+router.use('/share', oneMiddleware.tryParseAuthToken);
+router.get('/share/task/:taskId/checkin/:checkinId', oneMiddleware.preloadTaskCheckin, shareController.getCheckin)
+
 /***********************************************************************************************************************
  * 检查是否加入了默认班级
  ***********************************************************************************************************************/
@@ -91,6 +96,7 @@ router.put('/task/:taskId/checkin/:checkinId', oneMiddleware.checkMyTaskCheckin,
 router.post('/task/:taskId/checkin/:checkinId/viewLog', taskController.addViewLog) //新增观看记录
 router.post('/task/:taskId/checkin/:checkinId/like', taskController.likeCheckin) //笔芯
 router.delete('/task/:taskId/checkin/:checkinId/like', taskController.cancelLikeCheckin) //取消笔芯
+router.get('/task/:taskId/checkin/:checkinId/shareInfo', taskController.getShareInfo) // 获取分享信息
 
 // 学习材料
 const lessonController = require('./weapp.one/lesson.controller');

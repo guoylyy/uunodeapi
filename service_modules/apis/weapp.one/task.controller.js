@@ -85,8 +85,8 @@ pub.checkin = (req, res) => {
     taskCheckin.userId = req.__CURRENT_USER.id;
     return taskService.checkin(taskCheckin);
   })
-  .then(() => {
-    return apiRender.renderSuccess(res)
+  .then((result) => {
+    return apiRender.renderBaseResult(res, result);
   })
   .catch(req.__ERROR_HANDLER);
 }
@@ -205,6 +205,20 @@ pub.addViewLog = (req, res) => {
   })
   .then(() => {
     return apiRender.renderSuccess(res)
+  })
+  .catch(req.__ERROR_HANDLER);
+}
+
+/**
+ * 获取分享信息
+ */
+pub.getShareInfo = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+  .then(() => {
+    const result = {
+      imgUrl: 'https://qiniuprivate.gambition.cn/1580549260447_1xX3d2_Screen%20Shot%202020-02-01%20at%2017.27.12.png'
+    }
+    return apiRender.renderBaseResult(res, result);
   })
   .catch(req.__ERROR_HANDLER);
 }

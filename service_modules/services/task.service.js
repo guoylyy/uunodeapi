@@ -436,4 +436,37 @@ pub.getMyLikeCountWeekData = (userId) => {
     });
 }
 
+/**
+ * 获取打卡详情
+ */
+pub.getShareCheckin = checkinId => {
+  if (_.isNil(checkinId)) {
+    winston.error("获取打卡详情失败，参数错误！！！ checkinId: %s", checkinId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return taskCheckinMapper.findById(checkinId)
+  .then(checkin => {
+    const userId = checkin.userId;
+      return Promise.all([
+        userMapper.fetchByParam({id: userId}),
+        taskCheckinMapper.sumCheckinDaysByUserId(userId),
+        taskCheckinMapper.sumTodayPracticeTime(userId),
+        attachMapper.fetchById(checkin.attach)
+      ])
+      .then(([
+        user,
+        [checkinDays],
+        [todayPracticeTime],
+        attach
+      ]) => {
+        user.todayPracticeTime= !!todayPracticeTime? todayPracticeTime.practiceTime: 0,
+        user.checkinDays= !!checkinDays ? checkinDays.count : 0
+        console.log(user);
+        checkin.user = user;
+        checkin.attach = attach;
+        return checkin;
+      })
+  });
+};
+
 module.exports = pub;

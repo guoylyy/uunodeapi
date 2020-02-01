@@ -563,4 +563,45 @@ pub.checkMyTaskCheckin = (req, res, next) => {
   }
 }
 
+
+/**
+ * 尝试解析json web token, 验证用户是否已经登录 没有token则跳过
+ */
+pub.tryParseAuthToken = (req, res, next) => {
+  const loginRequired = (error) => {
+    debug(error);
+    winston.error('小程序用户需要重新登录！！！');
+    return apiRender.renderLoginRequired(res);
+  };
+
+  debug(req.headers);
+  const token = req.header('X-Auth-Token');
+
+  if (_.isNil(token)) {
+    // token 为空跳过
+    next();
+    // 返回null，避免bluebird报not returned from promise警告
+    return null;
+  }
+
+  // verifies secret and checks exp
+  return jwtUtil.verify(token, config.jwt_weapp_one.secretKey, config.jwt_weapp_one.options)
+      .then((userObj) => {
+        debug(userObj);
+        return userService.fetchById(userObj.weappUserId);
+      })
+      .then((userItem) => {
+        // 如果用户不存在，则需登录
+        if (_.isNil(userItem)) {
+          return loginRequired();
+        }
+
+        req.__CURRENT_USER = userItem;
+        next();
+        // 返回null，避免bluebird报not returned from promise警告
+        return null;
+      })
+      .catch(loginRequired);
+};
+
 module.exports = pub;
