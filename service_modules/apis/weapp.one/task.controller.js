@@ -99,7 +99,7 @@ pub.getMyCheckinList = (req, res) => {
   .then(() => {
     const param = {};
     param.task = {};
-    param.task.id = req.__TASK_ITEM.id;
+    param.taskId = req.__TASK_ITEM.id;
     param.userId = req.__CURRENT_USER.id;
     return taskService.getCheckinList(param);
   })
@@ -216,7 +216,7 @@ pub.getShareInfo = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
   .then(() => {
     const result = {
-      imgUrl: 'https://qiniuprivate.gambition.cn/1580549260447_1xX3d2_Screen%20Shot%202020-02-01%20at%2017.27.12.png'
+      imgUrl: 'http://qiniuprivate.gambition.cn/1580549260447_1xX3d2_Screen%20Shot%202020-02-01%20at%2017.27.12.png'
     }
     return apiRender.renderBaseResult(res, result);
   })
