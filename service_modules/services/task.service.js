@@ -451,19 +451,18 @@ pub.getShareCheckin = checkinId => {
         userMapper.fetchByParam({id: userId}),
         taskCheckinMapper.sumCheckinDaysByUserId(userId),
         taskCheckinMapper.sumTodayPracticeTime(userId),
-        attachMapper.fetchById(checkin.attach)
+        userFileMapper.fetchById(checkin.attach)
       ])
       .then(([
         user,
         [checkinDays],
         [todayPracticeTime],
-        attach
+        userFile
       ]) => {
         user.todayPracticeTime= !!todayPracticeTime? todayPracticeTime.practiceTime: 0,
         user.checkinDays= !!checkinDays ? checkinDays.count : 0
-        console.log(user);
         checkin.user = user;
-        checkin.attach = attach;
+        checkin.attach = userFile;
         return checkin;
       })
   });
