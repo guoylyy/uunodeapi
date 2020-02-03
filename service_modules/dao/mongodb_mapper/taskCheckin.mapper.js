@@ -184,7 +184,7 @@ pub.sumCheckinDaysByUserId = userId => {
 }
 
 /**
- * 打卡周排行榜
+ * 我的排行榜-打卡周排行榜
  */
 pub.checkinWeekRank = (limit = 100)=> {
   return taskCheckinSchema.aggregate([
@@ -201,7 +201,7 @@ pub.checkinWeekRank = (limit = 100)=> {
 }
 
 /**
- * 笔芯周排行榜
+ * 我的排行榜-笔芯周排行榜
  */
 pub.likeCountWeekRank = (limit = 100) =>{
   return taskCheckinSchema.aggregate([ 
@@ -245,6 +245,97 @@ pub.myLikeCountWeekData = (userId) => {
     {$project: { _id: '$items._id', likeCount: '$items.likeCount', rank: {$add: ['$items.rank', 1]}}},
     {$match: {_id: userId}}
   ])
+}
+
+/**
+ * 学校排行榜-打卡周排行榜
+ */
+pub.schoolCheckinWeekRank = (limit = 1000)=> {
+  return taskCheckinSchema.aggregate([ 
+    {$match: {'isDelete': false}},
+		{$lookup: {
+			"localField": "userId",
+			"from": "WeUser",
+			"foreignField": "userId",
+			"as": "user"
+		}},
+    {$project: {yearWeek: {$dateToString: {format: "%Y-%V", date: {$add: ["$createdAt", 8 * 3600000]}}}, practiceTime: '$practiceTime', school: { $arrayElemAt: [ '$user.school', 0 ] }}},
+    {$match: {'yearWeek': moment().format('YYYY-WW'), 'school': {$ne:null}}},
+    {$group: {_id: "$school", practiceTime: {$sum: '$practiceTime'}}},
+		{$sort: {'practiceTime': -1}},
+		{$limit: limit},
+		{$group: {_id: null, items: {$push: '$$ROOT'}}},
+		{$unwind: { "path": "$items", "includeArrayIndex": "items.rank" } },
+		{$project: { _id: '$items._id', practiceTime: '$items.practiceTime', rank: {$add: ['$items.rank', 1]}}},
+  ]);
+}
+
+/**
+ * 学校排行榜-打卡周排行榜
+ */
+pub.mySchoolCheckinWeekData = (school)=> {
+  return taskCheckinSchema.aggregate([ 
+    {$match: {'isDelete': false}},
+		{$lookup: {
+			"localField": "userId",
+			"from": "WeUser",
+			"foreignField": "userId",
+			"as": "user"
+		}},
+    {$project: {yearWeek: {$dateToString: {format: "%Y-%V", date: {$add: ["$createdAt", 8 * 3600000]}}}, practiceTime: '$practiceTime', school: { $arrayElemAt: [ '$user.school', 0 ] }}},
+    {$match: {'yearWeek': moment().format('YYYY-WW'), 'school': {$ne:null}}},
+    {$group: {_id: "$school", practiceTime: {$sum: '$practiceTime'}}},
+		{$sort: {'practiceTime': -1}},
+		{$limit: 1000},
+		{$group: {_id: null, items: {$push: '$$ROOT'}}},
+		{$unwind: { "path": "$items", "includeArrayIndex": "items.rank" } },
+    {$project: { _id: '$items._id', practiceTime: '$items.practiceTime', rank: {$add: ['$items.rank', 1]}}},
+    {$match: {_id: school}}
+  ]);
+}
+
+/**
+ * 
+ */
+pub.schoolLikeCountWeekRank = (limit = 1000) => {
+  return taskCheckinSchema.aggregate([ 
+    {$match: {'isDelete': false}},
+		{$lookup: {
+			"localField": "userId",
+			"from": "WeUser",
+			"foreignField": "userId",
+			"as": "user"
+		}},
+    {$project: {yearWeek: {$dateToString: {format: "%Y-%V", date: {$add: ["$createdAt", 8 * 3600000]}}}, likeCount: {$size: '$likeArr'}, school: { $arrayElemAt: [ '$user.school', 0 ] }}},
+    {$match: {'yearWeek': moment().format('YYYY-WW'), 'school': {$ne:null}}},
+    {$group: {_id: "$school", likeCount: {$sum: '$likeCount'}}},
+		{$sort: {'likeCount': -1}},
+		{$limit: 1000},
+		{$group: {_id: null, items: {$push: '$$ROOT'}}},
+		{$unwind: { "path": "$items", "includeArrayIndex": "items.rank" } },
+    {$project: { _id: '$items._id', likeCount: '$items.likeCount', rank: {$add: ['$items.rank', 1]}}},
+  ]);
+}
+
+pub.mySchoolLikeCountWeekData = (school) => {
+  return taskCheckinSchema.aggregate([ 
+    {$match: {'isDelete': false}},
+		{$lookup: {
+			"localField": "userId",
+			"from": "WeUser",
+			"foreignField": "userId",
+			"as": "user"
+		}},
+    {$project: {yearWeek: {$dateToString: {format: "%Y-%V", date: {$add: ["$createdAt", 8 * 3600000]}}}, likeCount: {$size: '$likeArr'}, school: { $arrayElemAt: [ '$user.school', 0 ] }}},
+    {$match: {'yearWeek': moment().format('YYYY-WW'), 'school': {$ne:null}}},
+    {$group: {_id: "$school", likeCount: {$sum: '$likeCount'}}},
+		{$sort: {'likeCount': -1}},
+		{$limit: 1000},
+		{$group: {_id: null, items: {$push: '$$ROOT'}}},
+		{$unwind: { "path": "$items", "includeArrayIndex": "items.rank" } },
+    {$project: { _id: '$items._id', likeCount: '$items.likeCount', rank: {$add: ['$items.rank', 1]}}},
+    {$match: {_id: school}}
+  ]);
 }
 
 module.exports = pub;

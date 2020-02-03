@@ -194,4 +194,23 @@ pub.create = (userItem) => {
       });
 };
 
+/**
+ * 根据学校查询人数
+ */
+pub.countBySchool = (school) => {
+  console.log(school);
+  if (_.isEmpty(school)) {
+    return null;
+  }
+  return userSchema.query(
+      (query) => {
+        query.count('id as c').where('school', school)
+      })
+      .fetchAll()
+      .then((rs) => {
+        let count = _.first(rs.toJSON()).c;
+        return _.toNumber(count);
+      })
+}
+
 module.exports = pub;

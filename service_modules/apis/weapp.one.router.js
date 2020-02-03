@@ -77,6 +77,8 @@ router.get('/account/statistics/checkin', accountApis.fetchTaskCheckinStatistics
 router.get('/account/statistics/checkinRecords', accountApis.fetchTaskCheckinRecords) //口译记录
 router.get('/account/statistics/checkinWeekRank', accountApis.fetchCheckinWeekRank) //我的排行榜-努力榜
 router.get('/account/statistics/likeCountWeekRank', accountApis.fetchLikeCountWeekRank) //我的排行榜-笔芯榜
+router.get('/account/statistics/school/checkinWeekRank', accountApis.fetchSchoolCheckinWeekRank) //学校排行榜-努力榜
+router.get('/account/statistics/school/likeCountWeekRank', accountApis.fetchSchoolLikeCountWeekRank) //学校排行榜-笔芯榜
 // router.get('/account/checkins') //个人口译记录筛选
 
 // @HuPeng

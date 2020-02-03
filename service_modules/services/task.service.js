@@ -361,6 +361,7 @@ pub.fetchTaskCheckinStatistics = userId => {
   );
 };
 
+/** 个人排行榜 */
 /**
  * 获取周打卡排行榜和个人信息
  */
@@ -428,6 +429,81 @@ pub.getMyLikeCountWeekData = (userId) => {
       if (_.isNil(myLikeCountWeekData)) {
         return {
           "_id" : userId,
+          rank: 99999,
+          likeCount: 0
+        }
+      }
+      return myLikeCountWeekData;
+    });
+}
+
+/** 学校排行榜 */
+/**
+ * 获取学校周打卡排行榜和个人信息
+ */
+pub.getSchoolCheckinWeekRank = (userId) => {
+  return taskCheckinMapper.schoolCheckinWeekRank()
+  .then(checkinRank => {
+    const countUsers = [];
+    checkinRank.forEach(item => {
+      countUsers.push(userMapper.countBySchool(item._id));
+    })
+    return Promise.all(countUsers)
+    .then(countList => {
+      for (let i=0; i<countList.length; i++) {
+        checkinRank[i].userCount = countList[i] || 0;
+      }
+      return checkinRank;
+    });
+  });
+};
+
+/**
+ * 我的学校打卡排行榜的个人信息
+ */
+pub.getMySchoolCheckinWeekData = (user) => {
+  return taskCheckinMapper.mySchoolCheckinWeekData(user.school)
+    .then(([myCheckinWeekData]) => {
+      if (_.isNil(myCheckinWeekData)) {
+        return {
+          "_id" : user.school || '',
+          rank: 99999,
+          practiceTime: 0,
+        }
+      }
+      return myCheckinWeekData;
+    });
+}
+
+/**
+ * 我的排行榜-笔芯榜
+ */
+pub.getSchoolLikeCountWeekRank = () => {
+  return taskCheckinMapper.schoolLikeCountWeekRank()
+    .then(likeCountWeekRank => {
+      const countUsers = [];
+      likeCountWeekRank.forEach(item => {
+        countUsers.push(userMapper.countBySchool(item._id));
+      })
+      return Promise.all(countUsers)
+      .then(countList => {
+        for (let i=0; i<countList.length; i++) {
+          likeCountWeekRank[i].userCount = countList[i] || 0;
+        }
+        return likeCountWeekRank;
+      });
+    });
+}
+
+/**
+ * 我的排行榜-笔芯榜 我的信息
+ */
+pub.getMySchoolLikeCountWeekData = (user) => {
+  return taskCheckinMapper.mySchoolLikeCountWeekData(user.school)
+    .then(([myLikeCountWeekData]) => {
+      if (_.isNil(myLikeCountWeekData)) {
+        return {
+          "_id" : user.school || '',
           rank: 99999,
           likeCount: 0
         }

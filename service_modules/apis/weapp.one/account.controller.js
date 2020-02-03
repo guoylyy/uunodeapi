@@ -517,4 +517,55 @@ pub.fetchLikeCountWeekRank = (req, res) => {
     .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 学校排行榜-努力榜
+ * @param req
+ * @param res
+ */
+pub.fetchSchoolCheckinWeekRank = (req, res) => {
+  return schemaValidator
+    .validatePromise(commonSchema.emptySchema, req.query)
+    .then(() => {
+      return Promise.all([
+        taskService.getSchoolCheckinWeekRank(),
+        taskService.getMySchoolCheckinWeekData(req.__CURRENT_USER)
+      ]);
+    })
+    .then(([
+      checkinWeekRank, 
+      myCheckinWeekData
+    ]) => {
+      myCheckinWeekData.user = _.pick(req.__CURRENT_USER, userViewColumns);
+      return apiRender.renderBaseResult(res, {
+        checkinWeekRank: checkinWeekRank,
+        myCheckinWeekData: myCheckinWeekData
+      });
+    })
+    .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 学校排行榜-笔芯榜
+ * @param req
+ * @param res
+ */
+pub.fetchSchoolLikeCountWeekRank = (req, res) => {
+  return schemaValidator
+    .validatePromise(commonSchema.emptySchema, req.query)
+    .then(() => {
+      return Promise.all([
+        taskService.getSchoolLikeCountWeekRank(),
+        taskService.getMySchoolLikeCountWeekData(req.__CURRENT_USER)
+      ]);
+    })
+    .then(([checkinWeekRank, myCheckinWeekData]) => {
+      myCheckinWeekData.user = _.pick(req.__CURRENT_USER, userViewColumns);
+      return apiRender.renderBaseResult(res, {
+        checkinWeekRank: checkinWeekRank,
+        myCheckinWeekData: myCheckinWeekData
+      });
+    })
+    .catch(req.__ERROR_HANDLER);
+};
+
 module.exports = pub;
