@@ -90,9 +90,10 @@ pub.getAccountBaseInfo = (req, res) => {
       } else {
         let certs = [];
         _.each(pickedUserInfo["certification"].split(","), item => {
-          certs.push(
-            enumModel.getEnumByKey(item, enumModel.userCertificationEnum)
-          );
+          let cert = enumModel.getEnumByKey(item, enumModel.userCertificationEnum);
+          if(!_.isNil(cert)){
+            certs.push(cert);
+          }
         });
         pickedUserInfo["certification"] = certs;
       }
