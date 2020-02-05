@@ -250,7 +250,6 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
                     )
                     .catch((error) => {
                       winston.error(error);
-
                       return {};
                     });
               };
@@ -270,7 +269,8 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
                       return registerUserBindItem(registeredUserItem)
                           .then((userBindItem) => {
                             debug(userBindItem);
-
+                            //此处需要标记是新注册的用户
+                            registeredUserItem['isNewUser'] = true;
                             return registeredUserItem;
                           });
                     });
@@ -281,13 +281,17 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
                   .then((userBindItem) => {
                     debug(userBindItem);
                     if (_.isNil(userBindItem)) {
-                      return registerUserBindItem(userItem);
+                      //此处也需要标记是新注册的用户
+                      return registerUserBindItem(userItem).then((userBindItem)=>{
+                        debug(userBindItem);
+                        userItem['isNewUser'] = true;
+                        return userItem;
+                      });
                     }
-
                     return null;
                   });
 
-              // 已注册用户，直接返回
+              // 已注册用户，更新头像后，直接返回
               return userItem;
             });
       });

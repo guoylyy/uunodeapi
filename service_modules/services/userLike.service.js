@@ -12,6 +12,26 @@ const userLikeMapper = require('../dao/mysql_mapper/userLike.mapper');
 
 let pub = {};
 
+
+/**
+ * 加入一条用户笔芯
+ */
+pub.createUserLike = (userId, likeType, appType, count) =>{
+  if(_.isNil(userId) || _.isNil(likeType) || _.isNil(appType) || _.isNil(count)){
+    winston.error('参数错误！！！');
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  let likeItem = {
+    'userId': userId,
+    'likeType': likeType,
+    'appType':appType,
+    'likeCount': count,
+    'isValid': true
+  };
+  return userLikeMapper.create(likeItem);
+};
+
+
 /**
  * 获取用户在一个业务下的笔芯统计
  * @param userId

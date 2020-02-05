@@ -27,6 +27,7 @@ const enumModel = require('../../services/model/enum');
 
 const userService = require('../../services/user.service');
 const userPayService = require('../../services/userPay.service');
+const userLikeService = require('../../services/userLike.service');
 const clazzAccountService = require('../../services/clazzAccount.service');
 
 /**
@@ -59,10 +60,22 @@ pub.authWechatLogin = (req, res) => {
   schemaValidator.validatePromise(wechatSchema.weappAuthBodySchema, req.body)
       .then((authBody) => {
         debug(authBody);
-
         return wechatUser.requestWeappUserInfoThenSignupIfAbsent(authBody.code, authBody.encryptedData, authBody.iv);
       })
-      .then((userItem) => signUserItem(userItem, res))
+      .then((userItem) => {
+        //如果是新用户，需要给与积分
+        if(userItem['isNewUser']){
+          //新建积分
+          return userLikeService.createUserLike(userItem.id, enumModel.userLikeTaskEnum.REGISTRATION_TASK.key,
+              enumModel.appTypeEnum,' WECHAT_MINI_KY', 10)
+              .then((userLikeItem)=>{
+                winston.info('Create UserLike', userLikeItem);
+                return signUserItem(userItem, res);
+              });
+        }
+        winston.info('Direct Register', userItem);
+        return signUserItem(userItem, res);
+      })
       .catch(req.__ERROR_HANDLER);
 };
 
