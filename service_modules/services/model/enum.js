@@ -2332,14 +2332,14 @@ const miniKYPracticeModeEnum = {
 //用户小程序积分任务
 //本枚举值较复杂，未来有需要的时候可以迁移到数据库去
 const userLikeTaskEnum = {
-  'REGISTRATION_TASK': {
-    key: 'REGISTRATION_TASK',
-    name: '初次授权登录',
-    likeAdd: 10,
-    buttonText: '去授权',
-    targetPath: '/',
-    desc: ' '
-  },
+  // 'REGISTRATION_TASK': {
+  //   key: 'REGISTRATION_TASK',
+  //   name: '初次授权登录',
+  //   likeAdd: 10,
+  //   buttonText: '去授权',
+  //   targetPath: '/',
+  //   desc: ' '
+  // },
   'FINISHPLAN_TASK': {
     key: 'FINISHPLAN_TASK',
     name: '首次定制计划',
