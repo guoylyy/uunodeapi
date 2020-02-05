@@ -303,6 +303,65 @@ pub.wechatSignUp = (userObject) => {
 };
 
 /**
+ * 使用微信返回的用户信息注册
+ *
+ * @param userObject => {
+ *  nickname: "昵称",
+ *  headimgurl: "头像地址",
+ *  openid: "微信 openid",
+ *  unionid: "微信 unionid",
+ *  sex: "性别",
+ *  city: "城市"
+ * }
+ * @returns {*}
+ */
+pub.wechatSignUpPlus = (userObject) => {
+  if (!_.isPlainObject(userObject)) {
+    return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息不全！'));
+  }
+  winston.error('用户注册信息', userObject);
+
+  //兼容微信最新接口的openId获取任务
+  let openId = userObject.openId;
+  if(_.isNil(openId)){
+    openId = userObject.openid;
+  }
+  let unionId = userObject.unionId;
+  if(_.isNil(unionId)){
+    unionId = userObject.unionid;
+  }
+
+  if (global.IS_DEVLOPMENT_ENVIRONMENT === true) {
+    if (_.isNil(openId)) {
+      return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息有误！'));
+    }
+  } else {
+    if (_.isNil(openId) || _.isNil(unionId)) {
+      return Promise.reject(commonError.PARAMETER_ERROR('注册用户信息有误！'));
+    }
+  }
+
+  // 抽取信息
+  const userItem = {
+    name: userObject.nickname,
+    headImgUrl: userObject.headimgurl,
+    openId: openId,
+    unionid: unionId,
+    sex: userObject.sex,
+    city: userObject.city
+  };
+
+  return userMapper.create(userItem)
+      .then((createdUserItem) => {
+        debug(createdUserItem);
+
+        saveUserInCache(createdUserItem);
+
+        return createdUserItem;
+      });
+};
+
+/**
  * 分页查询用户列表
  *
  * @param pageNumber    页数

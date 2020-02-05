@@ -339,7 +339,7 @@ pub.requestUserItemByAuthCode = (appid, appSecret, authCode, userBindType, targe
                 // 如果目标用户为空，则注册
                 if (_.isNil(targetUserItem)) {
                   winston.info("APP WECHAT REGISTER", userObject);
-                  return userService.wechatSignUp(userObject)
+                  return userService.wechatSignUpPlus(userObject)
                       .then((registeredUserItem) => {
                         //  注册第三方用户信息
                         return registerUserBindItem(registeredUserItem)
