@@ -303,23 +303,6 @@ pub.wechatSignUp = (userObject) => {
 };
 
 /**
- * 使用微信返回的用户信息注册
- *
- * @param userObject => {
- *  nickname: "昵称",
- *  headimgurl: "头像地址",
- *  openid: "微信 openid",
- *  unionid: "微信 unionid",
- *  sex: "性别",
- *  city: "城市"
- * }
- * @returns {*}
- */
-pub.wechatSignUpPlus = (userObject) => {
-  return {'data':true};
-};
-
-/**
  * 分页查询用户列表
  *
  * @param pageNumber    页数
