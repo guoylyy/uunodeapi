@@ -80,6 +80,7 @@ pub.fetchUserLikeFromTasks = (userId, taskKeys, appType) => {
     'appType': appType,
     'likeType': {operator: 'in', value: taskKeys}
   };
+  winston.info('param', params);
   return userLikeMapper.fetchByParam(params);
 };
 

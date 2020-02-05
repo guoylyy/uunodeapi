@@ -56,6 +56,9 @@ router.use(oneMiddleware.parseAuthToken);
  ***********************************************************************************************************************/
 router.use(oneMiddleware.moduleLogger);
 
+//分享打卡动作记录
+router.post('/share/task/:taskId/checkin/:checkinId', shareController.shareCheckin);
+
 // @yiliang
 const accountApis = require('./weapp.one/account.controller');
 // 账户相关API

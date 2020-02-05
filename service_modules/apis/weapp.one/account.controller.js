@@ -6,6 +6,7 @@
 
 const _ = require("lodash");
 const debug = require("debug")("controller");
+const winston = require('winston');
 const moment = require("moment");
 const apiUtil = require("../util/api.util");
 
@@ -139,15 +140,16 @@ pub.updateAccountSchool = (req, res) => {
             [enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.key], 'WECHAT_MINI_KY');
         return Promise.all([updatePromise, queryLikePromise]);
       })
-      .then((userItem, userLikes) => {
+      .then(([userItem, userLikes]) => {
+        winston.info('userLikes', userLikes);
         if (_.size(userLikes) == 0) {
           return userLikeService.createUserLike(req.__CURRENT_USER.id, enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.key,
-               ' WECHAT_MINI_KY', 10)
+               'WECHAT_MINI_KY', 10)
               .then((userLikeItem) => {
                 return apiRender.renderBaseResult(res, {'result': true, 'pointChange': 10})
               });
         } else {
-          return apiRender.renderSuccess(res);
+          return apiRender.renderBaseResult(res,{'result': true});
         }
       })
       .catch(req.__ERROR_HANDLER);
@@ -240,12 +242,12 @@ pub.updateUserPersonConfiguration = (req, res) => {
       .then((likes)=>{
         if(_.size(likes) == 0){
           return userLikeService.createUserLike(req.__CURRENT_USER.id, enumModel.userLikeTaskEnum.FINISHPLAN_TASK.key,
-               ' WECHAT_MINI_KY', 10)
+               'WECHAT_MINI_KY', 10)
               .then((userLikeItem) => {
                 return apiRender.renderBaseResult(res, {'result': true, 'pointChange': 10})
               });
         }else{
-          return apiRender.renderSuccess(res);
+          return apiRender.renderBaseResult(res,{'result': true});
         }
       })
       .catch(req.__ERROR_HANDLER);
@@ -345,6 +347,8 @@ pub.fetchUserLikeTasks = (req, res) => {
       })
       .then(likes => {
         //3.合并，标记数据
+        winston.info('userId',req.__CURRENT_USER.id);
+        winston.info('likes',likes);
         _.each(likes, like => {
           let likeType = like.likeType;
           tasks[likeType]["finished"] = true;

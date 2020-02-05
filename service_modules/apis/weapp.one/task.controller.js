@@ -135,7 +135,7 @@ pub.getCheckinList = (req, res) => {
     );
   })
   .catch(req.__ERROR_HANDLER);
-}
+};
 
 /**
  * 点赞打卡记录
@@ -149,7 +149,7 @@ pub.likeCheckin = (req, res) => {
     return apiRender.renderSuccess(res)
   })
   .catch(req.__ERROR_HANDLER);
-}
+};
 
 /**
  * 取消点赞打卡

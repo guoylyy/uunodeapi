@@ -16,7 +16,7 @@ const pub = {};
  * @param queryParams
  * @returns {Promise}
  */
-const QUERY_SAFE_PARAMS = ['id','appType','likeType','isValid'],
+const QUERY_SAFE_PARAMS = ['id','appType','userId','likeType','isValid'],
     QUERY_SELECT_COLUMNS = ['id', 'userId', 'outBizId', 'likeType','likeRemark','appType','createdAt','updatedAt','likeCount'];
 
 
