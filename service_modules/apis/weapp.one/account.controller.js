@@ -141,7 +141,7 @@ pub.updateAccountSchool = (req, res) => {
       })
       .then((userItem, userLikes) => {
         if (_.size(userLikes) == 0) {
-          return userLikeService.createUserLike(userItem.id, enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.key,
+          return userLikeService.createUserLike(req.__CURRENT_USER.id, enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.key,
               enumModel.appTypeEnum, ' WECHAT_MINI_KY', 10)
               .then((userLikeItem) => {
                 return apiRender.renderBaseResult(res, {'result': true, 'pointChange': 10})
@@ -239,7 +239,7 @@ pub.updateUserPersonConfiguration = (req, res) => {
       })
       .then((likes)=>{
         if(_.size(likes) == 0){
-          return userLikeService.createUserLike(userItem.id, enumModel.userLikeTaskEnum.FINISHPLAN_TASK.key,
+          return userLikeService.createUserLike(req.__CURRENT_USER.id, enumModel.userLikeTaskEnum.FINISHPLAN_TASK.key,
               enumModel.appTypeEnum, ' WECHAT_MINI_KY', 10)
               .then((userLikeItem) => {
                 return apiRender.renderBaseResult(res, {'result': true, 'pointChange': 10})
