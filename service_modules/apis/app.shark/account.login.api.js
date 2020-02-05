@@ -40,7 +40,7 @@ const isValidSecurityCode = (latestCodeItem, securityCode) => {
 
 /**
  * 微信登录授权
- *
+ * TODO:如果使用未注册过的账号，就会报错了
  * @param req
  * @param res
  */
