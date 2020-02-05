@@ -144,7 +144,7 @@ pub.updateAccountSchool = (req, res) => {
         winston.info('userLikes', userLikes);
         if (_.size(userLikes) == 0) {
           return userLikeService.createUserLike(req.__CURRENT_USER.id, enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.key,
-              enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.desc,
+              enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.name,
                'WECHAT_MINI_KY', 10)
               .then((userLikeItem) => {
                 return apiRender.renderBaseResult(res, {'result': true, 'pointChange': 10})
@@ -243,8 +243,8 @@ pub.updateUserPersonConfiguration = (req, res) => {
       .then((likes)=>{
         if(_.size(likes) == 0){
           return userLikeService.createUserLike(req.__CURRENT_USER.id, enumModel.userLikeTaskEnum.FINISHPLAN_TASK.key,
-              enumModel.userLikeTaskEnum.FINISHPLAN_TASK.desc,
-               'WECHAT_MINI_KY', 10)
+              enumModel.userLikeTaskEnum.FINISHPLAN_TASK.name,
+               'WECHAT_MINI_KY', 5)
               .then((userLikeItem) => {
                 return apiRender.renderBaseResult(res, {'result': true, 'pointChange': 10})
               });

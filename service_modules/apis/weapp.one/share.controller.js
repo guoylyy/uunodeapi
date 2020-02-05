@@ -48,7 +48,7 @@ pub.shareCheckin = (req, res) =>{
       .then((likes) => {
         if(_.size(likes) == 0){
           return userLikeService.createUserLike(req.__CURRENT_USER.id, enumModel.userLikeTaskEnum.SHAREWORK_TASK.key,
-              enumModel.userLikeTaskEnum.SHAREWORK_TASK.desc,
+              enumModel.userLikeTaskEnum.SHAREWORK_TASK.name,
               'WECHAT_MINI_KY', 10)
               .then((userLikeItem) => {
                 return apiRender.renderBaseResult(res, {'result': true, 'pointChange': 10})

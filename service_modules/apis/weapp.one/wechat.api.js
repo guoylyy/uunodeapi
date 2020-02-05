@@ -67,7 +67,7 @@ pub.authWechatLogin = (req, res) => {
         if(userItem['isNewUser']){
           //新建积分
           return userLikeService.createUserLike(userItem.id, enumModel.userLikeTaskEnum.REGISTRATION_TASK.key,
-              enumModel.userLikeTaskEnum.REGISTRATION_TASK.desc,'WECHAT_MINI_KY', 10)
+              enumModel.userLikeTaskEnum.REGISTRATION_TASK.name,'WECHAT_MINI_KY', 10)
               .then((userLikeItem)=>{
                 winston.info('Create UserLike', userLikeItem);
                 return signUserItem(userItem, res);
