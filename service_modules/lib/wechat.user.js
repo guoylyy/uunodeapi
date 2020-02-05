@@ -270,7 +270,7 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
                           .then((userBindItem) => {
                             debug(userBindItem);
                             //此处需要标记是新注册的用户
-                            registeredUserItem['isNewUser'] = false;
+                            registeredUserItem['isNewUser'] = true;
                             return registeredUserItem;
                           });
                     });
@@ -284,7 +284,7 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
                       //此处也需要标记是新注册的用户
                       return registerUserBindItem(userItem).then((userBindItem)=>{
                         debug(userBindItem);
-                        userItem['isNewUser'] = false;
+                        userItem['isNewUser'] = true;
                         return userItem;
                       });
                     }

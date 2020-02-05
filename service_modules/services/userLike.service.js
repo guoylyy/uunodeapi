@@ -16,7 +16,7 @@ let pub = {};
 /**
  * 加入一条用户笔芯
  */
-pub.createUserLike = (userId, likeType, appType, count) =>{
+pub.createUserLike = (userId, likeType, likeRemark, appType, count) =>{
   if(_.isNil(userId) || _.isNil(likeType) || _.isNil(appType) || _.isNil(count)){
     winston.error('参数错误！！！');
     return Promise.reject(commonError.PARAMETER_ERROR());
@@ -25,6 +25,7 @@ pub.createUserLike = (userId, likeType, appType, count) =>{
     'userId': userId,
     'likeType': likeType,
     'appType':appType,
+    'likeRemark': likeRemark,
     'likeCount': count,
     'isValid': true
   };
