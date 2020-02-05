@@ -112,7 +112,7 @@ pub.update = (userLike) => {
  * @returns {Promise}
  */
 pub.fetchByParam = (queryParam) => {
-  const safeParams = ['id','appType','likeType','isValid'];
+  const safeParams = ['id','userId','appType','likeType','isValid'];
 
   return userLikeSchema.query(
       (query) => {
