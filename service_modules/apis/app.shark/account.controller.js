@@ -204,6 +204,7 @@ pub.fetchCouponList = (req, res) => {
 
         const pickedCouponList = _.map(couponList, (coupon) => ({
           name: _.get(coupon, 'remark', "抵用券"),
+          id: _.get(coupon,'id', null),
           money: _.get(coupon, 'money', 0),
           expireDate: moment(_.get(coupon, 'expireDate', new Date())).format('YYYY-MM-DD')
         }));
