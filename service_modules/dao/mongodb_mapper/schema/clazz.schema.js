@@ -26,6 +26,8 @@ let clazzSchema = new Schema({
   startDate: Date,
   endDate: Date,
   banner: String,
+  smallBanner: String,
+  teacherHead: String,
   introduction: { type: Schema.Types.ObjectId, ref: 'ClazzIntroduction' },
   configuration: {
     promotionOffer: {

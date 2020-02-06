@@ -11,7 +11,7 @@ const queryUtil = require('../util/queryUtil');
 
 const QUERY_SAFE_PARAM_LIST = ['status', '_id', 'configuration.teacherOpenIds', 'clazzType', 'startDate', 'endDate', 'name'];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
-  'name', 'description', 'status', 'banner', 'smallBanner',
+  'name', 'description', 'status', 'banner', 'smallBanner', 'teacherHead',
   'startDate', 'endDate', 'author', 'updatedAt', 'clazzType', 'isShow', 'isHot',
   'configuration.clazzType', 'configuration.taskCount', 'configuration.startHour', 'configuration.endHour', 'configuration.hasTheOneFeedback',
   'configuration.strategyLink','configuration.promotionOffer', 'configuration.totalFee', 'configuration.originFee', 'configuration.priceList',
