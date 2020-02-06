@@ -177,7 +177,7 @@ pub.fetchClazzItem = (req, res) => {
 
         let pickedClazzItem = _.pick(
             req.__CURRENT_CLAZZ,
-            ['id', 'name', 'banner', 'clazzType', 'status', 'author', 'openDate', 'startDate', 'endDate', 'description', 'isShow', 'isHot']
+            ['id', 'name', 'banner', 'smallBanner', 'teacherHead', 'clazzType', 'status', 'author', 'openDate', 'startDate', 'endDate', 'description', 'isShow', 'isHot']
         );
 
         debug(pickedClazzItem);
