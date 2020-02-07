@@ -49,7 +49,6 @@ const signPayment = (subject, tradeNo, totalAmount) => {
     method: alipayBase.ALIPAY_METHOD_TYPES.CREATE_APP_ORDER,
     format: "JSON",
     charset: "utf-8",
-    _input_charset:"utf-8",
     sign_type: "RSA2",
     timestamp: moment().format("YYYY-MM-DD HH:mm:ss"),
     version: "1.0",
