@@ -96,13 +96,13 @@ pub.bindPhoneNumber = (req, res) => {
 
         if (!isValidSecurityCode(latestCodeItem, bindBody.code)) {
           winston.error(`手机号 ${bindBody.phoneNumber} 及 ${bindBody.code} 验证失败`);
-          return apiRender.renderError(res, "验证码错误");
+          return apiRender.renderError(res, commonError.BIZ_FAIL_ERROR("验证码错误"));
         }
         if (!_.isNil(userBindItem)) {
-          return apiRender.renderError(res, "手机号已被绑定");
+          return apiRender.renderError(res, commonError.BIZ_FAIL_ERROR("手机号已被绑定"));
         }
         if (!_.isNil(userBindRecords) && _.size(userBindRecords) > 0) {
-          return apiRender.renderError(res, "你已经绑定了手机号，无需重复绑定")
+          return apiRender.renderError(res, commonError.BIZ_FAIL_ERROR("你已经绑定了手机号，无需重复绑定"));
         }
 
         return userBindService.createBindUser(
