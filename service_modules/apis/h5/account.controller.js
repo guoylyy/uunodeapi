@@ -31,6 +31,17 @@ const userRankService = require('../../services/userRank.service');
 const ubandCardService = require('../../services/ubandCard.service');
 const promotionService = require('../../services/promotion.service');
 
+const userBindService = require('../../services/userBind.service');
+const systemConfigService = require('../../services/systemConfig.service');
+const smsSecurityCodeService = require('../../services/smsSecurityCode.service');
+
+
+
+const isValidSecurityCode = (latestCodeItem, securityCode) => {
+  return !_.isNil(latestCodeItem) && securityCode === latestCodeItem.code &&
+      moment().isBefore(latestCodeItem.expireAt);
+};
+
 const pub = {};
 
 /**
@@ -64,6 +75,80 @@ pub.auth = (req, res) => {
 };
 
 /**
+ * API: POST /account/phoneNumber
+ * 账户电话号码绑定
+ */
+pub.bindPhoneNumber = (req, res) => {
+  let bindBody = {};
+  schemaValidator.validatePromise(userSchema.bindPhoneNumberBodySchema, req.body)
+      .then((params) => {
+        bindBody = params;
+        //查询手机号是否绑定
+        const fetchUserBindPromise = userBindService.fetchUserBind(enumModel.userBindTypeEnum.PHONE_NUMBER.key, phoneNumber);
+        //查询验证码是否正确
+        const fetchLatestCodePromise = smsSecurityCodeService.fetchLatestSecurityCode(enumModel.securityCodeTypeEnum.SMS_LOGIN.key, phoneNumber);
+        //查询用户是否已经绑定了手机号
+        const fetchUserBindRecordPromise = userBindService.fetchUserBindByUserId(enumModel.userBindTypeEnum.PHONE_NUMBER.key, req.__CURRENT_USER.id);
+
+        return Promise.all([fetchUserBindPromise, fetchUserBindRecordPromise, fetchLatestCodePromise])
+      })
+      .then(([userBindItem, userBindRecords, latestCodeItem]) => {
+
+        if (!isValidSecurityCode(latestCodeItem, bindBody.code)) {
+          winston.error(`手机号 ${phoneNumber} 及 ${securityCode} 验证失败`);
+          return apiRender.renderError(res, "验证码错误");
+        }
+        if (!_.isNil(userBindItem)) {
+          return apiRender.renderError(res, "手机号已被绑定");
+        }
+        if (!_.isNil(userBindRecords) && _.size(userBindRecords) > 0) {
+          return apiRender.renderError(res, "你已经绑定了手机号，无需重复绑定")
+        }
+
+        return userBindService.createBindUser(
+            req.__CURRENT_USER.id,
+            enumModel.userBindTypeEnum.PHONE_NUMBER.key,
+            bindBody.phoneNumber,
+            '&#*(!@&#*@!#^&@*KJHJKSDHKJ*@'//使用永远不能hash的密码
+        ).then((result) => {
+          return apiRender.renderSuccess(res);
+        })
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
+ * 发送登录验证码
+ * @param req
+ * @param res
+ */
+pub.sendLoginSmsCode = (req, res) =>{
+  return schemaValidator.validatePromise(userSchema.sendCodeBodyAuth, req.body)
+      .then((codeBody) => {
+        debug(codeBody);
+
+        const phoneNumber = codeBody.phoneNumber;
+        const fetchUserBindPromise = userBindService.fetchUserBind(enumModel.userBindTypeEnum.PHONE_NUMBER.key, phoneNumber);
+        const fetchSmsConfigPromise = systemConfigService.fetchSystemConfigByType(enumModel.systemConfigTypeEnum.SMS_CONFIG.key);
+
+        return Promise.all([fetchUserBindPromise, fetchSmsConfigPromise])
+            .then(([userBindItem, smsConfig]) => {
+              debug(userBindItem);
+              debug(smsConfig);
+              if (_.isNil(userBindItem)) {
+                winston.error(`手机号 ${phoneNumber} 未注册`);
+              }
+              return smsSecurityCodeService.sendLoginCode(phoneNumber, 5);
+            })
+            .then((smsItem) => {
+              debug(smsItem);
+              return apiRender.renderSuccess(res);
+            });
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+/**
  * API: GET /account
  * 获取个人信息，由于API相关信息已经存在于req.__CURRENT_USER 中，所以直接获取，不查询数据库
  *
@@ -72,7 +157,7 @@ pub.auth = (req, res) => {
  * @returns {*}
  */
 pub.getUserBaseInfo = (req, res) => {
-  let pickedUserInfo  = {};
+  let pickedUserInfo = {};
   let currentUserId = req.__CURRENT_USER.id;
   schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
@@ -82,32 +167,32 @@ pub.getUserBaseInfo = (req, res) => {
           pickedUserInfo.birthday = moment(pickedUserInfo.birthday).format('YYYY-MM-DD');
         }
         return promotionService.fetchPromotionUserByUserId(currentUserId);
-      }).then((promotionUser)=>{
-          debug(promotionUser);
-          if (!_.isNil(promotionUser)) {
-            pickedUserInfo['invitationCode'] = promotionUser;
-            return {"key":promotionUser.key};
-          }
-          return promotionService.createPromotionUser(currentUserId, JSON.stringify({"code":"11"}));
-      }).then((promotionUserItem)=>{
+      }).then((promotionUser) => {
+    debug(promotionUser);
+    if (!_.isNil(promotionUser)) {
+      pickedUserInfo['invitationCode'] = promotionUser;
+      return {"key": promotionUser.key};
+    }
+    return promotionService.createPromotionUser(currentUserId, JSON.stringify({"code": "11"}));
+  }).then((promotionUserItem) => {
 
-        if(!_.isNil(promotionUserItem)){
-          pickedUserInfo['invitationCode'] = promotionUserItem.key;
-        }
-        winston.log('StudentNumber', pickedUserInfo.studentNumber);
-        if(_.isNil(pickedUserInfo.studentNumber) || pickedUserInfo.studentNumber.length == 0){
-          //用户没有学号，开始生成
-          winston.log('用户没有学号，开始生成!');
-          return userService.syncUserStudentNumber(pickedUserInfo.id);
-        }else{
-          return promotionUserItem;
-        }
-      }).then((userObject)=>{
-        if(!_.isNil(userObject.studentNumber)){
-          pickedUserInfo['studentNumber'] = userObject.studentNumber;
-        }
-        return apiRender.renderBaseResult(res, pickedUserInfo);
-      })
+    if (!_.isNil(promotionUserItem)) {
+      pickedUserInfo['invitationCode'] = promotionUserItem.key;
+    }
+    winston.log('StudentNumber', pickedUserInfo.studentNumber);
+    if (_.isNil(pickedUserInfo.studentNumber) || pickedUserInfo.studentNumber.length == 0) {
+      //用户没有学号，开始生成
+      winston.log('用户没有学号，开始生成!');
+      return userService.syncUserStudentNumber(pickedUserInfo.id);
+    } else {
+      return promotionUserItem;
+    }
+  }).then((userObject) => {
+    if (!_.isNil(userObject.studentNumber)) {
+      pickedUserInfo['studentNumber'] = userObject.studentNumber;
+    }
+    return apiRender.renderBaseResult(res, pickedUserInfo);
+  })
       .catch(req.__ERROR_HANDLER);
 };
 
@@ -326,7 +411,7 @@ pub.getUserWithdraw = (req, res) => {
         }
         if (withdrawItem.userId === userId) {
 
-          let item = _.pick(withdrawItem,['id','verifiedRemark','applyMoney','verifiedMoney','status','verifiedDate','applyDate']);
+          let item = _.pick(withdrawItem, ['id', 'verifiedRemark', 'applyMoney', 'verifiedMoney', 'status', 'verifiedDate', 'applyDate']);
 
           return apiRender.renderBaseResult(res, item);
         } else {

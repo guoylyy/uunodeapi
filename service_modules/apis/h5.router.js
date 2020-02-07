@@ -75,6 +75,8 @@ router.use(middleware.moduleLogger);
 // 用户相关
 router.get('/account', accountApis.getUserBaseInfo);
 router.put('/account', accountApis.updateUserBaseInfo);
+router.post('/account/sms', accountApis.sendLoginSmsCode);
+router.post('/account/bindPhoneNumber', accountApis.bindPhoneNumber);
 router.get('/account/privacy', accountApis.fetchUserPrivacy);
 router.put('/account/privacy', accountApis.updateUserPrivacy);
 router.get('/account/password', accountApis.checkPasswordExist);

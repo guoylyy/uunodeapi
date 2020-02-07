@@ -17,6 +17,21 @@ pub.userLoginBodySchema = Joi.object().keys({
 });
 
 /**
+ * 用户绑定手机号 Body Schema
+ */
+pub.bindPhoneNumberBodySchema = Joi.object().keys({
+  phoneNumber: Joi.string().trim().required(),
+  code: Joi.string().trim()
+});
+
+/**
+ * 用户发送验证码 Body Schema
+ */
+pub.sendCodeBodyAuth = Joi.object().keys({
+  phoneNumber: Joi.string().min(11).required()
+});
+
+/**
  * 用户更新私有信息Body Schema
  *
  * @type {*}
