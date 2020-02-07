@@ -95,7 +95,7 @@ pub.bindPhoneNumber = (req, res) => {
       .then(([userBindItem, userBindRecords, latestCodeItem]) => {
 
         if (!isValidSecurityCode(latestCodeItem, bindBody.code)) {
-          winston.error(`手机号 ${phoneNumber} 及 ${securityCode} 验证失败`);
+          winston.error(`手机号 ${bindBody.phoneNumber} 及 ${bindBody.code} 验证失败`);
           return apiRender.renderError(res, "验证码错误");
         }
         if (!_.isNil(userBindItem)) {
