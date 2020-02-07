@@ -84,9 +84,9 @@ pub.bindPhoneNumber = (req, res) => {
       .then((params) => {
         bindBody = params;
         //查询手机号是否绑定
-        const fetchUserBindPromise = userBindService.fetchUserBind(enumModel.userBindTypeEnum.PHONE_NUMBER.key, phoneNumber);
+        const fetchUserBindPromise = userBindService.fetchUserBind(enumModel.userBindTypeEnum.PHONE_NUMBER.key, bindBody.phoneNumber);
         //查询验证码是否正确
-        const fetchLatestCodePromise = smsSecurityCodeService.fetchLatestSecurityCode(enumModel.securityCodeTypeEnum.SMS_LOGIN.key, phoneNumber);
+        const fetchLatestCodePromise = smsSecurityCodeService.fetchLatestSecurityCode(enumModel.securityCodeTypeEnum.SMS_LOGIN.key, bindBody.phoneNumber);
         //查询用户是否已经绑定了手机号
         const fetchUserBindRecordPromise = userBindService.fetchUserBindByUserId(enumModel.userBindTypeEnum.PHONE_NUMBER.key, req.__CURRENT_USER.id);
 
