@@ -111,7 +111,26 @@ pub.bindPhoneNumber = (req, res) => {
             bindBody.phoneNumber,
             '&#*(!@&#*@!#^&@*KJHJKSDHKJ*@'//使用永远不能hash的密码
         ).then((result) => {
-          return apiRender.renderSuccess(res);
+          //这里需要发放优惠券
+          return couponService.createCoupon({
+            userId: req.__CURRENT_USER.id,
+            money: 10,
+            expireDate: moment().add('2','M').toDate(),
+            remark: '绑定手机号',
+            status: enumModel.couponStatusEnum.AVAILABLE.key
+          }).then((createItme)=>{
+            if(_.isNil(createItme)){
+              userService.fetchById(userId)
+                  .then((userItem) => {
+                    debug(userItem);
+                    wechatTemplateReply.sendCouponAlertMsg(userItem, '您有一张新的优惠券，点击查看');
+                  });
+              return apiRender.renderSuccess(res);
+            }else{
+              return apiRender.renderBizFail(res);
+            }
+          });
+          // return apiRender.renderSuccess(res);
         })
       })
       .catch(req.__ERROR_HANDLER);
