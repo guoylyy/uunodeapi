@@ -34,6 +34,7 @@ const promotionService = require('../../services/promotion.service');
 const userBindService = require('../../services/userBind.service');
 const systemConfigService = require('../../services/systemConfig.service');
 const smsSecurityCodeService = require('../../services/smsSecurityCode.service');
+const wechatTemplateReply = require('../../lib/wechat.template.reply');
 
 
 
