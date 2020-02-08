@@ -123,7 +123,7 @@ pub.bindPhoneNumber = (req, res) => {
           // return apiRender.renderSuccess(res);
         }).then((createItme)=>{
               if(_.isNil(createItme)){
-                userService.fetchById(userId)
+                userService.fetchById(req.__CURRENT_USER.id)
                     .then((userItem) => {
                       debug(userItem);
                       wechatTemplateReply.sendCouponAlertMsg(userItem, '您有一张新的优惠券，点击查看');
