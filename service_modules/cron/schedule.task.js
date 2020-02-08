@@ -386,7 +386,10 @@ pub.generateStudentNumber = () => {
         debug(`updated user size ${ _.size(updatedUserList) }`);
 
         _.forEach(updatedUserList, (userItem) => {
-          const messageEntity = wechatCustomMessage.makeCustomMessage(userItem.openId, "TEXT", { content: `亲爱的新笃友，你的学号是${ userItem.studentNumber }，欢迎加入Uband友班。` });
+
+          let msg = "亲爱的新笃友，你的学号是" + userItem.studentNumber + ",欢迎加入Uband友班。\n" + "<a href='http://wechat.gambition.cn/bindPhone'>绑定手机号可获得10元课程优惠券。</a>";
+
+          const messageEntity = wechatCustomMessage.makeCustomMessage(userItem.openId, "TEXT", { content: msg });
 
           wechatCustomMessage.sendCustomMessage(messageEntity);
         });
