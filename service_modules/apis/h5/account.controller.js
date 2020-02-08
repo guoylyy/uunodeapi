@@ -119,20 +119,20 @@ pub.bindPhoneNumber = (req, res) => {
             expireDate: moment().add('2','M').toDate(),
             remark: '绑定手机号',
             status: enumModel.couponStatusEnum.AVAILABLE.key
-          }).then((createItme)=>{
-            if(_.isNil(createItme)){
-              userService.fetchById(userId)
-                  .then((userItem) => {
-                    debug(userItem);
-                    wechatTemplateReply.sendCouponAlertMsg(userItem, '您有一张新的优惠券，点击查看');
-                  });
-              return apiRender.renderSuccess(res);
-            }else{
-              return apiRender.renderBizFail(res);
-            }
           });
           // return apiRender.renderSuccess(res);
-        })
+        }).then((createItme)=>{
+              if(_.isNil(createItme)){
+                userService.fetchById(userId)
+                    .then((userItem) => {
+                      debug(userItem);
+                      wechatTemplateReply.sendCouponAlertMsg(userItem, '您有一张新的优惠券，点击查看');
+                    });
+                return apiRender.renderSuccess(res);
+              }else{
+                return apiRender.renderBizFail(res);
+              }
+        });
       })
       .catch(req.__ERROR_HANDLER);
 };
