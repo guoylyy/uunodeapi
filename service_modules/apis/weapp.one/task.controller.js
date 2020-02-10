@@ -213,11 +213,15 @@ pub.addViewLog = (req, res) => {
  * 获取分享信息
  */
 pub.getShareInfo = (req, res) => {
-  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
-  .then(() => {
-    const result = {
-      imgUrl: 'http://qiniuprivate.gambition.cn/1580549260447_1xX3d2_Screen%20Shot%202020-02-01%20at%2017.27.12.png'
-    }
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.checkinId)
+  .then((checkinId) => {
+    console.log(`checkinId = ${checkinId}`)
+    return taskService.getShareInfo(checkinId);
+    // const result = {
+    //   imgUrl: 'http://qiniuprivate.gambition.cn/1580549260447_1xX3d2_Screen%20Shot%202020-02-01%20at%2017.27.12.png'
+    // }
+    
+  }).then(result => {
     return apiRender.renderBaseResult(res, result);
   })
   .catch(req.__ERROR_HANDLER);

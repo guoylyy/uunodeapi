@@ -60,7 +60,7 @@ const QUERY_SELECT_COLUMNS = ['id', 'studentNumber', 'name', 'headImgUrl', 'open
  */
 pub.fetchByParam = (queryParam, orderByColumn = '-updatedAt') => {
   const safeParams = ['openId', 'id', 'unionid', 'studentNumber'];
-
+  console.log(queryParam);
   return userSchema.query(
       (query) => {
         queryUtil.filterMysqlQueryParam(query, queryParam, safeParams)
@@ -69,7 +69,8 @@ pub.fetchByParam = (queryParam, orderByColumn = '-updatedAt') => {
       .fetch()
       .then((userItem) => {
             debug(userItem);
-            if (_.isNil(userItem)) {
+            console.log(userItem);
+            if (!userItem) {
               return null;
             }
             return parseUserFields(userItem.toJSON());

@@ -13,6 +13,7 @@ const qiniuComponent = require("./component/qiniu.component");
 const userMapper = require("../dao/mysql_mapper/user.mapper");
 const userFileMapper = require("../dao/mongodb_mapper/userFile.mapper");
 const moment = require("moment");
+const app = require("../../app");
 
 const pub = {};
 
@@ -365,16 +366,14 @@ pub.fetchTaskCheckinStatistics = userId => {
 /**
  * 获取周打卡排行榜和个人信息
  */
-pub.getCheckinWeekRank = (userId) => {
-  return taskCheckinMapper.checkinWeekRank()
-  .then(checkinRank => {
+pub.getCheckinWeekRank = userId => {
+  return taskCheckinMapper.checkinWeekRank().then(checkinRank => {
     const fetchUser = [];
     checkinRank.forEach(item => {
-      fetchUser.push(userMapper.fetchByParam({id: item._id}));
-    })
-    return Promise.all(fetchUser)
-    .then(userList => {
-      for (let i=0; i<userList.length; i++) {
+      fetchUser.push(userMapper.fetchByParam({ id: item._id }));
+    });
+    return Promise.all(fetchUser).then(userList => {
+      for (let i = 0; i < userList.length; i++) {
         checkinRank[i].user = userList[i] || {};
       }
       return checkinRank;
@@ -385,72 +384,70 @@ pub.getCheckinWeekRank = (userId) => {
 /**
  * 我的打卡排行榜的个人信息
  */
-pub.getMyCheckinWeekData = (userId) => {
-  return taskCheckinMapper.myCheckinWeekData(userId)
+pub.getMyCheckinWeekData = userId => {
+  return taskCheckinMapper
+    .myCheckinWeekData(userId)
     .then(([myCheckinWeekData]) => {
       console.log(myCheckinWeekData);
       if (_.isNil(myCheckinWeekData)) {
         return {
-          "_id" : userId,
+          _id: userId,
           rank: 99999,
-          practiceTime: 0,
-        }
+          practiceTime: 0
+        };
       }
       return myCheckinWeekData;
     });
-}
+};
 
 /**
  * 我的排行榜-笔芯榜
  */
 pub.getLikeCountWeekRank = () => {
-  return taskCheckinMapper.likeCountWeekRank()
-    .then(likeCountWeekRank => {
-      const fetchUser = [];
-      likeCountWeekRank.forEach(item => {
-        fetchUser.push(userMapper.fetchByParam({id: item._id}));
-      })
-      return Promise.all(fetchUser)
-      .then(userList => {
-        for (let i=0; i<userList.length; i++) {
-          likeCountWeekRank[i].user = userList[i] || {};
-        }
-        return likeCountWeekRank;
-      });
+  return taskCheckinMapper.likeCountWeekRank().then(likeCountWeekRank => {
+    const fetchUser = [];
+    likeCountWeekRank.forEach(item => {
+      fetchUser.push(userMapper.fetchByParam({ id: item._id }));
     });
-}
+    return Promise.all(fetchUser).then(userList => {
+      for (let i = 0; i < userList.length; i++) {
+        likeCountWeekRank[i].user = userList[i] || {};
+      }
+      return likeCountWeekRank;
+    });
+  });
+};
 
 /**
  * 我的排行榜-笔芯榜 我的信息
  */
-pub.getMyLikeCountWeekData = (userId) => {
-  return taskCheckinMapper.myLikeCountWeekData(userId)
+pub.getMyLikeCountWeekData = userId => {
+  return taskCheckinMapper
+    .myLikeCountWeekData(userId)
     .then(([myLikeCountWeekData]) => {
       if (_.isNil(myLikeCountWeekData)) {
         return {
-          "_id" : userId,
+          _id: userId,
           rank: 99999,
           likeCount: 0
-        }
+        };
       }
       return myLikeCountWeekData;
     });
-}
+};
 
 /** 学校排行榜 */
 /**
  * 获取学校周打卡排行榜和个人信息
  */
-pub.getSchoolCheckinWeekRank = (userId) => {
-  return taskCheckinMapper.schoolCheckinWeekRank()
-  .then(checkinRank => {
+pub.getSchoolCheckinWeekRank = userId => {
+  return taskCheckinMapper.schoolCheckinWeekRank().then(checkinRank => {
     const countUsers = [];
     checkinRank.forEach(item => {
       countUsers.push(userMapper.countBySchool(item._id));
-    })
-    return Promise.all(countUsers)
-    .then(countList => {
-      for (let i=0; i<countList.length; i++) {
+    });
+    return Promise.all(countUsers).then(countList => {
+      for (let i = 0; i < countList.length; i++) {
         checkinRank[i].userCount = countList[i] || 0;
       }
       return checkinRank;
@@ -461,56 +458,56 @@ pub.getSchoolCheckinWeekRank = (userId) => {
 /**
  * 我的学校打卡排行榜的个人信息
  */
-pub.getMySchoolCheckinWeekData = (user) => {
-  return taskCheckinMapper.mySchoolCheckinWeekData(user.school)
+pub.getMySchoolCheckinWeekData = user => {
+  return taskCheckinMapper
+    .mySchoolCheckinWeekData(user.school)
     .then(([myCheckinWeekData]) => {
       if (_.isNil(myCheckinWeekData)) {
         return {
-          "_id" : user.school || '',
+          _id: user.school || "",
           rank: 99999,
-          practiceTime: 0,
-        }
+          practiceTime: 0
+        };
       }
       return myCheckinWeekData;
     });
-}
+};
 
 /**
  * 我的排行榜-笔芯榜
  */
 pub.getSchoolLikeCountWeekRank = () => {
-  return taskCheckinMapper.schoolLikeCountWeekRank()
-    .then(likeCountWeekRank => {
-      const countUsers = [];
-      likeCountWeekRank.forEach(item => {
-        countUsers.push(userMapper.countBySchool(item._id));
-      })
-      return Promise.all(countUsers)
-      .then(countList => {
-        for (let i=0; i<countList.length; i++) {
-          likeCountWeekRank[i].userCount = countList[i] || 0;
-        }
-        return likeCountWeekRank;
-      });
+  return taskCheckinMapper.schoolLikeCountWeekRank().then(likeCountWeekRank => {
+    const countUsers = [];
+    likeCountWeekRank.forEach(item => {
+      countUsers.push(userMapper.countBySchool(item._id));
     });
-}
+    return Promise.all(countUsers).then(countList => {
+      for (let i = 0; i < countList.length; i++) {
+        likeCountWeekRank[i].userCount = countList[i] || 0;
+      }
+      return likeCountWeekRank;
+    });
+  });
+};
 
 /**
  * 我的排行榜-笔芯榜 我的信息
  */
-pub.getMySchoolLikeCountWeekData = (user) => {
-  return taskCheckinMapper.mySchoolLikeCountWeekData(user.school)
+pub.getMySchoolLikeCountWeekData = user => {
+  return taskCheckinMapper
+    .mySchoolLikeCountWeekData(user.school)
     .then(([myLikeCountWeekData]) => {
       if (_.isNil(myLikeCountWeekData)) {
         return {
-          "_id" : user.school || '',
+          _id: user.school || "",
           rank: 99999,
           likeCount: 0
-        }
+        };
       }
       return myLikeCountWeekData;
     });
-}
+};
 
 /**
  * 获取打卡详情
@@ -520,28 +517,99 @@ pub.getShareCheckin = checkinId => {
     winston.error("获取打卡详情失败，参数错误！！！ checkinId: %s", checkinId);
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
-  return taskCheckinMapper.findById(checkinId)
-  .then(checkin => {
+  return taskCheckinMapper.findById(checkinId).then(checkin => {
     const userId = checkin.userId;
-      return Promise.all([
-        userMapper.fetchByParam({id: userId}),
-        taskCheckinMapper.sumCheckinDaysByUserId(userId),
-        taskCheckinMapper.sumTodayPracticeTime(userId),
-        userFileMapper.fetchById(checkin.attach)
-      ])
-      .then(([
-        user,
-        [checkinDays],
-        [todayPracticeTime],
-        userFile
-      ]) => {
-        user.todayPracticeTime= !!todayPracticeTime? todayPracticeTime.practiceTime: 0,
-        user.checkinDays= !!checkinDays ? checkinDays.count : 0
-        checkin.user = user;
-        checkin.attach = userFile;
-        return checkin;
-      })
+    return Promise.all([
+      userMapper.fetchByParam({ id: userId }),
+      taskCheckinMapper.sumCheckinDaysByUserId(userId),
+      taskCheckinMapper.sumTodayPracticeTime(userId),
+      userFileMapper.fetchById(checkin.attach)
+    ]).then(([user, [checkinDays], [todayPracticeTime], userFile]) => {
+      (user.todayPracticeTime = !!todayPracticeTime
+        ? todayPracticeTime.practiceTime
+        : 0),
+        (user.checkinDays = !!checkinDays ? checkinDays.count : 0);
+      checkin.user = user;
+      checkin.attach = userFile;
+      return checkin;
+    });
   });
+};
+
+const gm = require("gm");
+const jimp = require("jimp");
+const EventProxy = require("eventproxy");
+const ep = new EventProxy();
+
+const getCircleImage = (url, saveName, eventName) => {
+  const maskImage = `${global.__projectDir}/resources/maskCircle.png`;
+  const content = jimp.read(url);
+  const circle = jimp.read(maskImage);
+  Promise.all([content, circle]).then(images => {
+    const mainPhoto = images[0];
+    const mask = images[1];
+    mainPhoto.resize(512, 512);
+    mainPhoto
+      .mask(mask, 0, 0)
+      .write(`${global.__projectDir}/public/${saveName}.png`, err => {
+        if (err) {
+          console.log(err);
+        } else {
+          ep.emit(eventName, `${global.__projectDir}/public/${saveName}.png`);
+          console.log(`${saveName} circle build success`);
+        }
+      });
+  });
+}
+
+/**
+ * 获取分享信息
+ */
+pub.getShareInfo = checkinId => {
+  if (_.isNil(checkinId)) {
+    winston.error("获取分享信息失败，参数错误！！！ checkinId: %s", checkinId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return pub.getShareCheckin(checkinId);
+  // .then(checkin => {
+  //   console.log(global.__projectDir);
+  //   let title = checkin.task.title
+  //   title = title.slice(0, 10) + "\\r\\n" + title.slice(10);
+
+  //   const taskImg = checkin.task.bigPic
+  //   const headImg = checkin.user.headImgUrl
+
+  //   getCircleImage(headImg, "userName_taskId_headImg", "buildHeadImg");
+  //   getCircleImage(taskImg, "userName_taskId_taskImg", "buildTaskImg");
+
+  //   ep.all("buildHeadImg", "buildTaskImg", (headImgSrc, taskImgSrc) => {
+  //     gm(`${global.__projectDir}/resources/sharePost.png`)
+  //       .draw(`image Over 372 128 622.8 622.8 ${taskImgSrc}`) //任务图片
+  //       .draw(`image Over 120 1343 260 260 ${headImgSrc}`) //头像图片
+  //       .font(`${global.__projectDir}/resources/HYQiHei-60S.ttf`)
+  //       .fontSize(72)
+  //       .fill("#fff")
+  //       .drawText(10, 1100, title, "North") //标题
+  //       .fontSize(56)
+  //       .fill("#0ACAF6")
+  //       .drawText(635, 1563, checkin.checkinDays + '') //累计口译
+  //       .drawText(1092, 1563, checkin.todayPracticeTime + '') //今日口译
+  //       .fontSize(60)
+  //       .fill("#1A1E1E")
+  //       .drawText(423, 1463, checkin.user.name) //微信名
+  //       .write(`${global.__projectDir}/public/${checkin.user.name}_${checkin.taskId}.png`, err => {
+  //         //username_taskId  自行替换
+  //         if (err) {
+  //           console.log("err:" + err);
+  //         } else {
+  //           console.log("finished! todo update img to cdn"); //这里做上传，上传完成后可以删除本地生成图片 一共三张
+  //           return {
+  //             imgUrl: `localhost:3000/static/${checkin.user.name}_${checkin.taskId}.png`
+  //           }
+  //         }
+  //       });
+  //   });
+  // });
 };
 
 module.exports = pub;
