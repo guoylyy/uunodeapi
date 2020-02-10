@@ -91,3 +91,6 @@ tmp/
 
 # Editor
 .vscode
+
+# 本地文件夹
+public/*

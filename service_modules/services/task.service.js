@@ -13,8 +13,11 @@ const qiniuComponent = require("./component/qiniu.component");
 const userMapper = require("../dao/mysql_mapper/user.mapper");
 const userFileMapper = require("../dao/mongodb_mapper/userFile.mapper");
 const moment = require("moment");
-
+const gm = require("gm");
+const jimp = require("jimp");
+const fs = require("fs");
 const pub = {};
+const commonUtil = require('../services/util/common.util')
 
 /**
  * 分页查询课程列表
@@ -365,16 +368,14 @@ pub.fetchTaskCheckinStatistics = userId => {
 /**
  * 获取周打卡排行榜和个人信息
  */
-pub.getCheckinWeekRank = (userId) => {
-  return taskCheckinMapper.checkinWeekRank()
-  .then(checkinRank => {
+pub.getCheckinWeekRank = userId => {
+  return taskCheckinMapper.checkinWeekRank().then(checkinRank => {
     const fetchUser = [];
     checkinRank.forEach(item => {
-      fetchUser.push(userMapper.fetchByParam({id: item._id}));
-    })
-    return Promise.all(fetchUser)
-    .then(userList => {
-      for (let i=0; i<userList.length; i++) {
+      fetchUser.push(userMapper.fetchByParam({ id: item._id }));
+    });
+    return Promise.all(fetchUser).then(userList => {
+      for (let i = 0; i < userList.length; i++) {
         checkinRank[i].user = userList[i] || {};
       }
       return checkinRank;
@@ -385,72 +386,70 @@ pub.getCheckinWeekRank = (userId) => {
 /**
  * 我的打卡排行榜的个人信息
  */
-pub.getMyCheckinWeekData = (userId) => {
-  return taskCheckinMapper.myCheckinWeekData(userId)
+pub.getMyCheckinWeekData = userId => {
+  return taskCheckinMapper
+    .myCheckinWeekData(userId)
     .then(([myCheckinWeekData]) => {
       console.log(myCheckinWeekData);
       if (_.isNil(myCheckinWeekData)) {
         return {
-          "_id" : userId,
+          _id: userId,
           rank: 99999,
-          practiceTime: 0,
-        }
+          practiceTime: 0
+        };
       }
       return myCheckinWeekData;
     });
-}
+};
 
 /**
  * 我的排行榜-笔芯榜
  */
 pub.getLikeCountWeekRank = () => {
-  return taskCheckinMapper.likeCountWeekRank()
-    .then(likeCountWeekRank => {
-      const fetchUser = [];
-      likeCountWeekRank.forEach(item => {
-        fetchUser.push(userMapper.fetchByParam({id: item._id}));
-      })
-      return Promise.all(fetchUser)
-      .then(userList => {
-        for (let i=0; i<userList.length; i++) {
-          likeCountWeekRank[i].user = userList[i] || {};
-        }
-        return likeCountWeekRank;
-      });
+  return taskCheckinMapper.likeCountWeekRank().then(likeCountWeekRank => {
+    const fetchUser = [];
+    likeCountWeekRank.forEach(item => {
+      fetchUser.push(userMapper.fetchByParam({ id: item._id }));
     });
-}
+    return Promise.all(fetchUser).then(userList => {
+      for (let i = 0; i < userList.length; i++) {
+        likeCountWeekRank[i].user = userList[i] || {};
+      }
+      return likeCountWeekRank;
+    });
+  });
+};
 
 /**
  * 我的排行榜-笔芯榜 我的信息
  */
-pub.getMyLikeCountWeekData = (userId) => {
-  return taskCheckinMapper.myLikeCountWeekData(userId)
+pub.getMyLikeCountWeekData = userId => {
+  return taskCheckinMapper
+    .myLikeCountWeekData(userId)
     .then(([myLikeCountWeekData]) => {
       if (_.isNil(myLikeCountWeekData)) {
         return {
-          "_id" : userId,
+          _id: userId,
           rank: 99999,
           likeCount: 0
-        }
+        };
       }
       return myLikeCountWeekData;
     });
-}
+};
 
 /** 学校排行榜 */
 /**
  * 获取学校周打卡排行榜和个人信息
  */
-pub.getSchoolCheckinWeekRank = (userId) => {
-  return taskCheckinMapper.schoolCheckinWeekRank()
-  .then(checkinRank => {
+pub.getSchoolCheckinWeekRank = userId => {
+  return taskCheckinMapper.schoolCheckinWeekRank().then(checkinRank => {
     const countUsers = [];
     checkinRank.forEach(item => {
       countUsers.push(userMapper.countBySchool(item._id));
-    })
-    return Promise.all(countUsers)
-    .then(countList => {
-      for (let i=0; i<countList.length; i++) {
+    });
+    return Promise.all(countUsers).then(countList => {
+      for (let i = 0; i < countList.length; i++) {
         checkinRank[i].userCount = countList[i] || 0;
       }
       return checkinRank;
@@ -461,56 +460,56 @@ pub.getSchoolCheckinWeekRank = (userId) => {
 /**
  * 我的学校打卡排行榜的个人信息
  */
-pub.getMySchoolCheckinWeekData = (user) => {
-  return taskCheckinMapper.mySchoolCheckinWeekData(user.school)
+pub.getMySchoolCheckinWeekData = user => {
+  return taskCheckinMapper
+    .mySchoolCheckinWeekData(user.school)
     .then(([myCheckinWeekData]) => {
       if (_.isNil(myCheckinWeekData)) {
         return {
-          "_id" : user.school || '',
+          _id: user.school || "",
           rank: 99999,
-          practiceTime: 0,
-        }
+          practiceTime: 0
+        };
       }
       return myCheckinWeekData;
     });
-}
+};
 
 /**
  * 我的排行榜-笔芯榜
  */
 pub.getSchoolLikeCountWeekRank = () => {
-  return taskCheckinMapper.schoolLikeCountWeekRank()
-    .then(likeCountWeekRank => {
-      const countUsers = [];
-      likeCountWeekRank.forEach(item => {
-        countUsers.push(userMapper.countBySchool(item._id));
-      })
-      return Promise.all(countUsers)
-      .then(countList => {
-        for (let i=0; i<countList.length; i++) {
-          likeCountWeekRank[i].userCount = countList[i] || 0;
-        }
-        return likeCountWeekRank;
-      });
+  return taskCheckinMapper.schoolLikeCountWeekRank().then(likeCountWeekRank => {
+    const countUsers = [];
+    likeCountWeekRank.forEach(item => {
+      countUsers.push(userMapper.countBySchool(item._id));
     });
-}
+    return Promise.all(countUsers).then(countList => {
+      for (let i = 0; i < countList.length; i++) {
+        likeCountWeekRank[i].userCount = countList[i] || 0;
+      }
+      return likeCountWeekRank;
+    });
+  });
+};
 
 /**
  * 我的排行榜-笔芯榜 我的信息
  */
-pub.getMySchoolLikeCountWeekData = (user) => {
-  return taskCheckinMapper.mySchoolLikeCountWeekData(user.school)
+pub.getMySchoolLikeCountWeekData = user => {
+  return taskCheckinMapper
+    .mySchoolLikeCountWeekData(user.school)
     .then(([myLikeCountWeekData]) => {
       if (_.isNil(myLikeCountWeekData)) {
         return {
-          "_id" : user.school || '',
+          _id: user.school || "",
           rank: 99999,
           likeCount: 0
-        }
+        };
       }
       return myLikeCountWeekData;
     });
-}
+};
 
 /**
  * 获取打卡详情
@@ -520,26 +519,95 @@ pub.getShareCheckin = checkinId => {
     winston.error("获取打卡详情失败，参数错误！！！ checkinId: %s", checkinId);
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
-  return taskCheckinMapper.findById(checkinId)
-  .then(checkin => {
+  return taskCheckinMapper.findById(checkinId).then(checkin => {
     const userId = checkin.userId;
-      return Promise.all([
-        userMapper.fetchByParam({id: userId}),
-        taskCheckinMapper.sumCheckinDaysByUserId(userId),
-        taskCheckinMapper.sumTodayPracticeTime(userId),
-        userFileMapper.fetchById(checkin.attach)
-      ])
-      .then(([
-        user,
-        [checkinDays],
-        [todayPracticeTime],
-        userFile
-      ]) => {
-        user.todayPracticeTime= !!todayPracticeTime? todayPracticeTime.practiceTime: 0,
-        user.checkinDays= !!checkinDays ? checkinDays.count : 0
-        checkin.user = user;
-        checkin.attach = userFile;
-        return checkin;
+    return Promise.all([
+      userMapper.fetchByParam({ id: userId }),
+      taskCheckinMapper.sumCheckinDaysByUserId(userId),
+      taskCheckinMapper.sumTodayPracticeTime(userId),
+      userFileMapper.fetchById(checkin.attach)
+    ]).then(([user, [checkinDays], [todayPracticeTime], userFile]) => {
+      (user.todayPracticeTime = !!todayPracticeTime
+        ? todayPracticeTime.practiceTime
+        : 0),
+        (user.checkinDays = !!checkinDays ? checkinDays.count : 0);
+      checkin.user = user;
+      checkin.attach = userFile;
+      return checkin;
+    });
+  });
+};
+
+const getCircleImage = async (url, saveName) => {
+  const maskImage = `${global.__projectDir}/resources/maskCircle.png`;
+  const mainPhoto = await jimp.read(url);
+  const mask = await jimp.read(maskImage);
+
+  return new Promise((resolve, reject) => {
+    mainPhoto
+      .resize(512, 512)
+      .mask(mask, 0, 0)
+      .write(`${global.__projectDir}/public/${saveName}.png`, err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(`${global.__projectDir}/public/${saveName}.png`);
+        }
+      });
+  });
+};
+
+/**
+ * 获取分享信息
+ */
+pub.getShareInfo = checkinId => {
+  if (_.isNil(checkinId)) {
+    winston.error("获取分享信息失败，参数错误！！！ checkinId: %s", checkinId);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  return pub.getShareCheckin(checkinId).then(checkin => {
+    const title = checkin.task.title.slice(0, 10) + "\\r\\n" + checkin.task.title.slice(10);
+    const taskImg = checkin.task.pic;
+    const headImg = checkin.user.headImgUrl;
+    return Promise.all([
+      getCircleImage(headImg, `${checkin.id}_headImg`),
+      getCircleImage(taskImg, `${checkin.id}_taskImg`)
+    ])
+      .then(([headImgPath, taskImgPath]) => {
+        return new Promise((resolve, reject) => {
+          gm(`${global.__projectDir}/resources/sharePost.png`)
+            .draw(`image Over 372 128 622.8 622.8 ${taskImgPath}`) //任务图片
+            .draw(`image Over 120 1343 260 260 ${headImgPath}`) //头像图片
+            .font(`${global.__projectDir}/resources/HYQiHei-60S.ttf`)
+            .fontSize(72)
+            .fill("#fff")
+            .drawText(10, 1100, title, "North") //标题
+            .fontSize(50)
+            .fill("#0ACAF6")
+            .drawText(635, 1560, checkin.user.checkinDays + "") //累计口译
+            .drawText(1070, 1560, checkin.user.todayPracticeTime + "") //今日口译
+            .fontSize(60)
+            .fill("#1A1E1E")
+            .drawText(423, 1463, checkin.user.name) //微信名
+            .write(`${global.__projectDir}/public/${checkin.id}.png`, err => {
+              if (err) {
+                reject(err);
+              } else {
+                const filePath = `${global.__projectDir}/public/${checkin.id}.png`;
+                console.log("Finished! Upload to Qiniu CDN"); //这里做上传，上传完成后可以删除本地生成图片 一共三张
+                fs.unlinkSync(taskImgPath);
+                fs.unlinkSync(headImgPath);
+                qiniuComponent.uploadFilePromise('PUBLIC', _.now() + '_' + commonUtil.generateRandomString(7) + '_' + `${checkin.id}.png`, 'png', filePath)
+                .then(result => {
+                  fs.unlinkSync(filePath);
+                  resolve({
+                    imgUrl: qiniuComponent.getAccessibleUrl('PUBLIC', result.key)
+                  })
+                });
+                
+              }
+            });
+        });
       })
   });
 };

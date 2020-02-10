@@ -60,7 +60,6 @@ const QUERY_SELECT_COLUMNS = ['id', 'studentNumber', 'name', 'headImgUrl', 'open
  */
 pub.fetchByParam = (queryParam, orderByColumn = '-updatedAt') => {
   const safeParams = ['openId', 'id', 'unionid', 'studentNumber'];
-
   return userSchema.query(
       (query) => {
         queryUtil.filterMysqlQueryParam(query, queryParam, safeParams)
