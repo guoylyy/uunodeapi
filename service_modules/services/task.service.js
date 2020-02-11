@@ -584,7 +584,7 @@ pub.getShareInfo = checkinId => {
             .fontSize(50)
             .fill("#0ACAF6")
             .drawText(635, 1560, checkin.user.checkinDays + "") //累计口译
-            .drawText(1070, 1560, checkin.user.todayPracticeTime + "") //今日口译
+            .drawText(1070, 1560, Math.ceil(checkin.user.todayPracticeTime/60) + "") //今日口译
             .fontSize(60)
             .fill("#1A1E1E")
             .drawText(423, 1463, checkin.user.name) //微信名
