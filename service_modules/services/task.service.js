@@ -539,7 +539,7 @@ pub.getShareCheckin = checkinId => {
 
 const getCircleImage = async (url, saveName) => {
   const maskImage = `${global.__projectDir}/resources/maskCircle.png`;
-  const mainPhoto = await jimp.read(url);
+  const mainPhoto = await jimp.read(encodeURI(url));
   const mask = await jimp.read(maskImage);
 
   return new Promise((resolve, reject) => {
