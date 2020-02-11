@@ -3,7 +3,6 @@
 const _ = require("lodash");
 const winston = require("winston");
 const Promise = require("bluebird");
-const debug = require("debug")("service");
 const taskMapper = require("../dao/mongodb_mapper/task.mapper");
 const taskCheckinMapper = require("../dao/mongodb_mapper/taskCheckin.mapper");
 const pushTaskMapper = require("../dao/mongodb_mapper/pushTask.mapper");
