@@ -19,7 +19,6 @@
     "bookshelf": "^0.14.2",
     "cache-manager": "^2.9.0",
     "cache-manager-ioredis": "^1.0.1",
-    "canvas": "^2.6.1",
     "compression": "^1.7.4",
     "crypto": "^1.0.1",
     "debug": "^4.1.1",
