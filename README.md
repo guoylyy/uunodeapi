@@ -199,7 +199,7 @@ pm2 monit
 ```
 wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo
 
-yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++ -y
+yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++ GraphicsMagick ImageMagick ghostscript -y
 
 // 临时编译前使用
 export CC=/opt/rh/devtoolset-2/root/usr/bin/gcc

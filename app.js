@@ -95,6 +95,8 @@ if (isAndroidSharkOpen === true) {
     app.use('/appShark', appSharkAPIRouter);
 }
 
+app.use('/static', express.static(__dirname + '/public'))
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     let err = { code: 404, message: 'API Not Found' };
@@ -113,6 +115,8 @@ var config = {
   appRoot: __dirname, // required config
   swaggerFile: __dirname + '/doc/swagger/swagger.yaml'
 };
+
+global.__projectDir = __dirname;
 
 SwaggerExpress.create(config, function(err, swaggerExpress) {
   if (err) { throw err; }
