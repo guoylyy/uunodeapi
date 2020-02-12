@@ -563,7 +563,7 @@ pub.getShareInfo = checkinId => {
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
   return pub.getShareCheckin(checkinId).then(checkin => {
-    const title = checkin.task.title.slice(0, 10) + "\\r\\n" + checkin.task.title.slice(10);
+    const title = checkin.task.title.slice(0, 10) + "\r\n" + checkin.task.title.slice(10);
     const taskImg = checkin.task.pic;
     const headImg = checkin.user.headImgUrl;
     return Promise.all([
