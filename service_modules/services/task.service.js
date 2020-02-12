@@ -609,11 +609,11 @@ pub.getShareInfo = checkinId => {
                 console.log("Finished! Upload to Qiniu CDN"); //这里做上传，上传完成后可以删除本地生成图片 一共三张
                 fs.unlinkSync(taskImgPath);
                 fs.unlinkSync(headImgPath);
-                qiniuComponent.uploadFilePromise('PUBLIC', _.now() + '_' + commonUtil.generateRandomString(7) + '_' + `${checkin.id}.png`, 'png', filePath)
+                qiniuComponent.uploadFilePromise('SECRET', _.now() + '_' + commonUtil.generateRandomString(7) + '_' + `${checkin.id}.png`, 'png', filePath)
                 .then(result => {
                   fs.unlinkSync(filePath);
                   resolve({
-                    imgUrl: qiniuComponent.getAccessibleUrl('PUBLIC', result.key)
+                    imgUrl: qiniuComponent.getAccessibleUrl('SECRET', result.key)
                   })
                 });
               }
