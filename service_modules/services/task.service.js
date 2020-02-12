@@ -26,7 +26,6 @@ pub.queryTaskList = queryParam => {
     (queryParam.title = {
       $regex: RegExp(queryParam.title, "i")
     });
-  console.log(queryParam);
   return taskMapper.queryPagedTaskList(
     queryParam,
     queryParam.pageNumber,
@@ -389,7 +388,6 @@ pub.getMyCheckinWeekData = userId => {
   return taskCheckinMapper
     .myCheckinWeekData(userId)
     .then(([myCheckinWeekData]) => {
-      console.log(myCheckinWeekData);
       if (_.isNil(myCheckinWeekData)) {
         return {
           _id: userId,
@@ -573,6 +571,21 @@ pub.getShareInfo = checkinId => {
       getCircleImage(taskImg, `${checkin.id}_taskImg`)
     ])
       .then(([headImgPath, taskImgPath]) => {
+        const checkinDays = checkin.user.checkinDays,  
+        todayPracticeMinutes = Math.ceil(checkin.user.todayPracticeTime/60);
+        let checkinDaysX = 655, todayPracticeMinutesX = 1105;
+        const fontPx = 18;
+        // 跳转动态数字偏移量
+        if (checkinDays >= 100) {
+          checkinDaysX -= fontPx * 2;
+        } else if (checkinDays >= 10) {
+          checkinDaysX -= fontPx;
+        }
+        if (todayPracticeMinutes >= 100) {
+          todayPracticeMinutesX -= fontPx * 2;
+        } else if (todayPracticeMinutes >= 10) {
+          todayPracticeMinutesX -= fontPx;
+        }
         return new Promise((resolve, reject) => {
           gm(`${global.__projectDir}/resources/sharePost.png`)
             .draw(`image Over 372 128 622.8 622.8 ${taskImgPath}`) //任务图片
@@ -581,10 +594,10 @@ pub.getShareInfo = checkinId => {
             .fontSize(72)
             .fill("#fff")
             .drawText(10, 1100, title, "North") //标题
-            .fontSize(50)
+            .fontSize(56)
             .fill("#0ACAF6")
-            .drawText(635, 1560, checkin.user.checkinDays + "") //累计口译
-            .drawText(1070, 1560, Math.ceil(checkin.user.todayPracticeTime/60) + "") //今日口译
+            .drawText(checkinDaysX, 1561, checkinDays + "") //累计口译
+            .drawText(todayPracticeMinutesX, 1561, todayPracticeMinutes + "") //今日口译
             .fontSize(60)
             .fill("#1A1E1E")
             .drawText(423, 1463, checkin.user.name) //微信名
@@ -603,7 +616,6 @@ pub.getShareInfo = checkinId => {
                     imgUrl: qiniuComponent.getAccessibleUrl('PUBLIC', result.key)
                   })
                 });
-                
               }
             });
         });

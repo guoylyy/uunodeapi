@@ -215,7 +215,6 @@ pub.addViewLog = (req, res) => {
 pub.getShareInfo = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.checkinId)
   .then((checkinId) => {
-    console.log(`checkinId = ${checkinId}`)
     return taskService.getShareInfo(checkinId);
   }).then(result => {
     return apiRender.renderBaseResult(res, result);

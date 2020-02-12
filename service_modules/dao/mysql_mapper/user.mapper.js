@@ -197,7 +197,6 @@ pub.create = (userItem) => {
  * 根据学校查询人数
  */
 pub.countBySchool = (school) => {
-  console.log(school);
   if (_.isEmpty(school)) {
     return null;
   }
