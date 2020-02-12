@@ -11,7 +11,7 @@ const queryUtil = require('../util/queryUtil');
 const ubandCoinSchema = require('./schema/ubandCoin.schema');
 
 const QUERY_SAFE_PARAMS = ['id', 'userId', 'transactionId'];
-const QUERY_SELECT_COLUMNS = ['id', 'userId', 'transactionId', 'title'];
+const QUERY_SELECT_COLUMNS = ['id', 'userId', 'coinChange', 'transactionId', 'title'];
 
 /**
  * 根据查询参数进行queryBuilder的构建

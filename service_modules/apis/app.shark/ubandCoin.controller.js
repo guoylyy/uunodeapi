@@ -49,11 +49,13 @@ pub.queryUbandCoins = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
         debug(queryParam);
+        const userCoinsPromise = ubandCoinService.getUserCoins(req.__CURRENT_USER.id);
+        const coinSumPromise = ubandCoinService.sumUbandCoins(req.__CURRENT_USER.id);
 
-        return ubandCoinService.sumUbandCoins(req.__CURRENT_USER.id);
+        return Promise.all([userCoinsPromise, coinSumPromise]);
       })
-      .then((coinSum) => {
-        return apiRender.renderBaseResult(res, { sum: coinSum, history: [] });
+      .then(([coins,coinSum]) => {
+        return apiRender.renderBaseResult(res, { sum: coinSum, history: coins });
       })
       .catch(req.__ERROR_HANDLER);
 };

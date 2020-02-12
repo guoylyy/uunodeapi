@@ -34,6 +34,10 @@ pub.sumUbandCoins = (userId) => {
   return ubandCoinMapper.sumUserUbandCoin(userId);
 };
 
+pub.getUserCoins = (userId) =>{
+  return ubandCoinMapper.fetchAllByParam({userId:userId});
+};
+
 pub.costUbandCoin = (userId, coins, title, remark) => {
   return ubandCoinMapper.create({
     userId: userId,
