@@ -91,3 +91,4 @@ tmp/
 
 # Editor
 .vscode
+/log
