@@ -11,8 +11,8 @@ const queryUtil = require('../util/queryUtil');
 const userBindSchema = require('./schema/userBind.schema');
 
 
-const QUERY_SAFE_PARAMS = ['id', 'userId', 'type', 'accountName'];
-const QUERY_SELECT_COLUMNS = ['id', 'userId', 'accountName'];
+const QUERY_SAFE_PARAMS = ['id', 'userId', 'type', 'accountName', 'taskGuide'];
+const QUERY_SELECT_COLUMNS = ['id', 'userId', 'accountName', 'taskGuide'];
 
 const pub = {};
 
