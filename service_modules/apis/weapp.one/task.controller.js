@@ -11,6 +11,7 @@ const taskService = require("../../services/task.service");
 const taskSchema = require("./schema/task.schema");
 const winston = require('winston');
 const pub = {};
+const userBindService = require('../../services/userBind.service')
 
 /**
  * 获取任务列表
@@ -49,9 +50,25 @@ pub.getTaskList = (req, res) => {
 pub.getTask = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
   .then(taskId => {
-    return Promise.all([taskService.fetchById(taskId), taskService.countByParam({taskId: taskId, userId: req.__CURRENT_USER.id})])
-    .then(([task, checkinCount])=> {
+    return Promise.all([
+      taskService.fetchById(taskId), 
+      taskService.countByParam({taskId: taskId, userId: req.__CURRENT_USER.id}),
+      userBindService.fetchUserBindByUserId(enumModel.userBindTypeEnum.WEAPP_ONE.key, req.__CURRENT_USER.id)
+    ])
+    .then(([
+      task, 
+      checkinCount,
+      userBindItem
+    ])=> {
       task.myCheckinCount = checkinCount;
+      console.log(userBindItem);
+      task.taskGuide = (userBindItem.taskGuide == 1)
+      if (!task.taskGuide) {
+        userBindService.updateUserBindItem({
+          id: userBindItem.id,
+          taskGuide: 1
+        });
+      }
       return task;
     });
   })
@@ -217,6 +234,7 @@ pub.getShareInfo = (req, res) => {
   .then((checkinId) => {
     return taskService.getShareInfo(checkinId);
   }).then(result => {
+
     return apiRender.renderBaseResult(res, result);
   })
   .catch(req.__ERROR_HANDLER);
