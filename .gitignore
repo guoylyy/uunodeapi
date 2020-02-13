@@ -5,6 +5,7 @@
 /dist-server
 /tmp
 /out-tsc
+/log
 
 # dependencies
 /node_modules
@@ -91,6 +92,7 @@ tmp/
 
 # Editor
 .vscode
-
 # 本地文件夹
 public/*
+log/shark-android-api-200206.paw
+log/shark-api-v2.0.paw

@@ -35,6 +35,15 @@ const saveUserInCache = (clazzTask) => {
   return clazzTask;
 };
 
+//删除缓存中的任务
+const deleteClazzTaskInCache = (taskId) =>{
+  if(_.isNil(taskId)){
+    return true;
+  }
+  cacheWrapComponent.del(`${REDIS_KEY_PREFIX}_TASK_${taskId}`);
+  return true;
+};
+
 /**
  * 从缓存中获取任务
  * @param taskId
@@ -326,8 +335,12 @@ pub.updateClazzTask = (taskItem) => {
   }
 
   debug(taskItem);
+  const removeTaskInCache = deleteClazzTaskInCache(taskItem.id);
+  const updatePromise =clazzTaskMapper.update(taskItem.id, taskItem);
 
-  return clazzTaskMapper.update(taskItem.id, taskItem);
+  return Promise.all([updatePromise, removeTaskInCache]).then(([result, removeResult])=>{
+    return true;
+  });
 };
 
 /**

@@ -118,7 +118,7 @@ pub.createUserCoupon = (req, res) => {
         return apiRender.renderSuccess(res);
       })
       .catch(req.__ERROR_HANDLER);
-}
+};
 
 /**
  * 查询用户所有的可用优惠券

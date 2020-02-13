@@ -45,6 +45,7 @@ const signPayment = (subject, tradeNo, totalAmount) => {
 
   const basicParams = {
     app_id: appAlipayConfig.APP_ID,
+    partner: appAlipayConfig.PARTNER_ID,
     method: alipayBase.ALIPAY_METHOD_TYPES.CREATE_APP_ORDER,
     format: "JSON",
     charset: "utf-8",
