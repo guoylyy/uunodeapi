@@ -307,7 +307,7 @@ schedule.scheduleJob(
  */
 schedule.scheduleJob(
     'scheduler clazz account statistics',
-    '*/5 * * * *', // every 1 minutes
+    '*/5 * * * *', // every 5 minutes
     scheduleTask.statisticsStudentNumber
 );
 
@@ -318,4 +318,13 @@ schedule.scheduleJob(
     'clazz rank updater',
     '00 07 * * *', // 每天7点
     scheduleTask.updateClazzRankList
+);
+
+/**
+ * 每天一点同步有学校的用户数据到mongodb
+ */
+schedule.scheduleJob(
+  'sync user data to mongo',
+  '0 1 * * *', // 每天1点
+  scheduleTask.syncUser2Mongo
 );

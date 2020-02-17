@@ -726,4 +726,13 @@ pub.syncUserUnionid = () => {
       });
 };
 
+/**
+ * 同步有学校的用户表到mongo
+ */
+pub.syncUser2Mongo = () => {
+  console.log('同步用户')
+  return userService.syncUser2Mongo()
+    .catch(winston.error);;
+}
+
 module.exports = pub;

@@ -407,5 +407,26 @@ pub.syncUserStudentNumber = (userId) => {
       });
 };
 
+const weUserMapper = require('../dao/mongodb_mapper/user.mapper')
+
+/**
+ * 同步有学校的用户表到mongo
+ */
+pub.syncUser2Mongo = () => {
+  // 清空mongo User Collection 数据
+  return Promise.all([weUserMapper.emptyCollection(), userMapper.queryAll({school: {operator: '!=', value: ''}})])
+  .then(([__, userItemList]) => {
+    console.log(userItemList);
+    let userList = [];
+    userItemList.forEach(item => {
+      userList.push({
+        userId: item.id,
+        school: item.school
+      })
+    })
+    console.log(userList);
+    return weUserMapper.insertAll(userList);
+  });
+}
 
 module.exports = pub;

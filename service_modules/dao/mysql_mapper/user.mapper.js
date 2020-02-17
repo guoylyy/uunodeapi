@@ -48,8 +48,8 @@ const parseUserFields = (userItem) => {
 
 const pub = {};
 
-const QUERY_SAFE_PARAMS = ['id', 'studentNumber', 'name'];
-const QUERY_SELECT_COLUMNS = ['id', 'studentNumber', 'name', 'headImgUrl', 'openId'];
+const QUERY_SAFE_PARAMS = ['id', 'studentNumber', 'name', 'school'];
+const QUERY_SELECT_COLUMNS = ['id', 'studentNumber', 'name', 'headImgUrl', 'openId', 'school'];
 
 /**
  * 根据用户openId, id获取用户信息
@@ -59,7 +59,7 @@ const QUERY_SELECT_COLUMNS = ['id', 'studentNumber', 'name', 'headImgUrl', 'open
  * @returns {Promise}
  */
 pub.fetchByParam = (queryParam, orderByColumn = '-updatedAt') => {
-  const safeParams = ['openId', 'id', 'unionid', 'studentNumber'];
+  const safeParams = ['openId', 'id', 'unionid', 'studentNumber', 'school'];
   return userSchema.query(
       (query) => {
         queryUtil.filterMysqlQueryParam(query, queryParam, safeParams)

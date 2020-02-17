@@ -285,7 +285,8 @@ module.exports = pub;
 ```
 
 ### controller demo
-```javascript
+```
+javascript
 pub.drawCLazzCheckins = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
