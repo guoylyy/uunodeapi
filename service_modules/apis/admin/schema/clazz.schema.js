@@ -38,6 +38,7 @@ pub.createClazzBodySchema = Joi.object().keys({
   isShow: Joi.boolean().default(true),
   isHot: Joi.boolean().default(true),
   teacherHead: Joi.string().uri().required(),
+  bindTeacherId: commonSchema.mongoIdSchema,
   smallBanner: Joi.string().uri().required()
 });
 
@@ -56,6 +57,7 @@ pub.updateClazzBodySchema = Joi.object().keys({
   description: Joi.string().max(64).allow(''),
   isShow: Joi.boolean().default(true),
   isHot: Joi.boolean().default(true),
+  bindTeacherId: commonSchema.mongoIdSchema,
   teacherHead: Joi.string().uri().required(),
   smallBanner: Joi.string().uri().required()
 });
