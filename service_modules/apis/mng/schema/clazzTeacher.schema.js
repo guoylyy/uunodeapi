@@ -22,4 +22,18 @@ pub.teacherClazzListQuerySchema = Joi.object().keys({
   status: Joi.string().valid(enumModel.clazzStatusEnum.OPEN.key).required()
 });
 
+pub.updateTeacherInfoSchema = Joi.object().keys({
+  name: Joi.string(),
+  headImgUrl: Joi.string(),
+  tags: Joi.array().items(Joi.string()),
+  description: Joi.string()
+});
+
+pub.createTeacherSchema =  Joi.object().keys({
+  name: Joi.string().required(),
+  headImgUrl: Joi.string().required(),
+  tags: Joi.array().items(Joi.string()),
+  description: Joi.string().required()
+});
+
 module.exports = pub;

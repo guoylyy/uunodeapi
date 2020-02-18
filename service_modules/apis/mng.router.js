@@ -185,6 +185,9 @@ router.put('/userFile/:userFileId', userFileController.downloadFromWechat);
 // 教师列表 - 小助手和管理员获取
 const clazzTeacherController = require('./mng/clazzTeacher.controller');
 router.get('/clazzTeachers', clazzTeacherController.fetchPagedTeacherList);
+router.get('/clazzTeacher/:id', clazzTeacherController.fetchTeacherInfo);
+router.put('/clazzTeacher/:id', clazzTeacherController.updateTeacherInfomation);
+router.post('/clazzTeacher', clazzTeacherController.createTeacher);
 
 
 /***********************************************************************************************************************

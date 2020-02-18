@@ -54,4 +54,13 @@ pub.update = (clazzTeacherId, clazzTeacherItem) => {
   return ClazzTeacherSchema.updateItemById(clazzTeacherId, clazzTeacherItem)
 };
 
+/**
+ *
+ * @param item
+ * @return {item}
+ */
+pub.create = (item) =>{
+  return ClazzTeacherSchema.create(item);
+};
+
 module.exports = pub;

@@ -211,10 +211,12 @@ pub.createClazzItem = (clazzItem) => {
     winston.error('新建班级参数错误, clazzItem: %j', clazzItem);
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
-
+  //默认添加一个空的introduction信息对象
   return clazzIntroductionMapper.create(
       {
         title: clazzItem.name,
+        subTitlte: null,
+        requiredInfo:[],
         introduction: null,
         strategy: null
       })

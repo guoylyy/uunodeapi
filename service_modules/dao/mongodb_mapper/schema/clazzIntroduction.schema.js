@@ -8,6 +8,11 @@ const Schema = mongoose.Schema;
 
 let clazzIntroductionSchema = new Schema({
   title: {type: String, required: true},
+  subTitle :{type: String, required: true},
+  requiredInfo: [{ //运营必要说明
+    type:{ type: String },
+    content:{ type: String },
+  }],
   introduction: String,
   strategy: String,
   payway: String,

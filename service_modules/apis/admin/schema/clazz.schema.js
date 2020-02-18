@@ -98,6 +98,11 @@ pub.updateClazzConfigurationBodySchema = Joi.object().keys({
  */
 pub.updateClazzIntroductionBodySchema = Joi.object().keys({
   title: Joi.string().max(32),
+  subTitle: Joi.string().allow(''),
+  requiredInfo:Joi.array().items(Joi.object().keys({
+    type: Joi.string().required(),
+    content:Joi.string().required()
+  })).unique('type'),
   introduction: Joi.string().allow(''),
   strategy: Joi.string().allow(''),
 });

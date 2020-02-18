@@ -47,6 +47,39 @@ pub.listAllClazzTeachers = () => {
 };
 
 /**
+ * 新增笃师
+ */
+pub.createTeacher = (teacherItem) =>{
+
+  if(!_.isPlainObject(teacherItem)){
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+
+  teacherItem['isAvailable'] = true;
+  teacherItem['sortOrder'] = 100;
+  teacherItem['introduction'] = '1';
+  teacherItem['businessScope'] = '1';
+  teacherItem['gender'] = '1';
+
+  return clazzTeacherMapper.create(teacherItem);
+
+};
+
+
+/**
+ * 更新笃师信息
+ */
+pub.updateClazzTeacher = (teacherId, updateItem) =>{
+  if (_.isNil(teacherId) || !_.isPlainObject(updateItem)) {
+    winston.error('更新教师参数错误, teacherId: %s, updateItem: %j', teacherId, updateItem);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+
+  return clazzTeacherMapper.update(teacherId, updateItem);
+
+};
+
+/**
  * 根据id列表查询笃师列表
  *
  * @param clazzTeacherIds

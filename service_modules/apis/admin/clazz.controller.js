@@ -177,7 +177,7 @@ pub.fetchClazzItem = (req, res) => {
 
         let pickedClazzItem = _.pick(
             req.__CURRENT_CLAZZ,
-            ['id', 'name', 'banner', 'smallBanner', 'teacherHead', 'clazzType', 'status', 'author', 'openDate', 'startDate', 'endDate', 'description', 'isShow', 'isHot']
+            ['id', 'name', 'banner', 'smallBanner', 'teacherHead', 'bindTeacherId', 'clazzType', 'status', 'author', 'openDate', 'startDate', 'endDate', 'description', 'isShow', 'isHot']
         );
 
         debug(pickedClazzItem);
@@ -290,7 +290,7 @@ pub.fetchClazzIntroductionItem = (req, res) => {
       .then((clazzIntroductionItem) => {
         debug(clazzIntroductionItem);
 
-        let pickedClazzIntroductionItem = _.pick(clazzIntroductionItem, ['id', 'title', 'strategy', 'introduction']);
+        let pickedClazzIntroductionItem = _.pick(clazzIntroductionItem, ['id', 'title', 'subTitle', 'requiredInfo', 'strategy', 'introduction']);
 
         debug(pickedClazzIntroductionItem);
 
