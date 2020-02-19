@@ -208,7 +208,7 @@ pub.fetchClazzIntroduction = (req, res) => {
         return req.__CURRENT_CLAZZ_INTRODUCTION;
       })
       .then((introductionItem) => {
-        let introduction = _.pick(introductionItem, 'introduction');
+        let introduction = _.pick(introductionItem, ['introduction','title','subTitle','requiredInfo']);
         if(_.isNil(req.__CURRENT_CLAZZ_ACCOUNT)){
           introduction['hasJoin'] = false;
         } else if( req.__CURRENT_CLAZZ_ACCOUNT.status == enumModel.clazzJoinStatusEnum.CLOSE.key ||
