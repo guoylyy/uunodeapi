@@ -205,7 +205,11 @@ pub.fetchClazzIntroduction = (req, res) => {
           clazzAccountService.userJoinClazz(req.__CURRENT_USER, currentClazzItem)
         }
 
-        return clazzTeacherService.fetchClazzTeacherById(bindTeacherId);
+        if(_.isNil(bindTeacherId)){
+          return null;
+        }else{
+          return clazzTeacherService.fetchClazzTeacherById(bindTeacherId);
+        }
       })
       .then((bindTeacher) => {
 
