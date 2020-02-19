@@ -103,7 +103,9 @@ pub.updateClazzIntroductionBodySchema = Joi.object().keys({
   subTitle: Joi.string().allow(''),
   requiredInfo:Joi.array().items(Joi.object().keys({
     type: Joi.string().required(),
-    content:Joi.string().required()
+    content:Joi.string().required(),
+    isDelete:Joi.boolean().default(false),
+    id: Joi.string()
   })).unique('type'),
   introduction: Joi.string().allow(''),
   strategy: Joi.string().allow(''),
