@@ -18,6 +18,7 @@ const wechatPromotion = require('../../lib/wechat.promotion');
 
 const clazzService = require('../../services/clazz.service');
 const clazzAccountService = require('../../services/clazzAccount.service');
+const clazzTeacherService = require('../../services/clazzTeacher.service');
 const userCoinService = require('../../services/userCoin.service');
 const userService = require('../../services/user.service');
 const couponService = require('../../services/coupon.service');
@@ -196,7 +197,7 @@ pub.fetchClazzIntroduction = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
         let currentClazzItem = req.__CURRENT_CLAZZ;
-
+        let bindTeacherId = req.__CURRENT_CLAZZ.bindTeacherId;
         req.__MODULE_LOGGER(`获取课程${currentClazzItem.id}简介`, queryParam);
 
         // 自动加入
@@ -204,11 +205,11 @@ pub.fetchClazzIntroduction = (req, res) => {
           clazzAccountService.userJoinClazz(req.__CURRENT_USER, currentClazzItem)
         }
 
-        // 获取班级介绍
-        return req.__CURRENT_CLAZZ_INTRODUCTION;
+        return clazzTeacherService.fetchClazzTeacherById(bindTeacherId);
       })
-      .then((introductionItem) => {
-        let introduction = _.pick(introductionItem, ['introduction','title','subTitle','requiredInfo']);
+      .then((bindTeacher) => {
+
+        let introduction = _.pick(req.__CURRENT_CLAZZ_INTRODUCTION, ['introduction','title','subTitle','requiredInfo']);
         if(_.isNil(req.__CURRENT_CLAZZ_ACCOUNT)){
           introduction['hasJoin'] = false;
         } else if( req.__CURRENT_CLAZZ_ACCOUNT.status == enumModel.clazzJoinStatusEnum.CLOSE.key ||
@@ -217,6 +218,12 @@ pub.fetchClazzIntroduction = (req, res) => {
           introduction['hasJoin'] = true;
         }else{
           introduction['hasJoin'] = false;
+        }
+        //加入教师
+        if(_.isNil(bindTeacher)){
+          introduction['bindTeacher'] = {}
+        }else{
+          introduction['bindTeacher'] = bindTeacher;
         }
         return apiRender.renderBaseResult(res, introduction);
       })
