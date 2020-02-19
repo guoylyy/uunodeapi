@@ -227,7 +227,7 @@ pub.fetchClazzIntroduction = (req, res) => {
         if(_.isNil(bindTeacher)){
           introduction['bindTeacher'] = {}
         }else{
-          introduction['bindTeacher'] = bindTeacher;
+          introduction['bindTeacher'] = _.pick(bindTeacher, ['id','name','headImgUrl','tags','description','gender']);
         }
         return apiRender.renderBaseResult(res, introduction);
       })
