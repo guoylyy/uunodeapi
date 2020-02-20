@@ -10,13 +10,15 @@ const enumModel = require('../../../services/model/enum');
 
 const pub = {};
 
+
 /**
  * 查询课程列表query schema
  * @type {*}
  */
 pub.clazzQuerySchema = Joi.object().keys({
   status: Joi.string().trim().required().valid(_.keys(enumModel.clazzStatusEnum)),
-  isCheckinable: Joi.boolean().empty('').default(false)
+  isCheckinable: Joi.boolean().empty('').default(false),
+  isHot: Joi.boolean().empty('').default(null)
 });
 
 /*

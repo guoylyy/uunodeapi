@@ -124,8 +124,18 @@ pub.preloadClazzItem = (req, res, next) => {
           return apiRender.renderNotFound(res);
         }
 
-        req.__CURRENT_CLAZZ = clazzItem;
+        let bindTeacherId = clazzItem.bindTeacherId;
+        let bindTeacherPromise = {};
+        if(!_.isNil(bindTeacherId)){
+          bindTeacherPromise =  clazzTeacherService.fetchClazzTeacherById(bindTeacherId);
+        }
         req.__CURRENT_CLAZZ_ACCOUNT = clazzAccountItem;
+        return Promise.all([clazzItem,bindTeacherPromise]);
+      })
+      .then(([clazzFinalItem, clazzTeacherItem])=>{
+        clazzFinalItem['bindTeacher'] =_.pick(clazzTeacherItem, ['id','name','headImgUrl','tags','description','gender'])
+        req.__CURRENT_CLAZZ = clazzFinalItem;
+
         next();
         // 返回null，避免bluebird报not returned from promise警告
         return null;

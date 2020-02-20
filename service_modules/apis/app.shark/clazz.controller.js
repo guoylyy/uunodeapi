@@ -21,7 +21,7 @@ const cacheWrapper = require('../../services/component/cacheWrap.component');
 
 const clazzService = require('../../services/clazz.service');
 const clazzAccountService = require('../../services/clazzAccount.service');
-const clazzTeacherService = require('../../services/clazzTeacher.service');
+const clazzPostService = require('../../services/post.service');
 const userService = require('../../services/user.service');
 const userCoinService = require('../../services/userCoin.service');
 const ubandCoinService = require('../../services/ubandCoin.service');
@@ -38,6 +38,31 @@ const wechatPayment = require('../../lib/wechat.payment');
 const alipayPayment = require('../../lib/alipay/alipay.payment');
 
 const pub = {};
+
+/**
+ * 获取一个用户在所有班级某一天的任务
+ *
+ * * 暂时只支持当天的
+ *
+ */
+pub.queryUserTasks = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
+      .then((params) => {
+        return clazzPostService.fetchUserTodayPostList(req.__CURRENT_USER.id);
+      })
+      .then((results) => {
+        let clazzIds = [];
+        _.each(results, (task) => {
+          clazzIds.push(task.clazzId);
+        });
+        return Promise.all([results, clazzService.queryClazzes(null, clazzIds, null, null, null)]);
+      })
+      .then(([tasks, clazzes]) => {
+        return apiRender.renderBaseResult(res, {'todayTasks': tasks, 'clazzList': clazzes, 'date': moment().toDate()});
+      })
+      .catch(req.__ERROR_HANDLER); // 错误处理
+};
+
 
 /**
  * 根据班级状态分页列出课程
@@ -60,9 +85,12 @@ pub.queryClazzList = (req, res) => {
           req.__MODULE_LOGGER('获取报名课程列表', queryParams);
 
           // 如果只看开放的课程，直接返回了
-          let clazzListPromise =  clazzService.queryClazzes(queryParams.status, null, null, null)
+          let clazzListPromise = clazzService.queryClazzes(queryParams.status, null, null, null)
               .then((clazzList) => {
                 let newClazzList = _.filter(clazzList, clazzUtil.checkIsClazzShow);
+                if (queryParams.isHost) {
+                  newClazzList = _.filter(clazzList, clazzUtil.checkIsClazzHot);
+                }
                 return newClazzList;
               });
 
@@ -98,7 +126,7 @@ pub.queryClazzList = (req, res) => {
         const CURRENT_USER = req.__CURRENT_USER;
         // return a list like [[clazz], [clazzAccount]]
 
-        let  clazzListPromise = clazzAccountService.queryUserClazzByStatus(CURRENT_USER, joinStatus, queryParams.isCheckinable)
+        let clazzListPromise = clazzAccountService.queryUserClazzByStatus(CURRENT_USER, joinStatus, queryParams.isCheckinable)
             .then((results) => {
               const clazzList = results[0],
                   clazzAccountMap = _.keyBy(results[1], 'clazzId');
@@ -121,19 +149,19 @@ pub.queryClazzList = (req, res) => {
 
         return Promise.all([clazzListPromise, countPromise]);
       })
-      .then(([clazzList,countMap]) => {
+      .then(([clazzList, countMap]) => {
         // 筛选数据
-        if(countMap == null){
+        if (countMap == null) {
           countMap = {};
         }
         const pickedClazzes = _.map(
             clazzList,
             (clazz) => {
-              const pickedClazz = _.pick(clazz, ['id', 'name', 'description', 'status', 'banner','smallBanner', 'startDate', 'endDate', 'author', 'hasCheckin','studentCount']);
+              const pickedClazz = _.pick(clazz, ['id', 'name', 'tags', 'description', 'isHot', 'status', 'banner', 'smallBanner', 'teacherHead', 'startDate', 'endDate', 'author', 'hasCheckin', 'studentCount']);
               pickedClazz.clazzJoinType = clazzUtil.getClazzJoinType(_.get(clazz, ['configuration', 'clazzType'], []));
               pickedClazz.totalFee = _.chain(clazzUtil.extractClazzPriceList(clazz)).head().get(['totalFee'], 0).value();
 
-              let count = countMap[clazz.id] ? countMap[clazz.id].count: 0;
+              let count = countMap[clazz.id] ? countMap[clazz.id].count : 0;
               pickedClazz['studentCount'] = count;
               return pickedClazz;
             }
@@ -147,11 +175,11 @@ pub.queryClazzList = (req, res) => {
 /**
  * 获取课程的介绍相关内容
  */
-pub.fetchClazzStrategyIntroduction = (req, res) =>{
+pub.fetchClazzStrategyIntroduction = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
-      .then((queryParam)=>{
+      .then((queryParam) => {
         const strategy = _.get(req.__CURRENT_CLAZZ_INTRODUCTION, 'strategy');
-        return apiRender.renderBaseResult(res, {"content":strategy});
+        return apiRender.renderBaseResult(res, {"content": strategy});
       })
       .catch(req.__ERROR_HANDLER);
 };
@@ -165,11 +193,10 @@ pub.fetchClazzStrategyIntroduction = (req, res) =>{
 pub.fetchClazzIntroduction = (req, res) => {
   const currentClazzItem = req.__CURRENT_CLAZZ,
       currentClazzAccountItem = req.__CURRENT_CLAZZ_ACCOUNT;
-  let bindTeacherId = req.__CURRENT_CLAZZ.bindTeacherId;
 
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
-        req.__MODULE_LOGGER(`获取课程${ currentClazzItem.id }简介`, queryParam);
+        req.__MODULE_LOGGER(`获取课程${currentClazzItem.id}简介`, queryParam);
 
         // 获取课程简介
         const introduction = _.get(req.__CURRENT_CLAZZ_INTRODUCTION, 'introduction');
@@ -177,16 +204,12 @@ pub.fetchClazzIntroduction = (req, res) => {
 
         // 获取加入班级人员数据
         const countClazzJoinedPromise = clazzAccountService.countClazzJoinedUser(currentClazzItem.id);
-        let bindTeacherPromise = {};
-        if(!_.isNil(bindTeacherId)){
-          bindTeacherPromise =  clazzTeacherService.fetchClazzTeacherById(bindTeacherId);
-        }
 
-        return Promise.all([countClazzJoinedPromise, introduction, bindTeacherPromise]);
-      }).then(([joinedCount, clazzIntroductionList, bindTeacherItem]) => {
+        return Promise.all([countClazzJoinedPromise, introduction]);
+      }).then(([joinedCount, clazzIntroductionList]) => {
         const clazzItem = _.pick(
             currentClazzItem,
-            ['id', 'name', 'description', 'banner', 'smallBanner', 'teacherHead', 'clazzType', 'author', 'status', 'taskCount']
+            ['id', 'name', 'description', 'banner', 'smallBanner', 'teacherHead', 'bindTeacher', 'clazzType', 'author', 'status', 'taskCount']
             ),
             clazzConfig = _.pick(currentClazzItem.configuration, ['clazzType', 'taskCount', 'robot']),
             clazzPriceList = clazzUtil.extractClazzPriceList(currentClazzItem);
@@ -211,13 +234,6 @@ pub.fetchClazzIntroduction = (req, res) => {
               endDate: moment(currentClazzItem.endDate).format('YYYY-MM-DD')
             }
         );
-
-        //加入教师
-        if(_.isNil(bindTeacherItem)){
-          clazzInfo['bindTeacher'] = {}
-        }else{
-          clazzInfo['bindTeacher'] = _.pick(bindTeacherItem, ['id','name','headImgUrl','tags','description','gender']);
-        }
 
         return apiRender.renderBaseResult(res, clazzInfo);
       })
@@ -246,7 +262,7 @@ pub.fetchClazzPayment = (req, res) => {
             fetchAvailableCouponListPromise = couponService.fetchAvailableCouponsList(userId),
             fetchPromotionOfferPromise = _.get(currentClazzItem, ['configuration', 'promotionOffer', 'isPromotion'], true)
                 ? promotionService.fetchInviteePromotionOfferInfo(userId)
-                : Promise.resolve({ promoterUser: null, joinedClazzCount: 1 }); // 如果当前班级不处于推广计划中，则直接诶返回
+                : Promise.resolve({promoterUser: null, joinedClazzCount: 1}); // 如果当前班级不处于推广计划中，则直接诶返回
 
         return Promise.all([fetchCoinSumPromise, fetchUbandCoinSumPromise, fetchAvailableCouponListPromise, fetchPromotionOfferPromise]);
       })
@@ -374,7 +390,7 @@ pub.getAppActiveBanner = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
         return ubandAdvertiseService.queryUbandBanner();
-      }).then((banners)=>{
+      }).then((banners) => {
         return apiRender.renderBaseResult(res, banners);
       })
       .catch(req.__ERROR_HANDLER);
@@ -387,10 +403,10 @@ pub.getAppActiveBanner = (req, res) => {
  * @从开放报名的课程中选择热门课程显示
  * @type {{}}
  */
-pub.getHotClazzList = (req, res) =>{
+pub.getHotClazzList = (req, res) => {
   //目前的策略就是给课程加一个字段，还是用获取课程列表的sevice
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
-      .then((queryParam)=>{
+      .then((queryParam) => {
 
         let countPromise = cacheWrapper.get('CLAZZ_USER_NUMBER');
 
@@ -398,25 +414,25 @@ pub.getHotClazzList = (req, res) =>{
             .then((clazzList) => {
               let newClazzList = _.filter(clazzList, clazzUtil.checkIsClazzShow);
 
-              let finalClazzList= _.filter(newClazzList, clazzUtil.checkIsClazzHot);
+              let finalClazzList = _.filter(newClazzList, clazzUtil.checkIsClazzHot);
 
               return finalClazzList;
             });
 
         return Promise.all([clazzPromise, countPromise]);
       })
-      .then(([finalList, countMap])=>{
-        if(countMap == null){
+      .then(([finalList, countMap]) => {
+        if (countMap == null) {
           countMap = {};
         }
         debug("=== COUNT MAP ===");
         debug(countMap);
 
-        const pickedClazzes = _.map(finalList, (item) =>{
-          const pickedClazz = _.pick(item, ['id', 'name', 'description', 'status', 'banner', 'smallBanner', 'startDate', 'endDate', 'author', 'hasCheckin','studentCount']);
+        const pickedClazzes = _.map(finalList, (item) => {
+          const pickedClazz = _.pick(item, ['id', 'name', 'description', 'status', 'banner', 'smallBanner', 'startDate', 'endDate', 'author', 'hasCheckin', 'studentCount']);
           pickedClazz.clazzJoinType = clazzUtil.getClazzJoinType(_.get(item, ['configuration', 'clazzType'], []));
           pickedClazz.totalFee = _.chain(clazzUtil.extractClazzPriceList(item)).head().get(['totalFee'], 0).value();
-          let count = countMap[item.id] ? countMap[item.id].count: 0;
+          let count = countMap[item.id] ? countMap[item.id].count : 0;
           pickedClazz['studentCount'] = count;
           return pickedClazz;
         });

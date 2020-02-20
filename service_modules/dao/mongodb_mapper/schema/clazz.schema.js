@@ -28,6 +28,7 @@ let clazzSchema = new Schema({
   banner: String,
   smallBanner: String,
   teacherHead: String,
+  tags: [String],
   bindTeacherId: { type: Schema.Types.ObjectId, ref: 'ClazzTeacher' },
   introduction: { type: Schema.Types.ObjectId, ref: 'ClazzIntroduction' },
   configuration: {

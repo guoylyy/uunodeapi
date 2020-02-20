@@ -167,6 +167,7 @@ pub.fetchClazzTaskItem = (req, res) => {
             });
       })
       .then((taskItem) => {
+        taskItem['bindTeacher'] = _.get(req.__CURRENT_CLAZZ,'bindTeacher', {});
         return apiRender.renderBaseResult(res, taskItem);
       })
       .catch(req.__ERROR_HANDLER);

@@ -58,6 +58,7 @@ pub.updateClazzBodySchema = Joi.object().keys({
   isShow: Joi.boolean().default(true),
   isHot: Joi.boolean().default(true),
   bindTeacherId: commonSchema.mongoIdSchema,
+  tags: Joi.array().items(Joi.string()),
   teacherHead: Joi.string().uri().required(),
   smallBanner: Joi.string().uri().required()
 });

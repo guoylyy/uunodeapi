@@ -121,6 +121,10 @@ const checkinApis = require('./app.shark/clazzCheckin.controller');
 router.get('/advertise/banners', clazzApis.getAppActiveBanner);
 router.get('/advertise/hostClazzes', clazzApis.getHotClazzList);
 
+
+//获取当天课程的内容
+router.get('/clazz/tasks', clazzApis.queryUserTasks);
+
 //获取课程的列表
 // @如果是开放的课程需要加入的人数
 // @如果是非开放的课程，不用计算
