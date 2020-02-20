@@ -21,6 +21,7 @@ const cacheWrapper = require('../../services/component/cacheWrap.component');
 
 const clazzService = require('../../services/clazz.service');
 const clazzAccountService = require('../../services/clazzAccount.service');
+const clazzTeacherService = require('../../services/clazzTeacher.service');
 const userService = require('../../services/user.service');
 const userCoinService = require('../../services/userCoin.service');
 const ubandCoinService = require('../../services/ubandCoin.service');
@@ -164,6 +165,7 @@ pub.fetchClazzStrategyIntroduction = (req, res) =>{
 pub.fetchClazzIntroduction = (req, res) => {
   const currentClazzItem = req.__CURRENT_CLAZZ,
       currentClazzAccountItem = req.__CURRENT_CLAZZ_ACCOUNT;
+  let bindTeacherId = req.__CURRENT_CLAZZ.bindTeacherId;
 
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then((queryParam) => {
@@ -171,13 +173,17 @@ pub.fetchClazzIntroduction = (req, res) => {
 
         // 获取课程简介
         const introduction = _.get(req.__CURRENT_CLAZZ_INTRODUCTION, 'introduction');
-        const parseIntroductionPromise = taskUtil.parseHtmlToListPromise(introduction);
+        // const parseIntroductionPromise = taskUtil.parseHtmlToListPromise(introduction);
 
         // 获取加入班级人员数据
         const countClazzJoinedPromise = clazzAccountService.countClazzJoinedUser(currentClazzItem.id);
+        let bindTeacherPromise = {};
+        if(!_.isNil(bindTeacherId)){
+          bindTeacherPromise =  clazzTeacherService.fetchClazzTeacherById(bindTeacherId);
+        }
 
-        return Promise.all([countClazzJoinedPromise, parseIntroductionPromise]);
-      }).then(([joinedCount, clazzIntroductionList]) => {
+        return Promise.all([countClazzJoinedPromise, introduction, bindTeacherPromise]);
+      }).then(([joinedCount, clazzIntroductionList, bindTeacherItem]) => {
         const clazzItem = _.pick(
             currentClazzItem,
             ['id', 'name', 'description', 'banner', 'smallBanner', 'teacherHead', 'clazzType', 'author', 'status', 'taskCount']
@@ -198,12 +204,20 @@ pub.fetchClazzIntroduction = (req, res) => {
               joinStatus: currentClazzAccountItem ? currentClazzAccountItem.status : '',
               introduction: clazzIntroductionList,
               studentCount: joinedCount,
+              title: _.get(req.__CURRENT_CLAZZ_INTRODUCTION, 'title'),
+              subTitle: _.get(req.__CURRENT_CLAZZ_INTRODUCTION, 'subTitle'),
+              requiredInfo: _.get(req.__CURRENT_CLAZZ_INTRODUCTION, 'requiredInfo'),
               startDate: moment(currentClazzItem.startDate).format('YYYY-MM-DD'),
               endDate: moment(currentClazzItem.endDate).format('YYYY-MM-DD')
             }
         );
 
-        debug(clazzConfig);
+        //加入教师
+        if(_.isNil(bindTeacherItem)){
+          clazzInfo['bindTeacher'] = {}
+        }else{
+          clazzInfo['bindTeacher'] = _.pick(bindTeacherItem, ['id','name','headImgUrl','tags','description','gender']);
+        }
 
         return apiRender.renderBaseResult(res, clazzInfo);
       })
