@@ -215,7 +215,7 @@ pub.createClazzItem = (clazzItem) => {
   return clazzIntroductionMapper.create(
       {
         title: clazzItem.name,
-        subTitlte: null,
+        subTitle: null,
         requiredInfo:[],
         introduction: null,
         strategy: null
