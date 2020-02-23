@@ -207,6 +207,7 @@ pub.requestWechatAuthAccessToken = (appid, secret, code) => {
         const obj = JSON.parse(body);
 
         debug(obj);
+        winston.info('OPENID', obj);
 
         if (_.isNil(obj.access_token) || _.isNil(obj.openid)) {
           winston.error('error: no unionid, openid, or token: %j', obj);
