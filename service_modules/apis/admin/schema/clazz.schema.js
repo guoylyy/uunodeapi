@@ -37,6 +37,7 @@ pub.createClazzBodySchema = Joi.object().keys({
   description: Joi.string().max(64).allow(''),
   isShow: Joi.boolean().default(true),
   isHot: Joi.boolean().default(true),
+  tags: Joi.array().items(Joi.string()),
   teacherHead: Joi.string().uri().required(),
   bindTeacherId: commonSchema.mongoIdSchema,
   smallBanner: Joi.string().uri().required()
