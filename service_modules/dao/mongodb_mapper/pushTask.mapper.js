@@ -10,7 +10,7 @@ const pushTaskSchema = require("./schema/pushTask.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 const enumModel = require('../../services/model/enum');
-const QUERY_SAFE_PARAMS = ["_id", "pushAt"];
+const QUERY_SAFE_PARAMS = ["_id", "pushAt", "weappType"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "taskId",
   "pushAt",
@@ -44,6 +44,7 @@ pub.queryPagedPushTaskList = (queryParam, pageNumber = 1, pageSize = 10) => {
 };
 
 pub.findByParam = (queryParam) => {
+  queryParam.weappType = queryParam.weappType || enumModel.weappTypeEnum.KOUYI.key;
   return pushTaskSchema.findItemByParam(queryParam, QUERY_SAFE_PARAMS);
 };
 

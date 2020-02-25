@@ -25,7 +25,7 @@ const userService = require('../services/user.service');
 const userBindService = require('../services/userBind.service');
 const clazzAccountService = require('../services/clazzAccount.service');
 const openCourseService = require('../services/openCourse.service');
-const taskService = require('../services/task.service');
+const biyiTaskService = require('../services/biyiTask.service');
 
 const enumModel = require('../services/model/enum');
 
@@ -521,7 +521,7 @@ pub.preloadUserOpenCourseRelation = (req, res, next) => {
 pub.preloadTask = (req, res, next) => {
   return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
   .then((taskId) => {
-    return taskService.fetchById(taskId)
+    return biyiTaskService.fetchById(taskId)
     .then(task => {
       if (_.isNil(task)) {
         return apiRender.renderNotFound(res);
@@ -539,7 +539,7 @@ pub.preloadTask = (req, res, next) => {
 pub.preloadTaskCheckin = (req, res, next) => {
   return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.checkinId)
   .then((checkinId) => {
-    return taskService.fetchCheckinById(checkinId)
+    return biyiTaskService.fetchCheckinById(checkinId)
     .then(checkin => {
       if (_.isNil(checkin) || !!checkin.isDelete || !_.isEqual(checkin.taskId, req.params.taskId)) {
         return apiRender.renderNotFound(res);

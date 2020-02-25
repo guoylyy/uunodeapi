@@ -7,7 +7,7 @@ const pagedBaseSchema = require("./schema/paged.base.schema");
 const apiRender = require("../render/api.render");
 const debug = require("debug")("controller");
 const enumModel = require('../../services/model/enum');
-const taskService = require("../../services/task.service");
+const taskService = require("../../services/biyiTask.service");
 const taskSchema = require("./schema/task.schema");
 const winston = require('winston');
 const pub = {};
@@ -21,14 +21,6 @@ pub.getTaskList = (req, res) => {
   return schemaValidator
     .validatePromise(taskSchema.pagedSchema, req.query)
     .then(queryParam => {
-      if (!_.isNil(queryParam.gtDuration)) {
-        queryParam.duration = queryParam.duration || {};
-        queryParam.duration.$gt = queryParam.gtDuration
-      }
-      if (!_.isNil(queryParam.ltDuration)) {
-        queryParam.duration = queryParam.duration || {};
-        queryParam.duration.$lt = queryParam.ltDuration
-      }
       queryParam.status = enumModel.taskStatusEnum.PUBLISHED.key;
       return taskService.queryTaskList(queryParam);
     })

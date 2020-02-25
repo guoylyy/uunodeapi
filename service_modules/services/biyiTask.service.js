@@ -3,10 +3,9 @@
 const _ = require("lodash");
 const winston = require("winston");
 const Promise = require("bluebird");
-const taskMapper = require("../dao/mongodb_mapper/task.mapper");
-const taskCheckinMapper = require("../dao/mongodb_mapper/taskCheckin.mapper");
+const taskMapper = require("../dao/mongodb_mapper/biyiTask.mapper");
+const taskCheckinMapper = require("../dao/mongodb_mapper/biyiTaskCheckin.mapper");
 const pushTaskMapper = require("../dao/mongodb_mapper/pushTask.mapper");
-const attachMapper = require("../dao/mongodb_mapper/attach.mapper");
 const commonError = require("./model/common.error");
 const qiniuComponent = require("./component/qiniu.component");
 const userMapper = require("../dao/mysql_mapper/user.mapper");
@@ -16,7 +15,7 @@ const gm = require("gm");
 const jimp = require("jimp");
 const fs = require("fs");
 const pub = {};
-const commonUtil = require('../services/util/common.util')
+const commonUtil = require('./util/common.util')
 
 /**
  * 分页查询课程列表
@@ -46,44 +45,7 @@ pub.fetchById = taskId => {
       winston.error("获取任务详情失败，参数错误！！！ taskId: %s", taskId);
       return Promise.reject(commonError.NOT_FOUND_ERROR("task不存在"));
     }
-    return Promise.all([
-      attachMapper.fetchById(task.srcAudio),
-      attachMapper.fetchById(task.srcVideo),
-      attachMapper.fetchById(task.oppoAudio),
-      attachMapper.fetchById(task.oppoVideo)
-    ]).then(
-      ([srcAudioAttach, srcVideoAttach, oppoAudioAttach, oppoVideoAttach]) => {
-        if (!_.isNil(srcAudioAttach)) {
-          srcAudioAttach.url = qiniuComponent.getAccessibleUrl(
-            srcAudioAttach.attachType,
-            srcAudioAttach.key
-          );
-          task.srcAudio = srcAudioAttach;
-        }
-        if (!_.isNil(srcVideoAttach)) {
-          srcVideoAttach.url = qiniuComponent.getAccessibleUrl(
-            srcVideoAttach.attachType,
-            srcVideoAttach.key
-          );
-          task.srcVideo = srcVideoAttach;
-        }
-        if (!_.isNil(oppoAudioAttach)) {
-          oppoAudioAttach.url = qiniuComponent.getAccessibleUrl(
-            oppoAudioAttach.attachType,
-            oppoAudioAttach.key
-          );
-          task.oppoAudio = oppoAudioAttach;
-        }
-        if (!_.isNil(oppoVideoAttach)) {
-          srcVideoAttach.url = qiniuComponent.getAccessibleUrl(
-            oppoVideoAttach.attachType,
-            oppoVideoAttach.key
-          );
-          task.oppoVideo = oppoVideoAttach;
-        }
-        return task;
-      }
-    );
+    return task;
   });
 };
 
@@ -92,57 +54,24 @@ pub.fetchById = taskId => {
  */
 pub.fetchTodayTask = () => {
   let param = { 
-    pushAt: moment().format("YYYY-MM-DD")
+    pushAt: moment().format("YYYY-MM-DD"),
+    weappType: 'BIYI'
   };
   return pushTaskMapper.findByParam(param).then(pushTask => {
-    // task对象 打卡数量 打卡人员列表 promise all
     if (!_.isNil(pushTask)) {
-      return Promise.all([
-        pub.fetchById(pushTask.taskId),
-        taskCheckinMapper.queryCheckinList({ taskId: pushTask.taskId })
-      ]).then(([task, checkinList]) => {
-        let fetchUser = [];
-        new Set(_.map(checkinList, "userId")).forEach(userId => {
-          fetchUser.push(userMapper.fetchByParam({ id: userId }));
-        });
-        return Promise.all(fetchUser).then(userList => {
-          task.headImgUrlList = _.map(userList, "headImgUrl");
-          const defaultHeadImg = [
-            "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJrjwowQB5WFKosOe4TSbhaDIicmKZ3PZR6LQ1T9NFAhyibFuMvdjDCYOqHFWCuAuY0IicBeKqklMtgQ/132",
-            "https://wx.qlogo.cn/mmopen/BaibzQDtAJbLBrdHeT4GbLJiaGgpzNeqnv3uZNcZZeRbs0piciaToPnXmM5ZYcApkBX9gYnHymIhT9YbdqkoxEcian9RTlKQibppdC/0",
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1580386008061&di=deae1a23df019332e31e9774d324161b&imgtype=0&src=http%3A%2F%2Fwww.vvfeng.com%2Fdata%2Fupload%2Fueditor%2F20181121%2F5bf4f3f00b53d.jpg",
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1580386008060&di=5bec0c942cc32c61654f8ccf5a15fe9d&imgtype=0&src=http%3A%2F%2Fpic.9ht.com%2Fup%2F2018-7%2F15312794628096861.jpg",
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1580386008060&di=3d307b8bd3ebc4af6873118a0dfbd0c1&imgtype=0&src=http%3A%2F%2Fimage.biaobaiju.com%2Fuploads%2F20180801%2F21%2F1533129201-eRalzJBYUH.jpg"
-          ];
-          while (task.headImgUrlList.length < 5) {
-            task.headImgUrlList.push(
-              defaultHeadImg[task.headImgUrlList.length]
-            );
-          }
-          task.checkinCount = userList.length < 10 ? 10 : userList.length;
-          return task;
-        });
-      });
+      return pub.fetchById(pushTask.taskId)
+    } else {
+      return null;
     }
-    return null;
-  });
+  })
 };
 
 /**
  * 打卡
  */
 pub.checkin = taskCheckin => {
-  return Promise.all([
-    taskMapper.findById(taskCheckin.taskId),
-    userFileMapper.fetchById(taskCheckin.attach)
-  ]).then(([task, userFile]) => {
-    if (_.isNil(userFile)) {
-      winston.error(
-        "获取用户文件失败，参数错误！！！ taskCheckin.attach: %s",
-        taskCheckin.attach
-      );
-      return Promise.reject(commonError.PARAMETER_ERROR("音频附件不存在"));
-    }
+  return taskMapper.findById(taskCheckin.taskId)
+  .then(task => {
     taskCheckin.task = task;
     return taskCheckinMapper.checkin(taskCheckin);
   });

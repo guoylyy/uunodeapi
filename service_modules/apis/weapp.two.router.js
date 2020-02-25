@@ -43,9 +43,9 @@ router.get('/system/enums', commonApis.getSystemEnums);
 
 
 // 任务练习相关API
-// const taskController = require('./weapp.two/task.controller');
-// router.get('/task/today',taskController.getTodayTask) //获取今日任务
-// router.get('/tasks', taskController.getTaskList) //往期材料搜索
+const taskController = require('./weapp.two/task.controller');
+router.get('/task/today',taskController.getTodayTask) //获取今日任务
+router.get('/tasks', taskController.getTaskList) //往期材料搜索
 
 // 学习材料
 const lessonController = require('./weapp.two/lesson.controller');
@@ -96,19 +96,18 @@ router.get('/account/statistics/school/likeCountWeekRank', accountApis.fetchScho
 // router.get('/account/checkins') //个人口译记录筛选
 
 // @HuPeng
-// router.get('/task/:taskId', taskController.getTask) //获取任务详细内容
-
-// router.use('/task/:taskId', twoMiddleware.preloadTask) //预加载task对象并校验
-// router.post('/task/:taskId/checkin', taskController.checkin) //完成练习
-// router.get('/task/:taskId/checkin/mine', taskController.getMyCheckinList) // 我的打卡列表
-// router.get('/task/:taskId/checkin', taskController.getCheckinList) //获取广场内容
-// router.use('/task/:taskId/checkin/:checkinId', twoMiddleware.preloadTaskCheckin) //预加载task对象并校验
-// router.delete('/task/:taskId/checkin/:checkinId', twoMiddleware.checkMyTaskCheckin, taskController.deleteTaskCheckin) //删除打卡记录
-// router.put('/task/:taskId/checkin/:checkinId', twoMiddleware.checkMyTaskCheckin, taskController.updateTaskCheckin) //更新打卡记录标题
-// router.post('/task/:taskId/checkin/:checkinId/viewLog', taskController.addViewLog) //新增观看记录
-// router.post('/task/:taskId/checkin/:checkinId/like', taskController.likeCheckin) //笔芯
-// router.delete('/task/:taskId/checkin/:checkinId/like', taskController.cancelLikeCheckin) //取消笔芯
-// router.get('/task/:taskId/checkin/:checkinId/shareInfo', taskController.getShareInfo) // 获取分享信息
+router.get('/task/:taskId', taskController.getTask) //获取任务详细内容
+router.use('/task/:taskId', twoMiddleware.preloadTask) //预加载task对象并校验
+router.post('/task/:taskId/checkin', taskController.checkin) //完成练习
+router.get('/task/:taskId/checkin/mine', taskController.getMyCheckinList) // 我的打卡列表
+router.get('/task/:taskId/checkin', taskController.getCheckinList) //获取广场内容
+router.use('/task/:taskId/checkin/:checkinId', twoMiddleware.preloadTaskCheckin) //预加载task对象并校验
+router.delete('/task/:taskId/checkin/:checkinId', twoMiddleware.checkMyTaskCheckin, taskController.deleteTaskCheckin) //删除打卡记录
+router.put('/task/:taskId/checkin/:checkinId', twoMiddleware.checkMyTaskCheckin, taskController.updateTaskCheckin) //更新打卡记录标题
+router.post('/task/:taskId/checkin/:checkinId/viewLog', taskController.addViewLog) //新增观看记录
+router.post('/task/:taskId/checkin/:checkinId/like', taskController.likeCheckin) //笔芯
+router.delete('/task/:taskId/checkin/:checkinId/like', taskController.cancelLikeCheckin) //取消笔芯
+router.get('/task/:taskId/checkin/:checkinId/shareInfo', taskController.getShareInfo) // 获取分享信息
 
 // 七牛
 router.post('/qiniu', qiniuController.fetchQiniuUploadToken);
