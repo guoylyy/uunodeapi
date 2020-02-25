@@ -12,7 +12,7 @@ const pub = {};
 /**
  * 查询banner列表
  */
-pub.queryBannerList = bizType => {
+pub.queryBannerList = (bizType, weappType = 'KOUYI') => {
   if (_.isNil(bizType)) {
     winston.error("查询banner失败，参数错误！！！bizType: %s", bizType);
     return Promise.reject(commonError.PARAMETER_ERROR());
@@ -20,6 +20,7 @@ pub.queryBannerList = bizType => {
   let queryParam = {};
   queryParam["bizType"] = bizType;
   queryParam["active"] = true;
+  queryParam["weappType"] = weappType;
   return bannerMapper.queryBannerList(queryParam);
 };
 

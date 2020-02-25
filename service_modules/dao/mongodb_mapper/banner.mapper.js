@@ -10,7 +10,7 @@ const bannerSchema = require("./schema/banner.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 
-const QUERY_SAFE_PARAM = ["bizType", "active"];
+const QUERY_SAFE_PARAM = ["bizType", "active", "weappType"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
   "image",

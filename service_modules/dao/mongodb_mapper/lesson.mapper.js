@@ -10,7 +10,7 @@ const lessonSchema = require("./schema/lesson.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 
-const QUERY_SAFE_PARAMS = ["_id", "types", "title", "status"];
+const QUERY_SAFE_PARAMS = ["_id", "types", "title", "status", "weappType"];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
   "image",
