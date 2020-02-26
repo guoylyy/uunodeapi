@@ -18,11 +18,9 @@ pub.pagedSchema = pagedBaseSchema.keys({
 });
 
 pub.checkinSchema = Joi.object().keys({
-  attach: commonSchema.mongoIdSchema.required(),
-  title: Joi.string().required(),
-  practiceMode: Joi.string().valid(_.keys(enumModel.miniKYPracticeModeEnum)).required(),
   practiceTime: Joi.number().integer().positive().required(),
-  audioDuration: Joi.number().integer().positive().required()
+  wordCount: Joi.number().integer().positive().required(),
+  translationText: Joi.string().required()
 });
 
 pub.checkinPagedSchema = pagedBaseSchema.keys({
@@ -30,7 +28,7 @@ pub.checkinPagedSchema = pagedBaseSchema.keys({
 });
 
 pub.updateCheckinSchema = Joi.object().keys({
-  title: Joi.string().required(),
+  translationText: Joi.string().required(),
 });
 
 module.exports = pub;

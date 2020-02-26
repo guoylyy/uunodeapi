@@ -6,7 +6,7 @@
 const _ = require("lodash");
 const debug = require("debug")("mapper");
 
-const taskCheckinSchema = require("./schema/taskCheckin.schema");
+const taskCheckinSchema = require("./schema/biyiTaskCheckin.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
 const winston = require("winston");
@@ -22,7 +22,9 @@ const QUERY_SAFE_PARAMS = [
   "viewLog"
 ];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
-  "title",
+  "translationText",
+  "wordCount",
+  "practiceTime",
   "userId",
   "likeArr",
   "createdAt",
@@ -77,7 +79,7 @@ pub.checkin = taskCheckin => {
 /**
  * 根据id更新taskCheckin
  */
-const safeUpdateParamList = ["likeArr", "title", "viewLog"]; // 限制可更新的字段
+const safeUpdateParamList = ["likeArr", "translationText", "viewLog"]; // 限制可更新的字段
 pub.updateById = (taskCheckinId, taskCheckin) => {
   const pickedCheckinItem = mongoUtil.pickUpdateParams(
     taskCheckin,

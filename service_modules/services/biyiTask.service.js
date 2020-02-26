@@ -15,7 +15,7 @@ const gm = require("gm");
 const jimp = require("jimp");
 const fs = require("fs");
 const pub = {};
-const commonUtil = require('./util/common.util')
+const commonUtil = require("./util/common.util");
 
 /**
  * 分页查询课程列表
@@ -50,28 +50,31 @@ pub.fetchById = taskId => {
 };
 
 /**
- * 获取当日任务
+ * 获取当日任务列表
  */
 pub.fetchTodayTask = () => {
-  let param = { 
+  let param = {
     pushAt: moment().format("YYYY-MM-DD"),
-    weappType: 'BIYI'
+    weappType: "BIYI"
   };
-  return pushTaskMapper.findByParam(param).then(pushTask => {
-    if (!_.isNil(pushTask)) {
-      return pub.fetchById(pushTask.taskId)
+  return pushTaskMapper.queryList(param).then(pushTaskList => {
+    if (!_.isEmpty(pushTaskList)) {
+      let fetchBiyiTaskList = [];
+      for (let i = 0; i < pushTaskList.length; i++) {
+        fetchBiyiTaskList.push(taskMapper.findById(pushTaskList[i].taskId));
+      }
+      return Promise.all(fetchBiyiTaskList);
     } else {
       return null;
     }
-  })
+  });
 };
 
 /**
  * 打卡
  */
 pub.checkin = taskCheckin => {
-  return taskMapper.findById(taskCheckin.taskId)
-  .then(task => {
+  return taskMapper.findById(taskCheckin.taskId).then(task => {
     taskCheckin.task = task;
     return taskCheckinMapper.checkin(taskCheckin);
   });
@@ -107,27 +110,20 @@ pub.queryPagedCheckinList = queryParam => {
     )
     .then(result => {
       const checkinList = result.values;
-      const queryAttach = [];
+      const queryUser = [];
       for (let i = 0; i < checkinList.length; i++) {
-        queryAttach.push(userFileMapper.fetchById(checkinList[i].attach));
+        const checkin = checkinList[i];
+        checkin.viewerCount = new Set(_.map(checkin.viewLog, "userId")).size;
+        checkin.viewLog = undefined;
+        queryUser.push(userMapper.fetchByParam({ id: checkin.userId }));
       }
-      return Promise.all(queryAttach).then(attachList => {
-        const queryUser = [];
+      return Promise.all(queryUser).then(userList => {
         for (let i = 0; i < checkinList.length; i++) {
           const checkin = checkinList[i];
-          checkin.viewerCount = new Set(_.map(checkin.viewLog, "userId")).size;
-          checkin.viewLog = undefined;
-          checkin.attach = attachList[i];
-          queryUser.push(userMapper.fetchByParam({ id: checkin.userId }));
+          checkin.user = _.pick(userList[i], ["id", "name", "headImgUrl"]);
         }
-        return Promise.all(queryUser).then(userList => {
-          for (let i = 0; i < checkinList.length; i++) {
-            const checkin = checkinList[i];
-            checkin.user = _.pick(userList[i], ["id", "name", "headImgUrl"]);
-          }
-          result.values = checkinList;
-          return result;
-        });
+        result.values = checkinList;
+        return result;
       });
     });
 };
@@ -494,63 +490,77 @@ pub.getShareInfo = checkinId => {
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
   return pub.getShareCheckin(checkinId).then(checkin => {
-    const title = checkin.task.title.slice(0, 10) + "\r\n" + checkin.task.title.slice(10);
+    const title =
+      checkin.task.title.slice(0, 10) + "\r\n" + checkin.task.title.slice(10);
     const taskImg = checkin.task.pic;
     const headImg = checkin.user.headImgUrl;
     return Promise.all([
       getCircleImage(headImg, `${checkin.id}_headImg`),
       getCircleImage(taskImg, `${checkin.id}_taskImg`)
-    ])
-      .then(([headImgPath, taskImgPath]) => {
-        const checkinDays = checkin.user.checkinDays,  
-        todayPracticeMinutes = Math.ceil(checkin.user.todayPracticeTime/60);
-        let checkinDaysX = 655, todayPracticeMinutesX = 1105;
-        const fontPx = 18;
-        // 跳转动态数字偏移量
-        if (checkinDays >= 100) {
-          checkinDaysX -= fontPx * 2;
-        } else if (checkinDays >= 10) {
-          checkinDaysX -= fontPx;
-        }
-        if (todayPracticeMinutes >= 100) {
-          todayPracticeMinutesX -= fontPx * 2;
-        } else if (todayPracticeMinutes >= 10) {
-          todayPracticeMinutesX -= fontPx;
-        }
-        return new Promise((resolve, reject) => {
-          gm(`${global.__projectDir}/resources/sharePost.png`)
-            .draw(`image Over 372 128 622.8 622.8 ${taskImgPath}`) //任务图片
-            .draw(`image Over 120 1343 260 260 ${headImgPath}`) //头像图片
-            .font(`${global.__projectDir}/resources/HYQiHei-60S.ttf`)
-            .fontSize(72)
-            .fill("#fff")
-            .drawText(10, 1100, title, "North") //标题
-            .fontSize(56)
-            .fill("#0ACAF6")
-            .drawText(checkinDaysX, 1561, checkinDays + "") //累计口译
-            .drawText(todayPracticeMinutesX, 1561, todayPracticeMinutes + "") //今日口译
-            .fontSize(60)
-            .fill("#1A1E1E")
-            .drawText(423, 1463, checkin.user.name) //微信名
-            .write(`${global.__projectDir}/public/${checkin.id}.png`, err => {
-              if (err) {
-                reject(err);
-              } else {
-                const filePath = `${global.__projectDir}/public/${checkin.id}.png`;
-                console.log("Finished! Upload to Qiniu CDN"); //这里做上传，上传完成后可以删除本地生成图片 一共三张
-                fs.unlinkSync(taskImgPath);
-                fs.unlinkSync(headImgPath);
-                qiniuComponent.uploadFilePromise('SECRET', _.now() + '_' + commonUtil.generateRandomString(7) + '_' + `${checkin.id}.png`, 'png', filePath)
+    ]).then(([headImgPath, taskImgPath]) => {
+      const checkinDays = checkin.user.checkinDays,
+        todayPracticeMinutes = Math.ceil(checkin.user.todayPracticeTime / 60);
+      let checkinDaysX = 655,
+        todayPracticeMinutesX = 1105;
+      const fontPx = 18;
+      // 跳转动态数字偏移量
+      if (checkinDays >= 100) {
+        checkinDaysX -= fontPx * 2;
+      } else if (checkinDays >= 10) {
+        checkinDaysX -= fontPx;
+      }
+      if (todayPracticeMinutes >= 100) {
+        todayPracticeMinutesX -= fontPx * 2;
+      } else if (todayPracticeMinutes >= 10) {
+        todayPracticeMinutesX -= fontPx;
+      }
+      return new Promise((resolve, reject) => {
+        gm(`${global.__projectDir}/resources/sharePost.png`)
+          .draw(`image Over 372 128 622.8 622.8 ${taskImgPath}`) //任务图片
+          .draw(`image Over 120 1343 260 260 ${headImgPath}`) //头像图片
+          .font(`${global.__projectDir}/resources/HYQiHei-60S.ttf`)
+          .fontSize(72)
+          .fill("#fff")
+          .drawText(10, 1100, title, "North") //标题
+          .fontSize(56)
+          .fill("#0ACAF6")
+          .drawText(checkinDaysX, 1561, checkinDays + "") //累计口译
+          .drawText(todayPracticeMinutesX, 1561, todayPracticeMinutes + "") //今日口译
+          .fontSize(60)
+          .fill("#1A1E1E")
+          .drawText(423, 1463, checkin.user.name) //微信名
+          .write(`${global.__projectDir}/public/${checkin.id}.png`, err => {
+            if (err) {
+              reject(err);
+            } else {
+              const filePath = `${global.__projectDir}/public/${checkin.id}.png`;
+              console.log("Finished! Upload to Qiniu CDN"); //这里做上传，上传完成后可以删除本地生成图片 一共三张
+              fs.unlinkSync(taskImgPath);
+              fs.unlinkSync(headImgPath);
+              qiniuComponent
+                .uploadFilePromise(
+                  "SECRET",
+                  _.now() +
+                    "_" +
+                    commonUtil.generateRandomString(7) +
+                    "_" +
+                    `${checkin.id}.png`,
+                  "png",
+                  filePath
+                )
                 .then(result => {
                   fs.unlinkSync(filePath);
                   resolve({
-                    imgUrl: qiniuComponent.getAccessibleUrl('SECRET', result.key)
-                  })
+                    imgUrl: qiniuComponent.getAccessibleUrl(
+                      "SECRET",
+                      result.key
+                    )
+                  });
                 });
-              }
-            });
-        });
-      })
+            }
+          });
+      });
+    });
   });
 };
 

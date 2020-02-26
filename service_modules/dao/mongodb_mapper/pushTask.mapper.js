@@ -61,4 +61,17 @@ pub.deleteById = pushTaskId => {
   return pushTaskSchema.destroyItem(pushTaskId);
 }
 
+/**
+ * 根据参数查询已发布的推送列表
+ */
+pub.queryList = (queryParam) => {
+  queryParam.status = enumModel.pushTaskStatusEnum.PUBLISHED.key;
+  return pushTaskSchema.queryList(
+    queryParam,
+    QUERY_SAFE_PARAMS,
+    QUERY_SELECT_COLUMNS,
+    QUERY_ORDER_BY
+  );
+}
+
 module.exports = pub;

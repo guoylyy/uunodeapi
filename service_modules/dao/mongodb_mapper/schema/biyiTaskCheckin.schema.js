@@ -16,7 +16,6 @@ let taskThemeEnum = _.keys(enumModel.taskThemeEnum)
 
 // create a schema
 let biyiTaskCheckinSchema = new Schema({
-  title: { type: String, required: true },
   taskId : { type: Schema.Types.ObjectId, ref: 'WeBiyiTask' },
   task: {
     title: { type: String, required: true },
@@ -31,8 +30,9 @@ let biyiTaskCheckinSchema = new Schema({
   userId: { type: Number, required: true },
   likeArr: [Number],
   yearMonth: { type: String, required: true },
-  practiceTime: Number, // 练习时间
-  translation: { type: String, required: true }, // 翻译文本
+  practiceTime: { type: Number, required: true }, // 练习时间
+  translationText: { type: String, required: true }, // 翻译文本
+  wordCount: { type: Number, required: true }, // 单词数
   viewLog: [{
     userId: {type: Number, required : true },
     createdAt: {type: Date, required: true, default: Date.now}

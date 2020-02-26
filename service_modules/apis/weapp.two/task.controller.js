@@ -79,6 +79,10 @@ pub.getTodayTask = (req, res) => {
       return taskService.fetchTodayTask();
     })
     .then(result => {
+      //todo 当前用户是否已经打卡
+      if (!_.isNil(req.__CURRENT_USER)) {
+
+      }
       return apiRender.renderBaseResult(res, result)
     })
     .catch(req.__ERROR_HANDLER);
@@ -175,42 +179,12 @@ pub.cancelLikeCheckin = (req, res) => {
 }
 
 /**
- * 删除打卡记录
- */
-pub.deleteTaskCheckin = (req, res) => {
-  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
-  .then(() => {
-    return taskService.deleteTaskCheckin(req.__TASK_CHECKIN_ITEM.id);
-  })
-  .then(() => {
-    return apiRender.renderSuccess(res)
-  })
-  .catch(req.__ERROR_HANDLER);
-}
-
-/**
- * 更新打卡记录 标题
+ * 更新打卡记录 译文
  */
 pub.updateTaskCheckin = (req, res) => {
   return schemaValidator.validatePromise(taskSchema.updateCheckinSchema, req.body)
   .then((param) => {
     return taskService.updateTaskCheckin(req.__TASK_CHECKIN_ITEM.id, param);
-  })
-  .then(() => {
-    return apiRender.renderSuccess(res)
-  })
-  .catch(req.__ERROR_HANDLER);
-}
-
-/**
- * 增加观看人数
- */
-pub.addViewLog = (req, res) => {
-  return schemaValidator.validatePromise(commonSchema.emptySchema, req.body)
-  .then((param) => {
-    const viewLog = req.__TASK_CHECKIN_ITEM.viewLog || [];
-    viewLog.push({userId: req.__CURRENT_USER.id, createdAt: new Date()});
-    return taskService.updateTaskCheckin(req.__TASK_CHECKIN_ITEM.id, {viewLog: viewLog});
   })
   .then(() => {
     return apiRender.renderSuccess(res)
