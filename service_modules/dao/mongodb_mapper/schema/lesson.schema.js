@@ -13,6 +13,7 @@ const enumModel = require('../../../services/model/enum');
 let lessonTypeEnum = _.keys(enumModel.lessonTypeEnum);
 let lessonLinkTypeEnum = _.keys(enumModel.lessonLinkTypeEnum);
 let lessonStatusEnum = _.keys(enumModel.lessonStatusEnum);
+let weappTypeEnum = _.keys(enumModel.weappTypeEnum);
 
 // create a schema
 let lessonSchema = new Schema({
@@ -26,7 +27,8 @@ let lessonSchema = new Schema({
   description: {type: String, required: true},
   author: {type: String, required: false},
   status: { type: String, required:true, enum: lessonStatusEnum},
-  views: {type: Number, default: 0}
+  views: {type: Number, default: 0},
+  weappType: { type: String, required:true, enum: weappTypeEnum, default: weappTypeEnum.KOUYI},
 });
 
 // create a schema named as Lesson, and collection as Lesson

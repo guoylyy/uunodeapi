@@ -6,21 +6,32 @@
 const _ = require("lodash");
 const debug = require("debug")("mapper");
 
-const lessonSchema = require("./schema/lesson.schema");
+const taskSchema = require("./schema/biyiTask.schema");
 const queryUtil = require("../util/queryUtil");
 const mongoUtil = require("../util/mongoUtil");
-
-const QUERY_SAFE_PARAMS = ["_id", "types", "title", "status", "weappType"];
+const winston = require("winston");
+const QUERY_SAFE_PARAMS = [
+  "_id",
+  "theme",
+  "language",
+  "oppoLanguage",
+  "type",
+  "status",
+  "title",
+];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",
-  "image",
-  "types",
-  "linkType",
-  "createdAt",
-  "linkUrl",
-  "description",
+  "sourceDate",
+  "duration",
+  "language",
+  "oppoLanguage",
+  "theme",
+  "pic",
+  "type",
   "status",
-  "views"
+  "wordCount",
+  "createdAt",
+  "updatedAt"
 ]);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([
   { column: "createdAt", isDescending: true }
@@ -35,9 +46,8 @@ const pub = {};
  * @param pageSize
  * @returns {Promise.<TResult>}
  */
-pub.queryPagedLessonList = (queryParam, pageNumber = 1, pageSize = 10) => {
-  debug(queryParam);
-  return lessonSchema.queryPaged(
+pub.queryPagedTaskList = (queryParam, pageNumber = 1, pageSize = 10) => {
+  return taskSchema.queryPaged(
     queryParam,
     QUERY_SAFE_PARAMS,
     QUERY_SELECT_COLUMNS,
@@ -50,30 +60,29 @@ pub.queryPagedLessonList = (queryParam, pageNumber = 1, pageSize = 10) => {
 /**
  * 根据课程id获取课程详情
  */
-pub.findById = (lessonId) => {
-  return lessonSchema.findItemById(lessonId)
-}
+pub.findById = taskId => {
+  return taskSchema.findItemById(taskId);
+};
 
 /**
- * 创建课程
+ * 根据id删除任务
  */
-pub.createLesson = lesson => {
-  lesson.views = 0;
-  return lessonSchema.createItem(lesson);
-}
+pub.deleteById = id => {
+  return taskSchema.destroyItem(id);
+};
 
 /**
- * 更新课程
+ * 创建任务
  */
-pub.updateLessonById = lesson => {
-  return lessonSchema.updateItemById(lesson.id, lesson);
-}
+pub.createTask = task => {
+  return taskSchema.createItem(task);
+};
 
 /**
- * 删除课程
+ * 更新任务
  */
-pub.deleteLessonById = lesson => {
-  return lessonSchema.destroyItem(lesson);
-}
+pub.updateTaskById = task => {
+  return taskSchema.updateItemById(task.id, task);
+};
 
 module.exports = pub;

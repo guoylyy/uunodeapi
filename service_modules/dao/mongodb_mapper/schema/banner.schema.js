@@ -11,7 +11,8 @@ const Schema = mongoose.Schema;
 const enumModel = require('../../../services/model/enum');
 
 let bannerBizTypeEnum = _.keys(enumModel.bannerBizTypeEnum);
-let bannerLinkTypeEnum = _.keys(enumModel.bannerLinkTypeEnum)
+let bannerLinkTypeEnum = _.keys(enumModel.bannerLinkTypeEnum);
+let weappTypeEnum = _.keys(enumModel.weappTypeEnum);
 
 // create a banner schema
 let bannerSchema = new Schema({
@@ -21,7 +22,8 @@ let bannerSchema = new Schema({
     image: {type: String, required: true},
     linkUrl: {type: String, required: false, default: ''},
     sort: {type: Number, required: true},
-    active: {type: Boolean, required: true}
+    active: {type: Boolean, required: true},
+    weappType: { type: String, required:true, enum: weappTypeEnum, default: weappTypeEnum.KOUYI},
 });
 
 // create a schema named as Banner, and collection as Banner
