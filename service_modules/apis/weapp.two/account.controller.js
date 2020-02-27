@@ -22,7 +22,7 @@ const userLikeService = require("../../services/userLike.service");
 
 const enumModel = require("../../services/model/enum");
 
-const taskService = require("../../services/task.service");
+const taskService = require("../../services/biyiTask.service");
 
 const pub = {};
 
@@ -408,21 +408,10 @@ pub.fetchTaskCheckinRecords = (req, res) => {
   return schemaValidator
       .validatePromise(accountSchema.taskCheckinRecordsSchema, req.query)
       .then(query => {
-        if (!_.isNil(query.gtDuration)) {
-          query.duration = query.duration || {};
-          query.duration.$gt = query.gtDuration;
-        }
-        if (!_.isNil(query.ltDuration)) {
-          query.duration = query.duration || {};
-          query.duration.$lt = query.ltDuration;
-        }
         const param = {
           yearMonth: query.yearMonth,
           userId: req.__CURRENT_USER.id
         };
-        if (query.duration) {
-          param["task.duration"] = query.duration;
-        }
         if (query.theme) {
           param["task.theme"] = query.theme;
         }
@@ -435,23 +424,6 @@ pub.fetchTaskCheckinRecords = (req, res) => {
         return taskService.getCheckinList(param);
       })
       .then(checkinList => {
-        const queryCheckinCount = [];
-        for (let i = 0; i < checkinList.length; i++) {
-          queryCheckinCount.push(
-              taskService.countByParam({
-                userId: req.__CURRENT_USER.id,
-                taskId: checkinList[i].taskId
-              })
-          );
-        }
-        return Promise.all(queryCheckinCount).then(countList => {
-          for (let i = 0; i < checkinList.length; i++) {
-            checkinList[i].checkinCount = countList[i];
-          }
-          return checkinList;
-        });
-      })
-      .then(checkinList => {
         checkinList = _.map(checkinList, function (item) {
           return _.pick(item, [
             "id",
@@ -459,33 +431,11 @@ pub.fetchTaskCheckinRecords = (req, res) => {
             "createdAt",
             "practiceMode",
             "taskId",
-            "checkinCount"
+            "practiceTime",
+            "wordCount"
           ]);
         });
-
-        // 去重
-        let set = [];
-        checkinList.forEach(item => {
-          let i = 0;
-          for (; i < set.length; i++) {
-            if (
-                _.isEqual(item.taskId, set[i].taskId) &&
-                _.isEqual(
-                    item.createdAt.toString().substring(0, 10),
-                    set[i].createdAt.toString().substring(0, 10)
-                )
-            ) {
-              if (item.createdAt.toString() > set[i].createdAt.toString()) {
-                set[i] = item;
-              }
-              break;
-            }
-          }
-          if (i == set.length) {
-            set.push(item);
-          }
-        });
-        return apiRender.renderBaseResult(res, set);
+        return apiRender.renderBaseResult(res, checkinList);
       })
       .catch(req.__ERROR_HANDLER);
 };

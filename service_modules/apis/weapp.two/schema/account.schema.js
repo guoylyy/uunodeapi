@@ -116,9 +116,7 @@ pub.taskCheckinRecordsSchema = Joi.object().keys({
   yearMonth: Joi.string().required(),
   theme: Joi.string().valid(_.keys(enumModel.taskThemeEnum)),
   language: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)),
-  oppoLanguage: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)),
-  gtDuration: Joi.number().integer().positive(),
-  ltDuration: Joi.number().integer().positive()
+  oppoLanguage: Joi.string().valid(_.keys(enumModel.taskLanguageEnum))
 });
 
 module.exports = pub;

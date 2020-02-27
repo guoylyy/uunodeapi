@@ -155,13 +155,13 @@ pub.sumPracticeTime = (userId) => {
 }
 
 /**
- * 根据源语统计练习时长
+ * 根据源语统计词数
  */
-pub.sumPracticeTimeByLanguage = userId => {
+pub.sumWordCountByLanguage = userId => {
   return taskCheckinSchema.aggregate([
     {$match: {'userId': userId, 'isDelete': false}},
-    {$group: {_id: "$task.language", practiceTime: {$sum: '$practiceTime'}}},
-    {$project: {_id: null, language:'$_id', practiceTime:'$practiceTime'}},
+    {$group: {_id: "$task.language", wordCount: {$sum: '$wordCount'}}},
+    {$project: {_id: null, language:'$_id', wordCount:'$wordCount'}},
   ]);
 }
 

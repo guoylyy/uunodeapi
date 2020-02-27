@@ -251,27 +251,25 @@ pub.fetchTaskCheckinStatistics = userId => {
   return Promise.all([
     taskCheckinMapper.sumGroupByUserIdAndDate(userId, 200),
     taskCheckinMapper.sumPracticeTime(userId),
-    taskCheckinMapper.sumTodayPracticeTime(userId),
-    taskCheckinMapper.sumPracticeTimeByLanguage(userId),
-    taskCheckinMapper.sumCheckinDaysByUserId(userId)
+    taskCheckinMapper.sumWordCountByLanguage(userId),
+    taskCheckinMapper.sumCheckinDaysByUserId(userId),
+    taskCheckinMapper.countByParam({userId: userId})
   ]).then(
     ([
       records,
       [totalPracticeTime],
-      [todayPracticeTime],
-      languagePracticeTime,
-      [checkinDays]
+      languageWordCount,
+      [checkinDays],
+      taskCount
     ]) => {
       const result = {
         records: records || [],
         totalPracticeTime: !!totalPracticeTime
           ? totalPracticeTime.practiceTime
           : 0,
-        todayPracticeTime: !!todayPracticeTime
-          ? todayPracticeTime.practiceTime
-          : 0,
-        languagePracticeTime: languagePracticeTime || [],
-        checkinDays: !!checkinDays ? checkinDays.count : 0
+        languageWordCount: languageWordCount || [],
+        checkinDays: !!checkinDays ? checkinDays.count : 0,
+        taskCount: taskCount
       };
       return result;
     }
