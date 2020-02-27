@@ -33,10 +33,6 @@ let biyiTaskCheckinSchema = new Schema({
   practiceTime: { type: Number, required: true }, // 练习时间
   translationText: { type: String, required: true }, // 翻译文本
   wordCount: { type: Number, required: true }, // 单词数
-  viewLog: [{
-    userId: {type: Number, required : true },
-    createdAt: {type: Date, required: true, default: Date.now}
-  }]
 });
 
 // create a schema named as Lesson, and collection as Lesson

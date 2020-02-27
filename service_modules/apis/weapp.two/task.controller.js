@@ -44,15 +44,15 @@ pub.getTask = (req, res) => {
   .then(taskId => {
     return Promise.all([
       taskService.fetchById(taskId), 
-      taskService.countByParam({taskId: taskId, userId: req.__CURRENT_USER.id}),
+      // taskService.countByParam({taskId: taskId, userId: req.__CURRENT_USER.id}),
       userBindService.fetchUserBindByUserId(enumModel.userBindTypeEnum.WEAPP_ONE.key, req.__CURRENT_USER.id)
     ])
     .then(([
       task, 
-      checkinCount,
+      // checkinCount,
       userBindItem
     ])=> {
-      task.myCheckinCount = checkinCount;
+      // task.myCheckinCount = checkinCount;
       console.log(userBindItem);
       task.taskGuide = (userBindItem.taskGuide == 1)
       if (!task.taskGuide) {
@@ -80,9 +80,24 @@ pub.getTodayTask = (req, res) => {
     })
     .then(result => {
       //todo 当前用户是否已经打卡
+      result = _.map(result, function(task) { 
+        return _.extend({}, task, {isCheckin: false});
+      });
       if (!_.isNil(req.__CURRENT_USER)) {
-
+        let checkinCountQuery = _.map(result, function(task) { 
+          return taskService.countByParam({taskId: task.id, userId: req.__CURRENT_USER.id})
+        });
+        return Promise.all(checkinCountQuery)
+        .then(checkinCountList => {
+          for (let i=0; i< checkinCountList.length; i++) {
+            result[i].isCheckin = !!(checkinCountList[i] > 0);
+          }
+          return result;
+        });
       }
+      return result;
+    })
+    .then(result => {
       return apiRender.renderBaseResult(res, result)
     })
     .catch(req.__ERROR_HANDLER);

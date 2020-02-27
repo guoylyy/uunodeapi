@@ -64,9 +64,8 @@ pub.fetchTodayTask = () => {
         fetchBiyiTaskList.push(taskMapper.findById(pushTaskList[i].taskId));
       }
       return Promise.all(fetchBiyiTaskList);
-    } else {
-      return null;
     }
+    return [];
   });
 };
 
@@ -74,28 +73,26 @@ pub.fetchTodayTask = () => {
  * 打卡
  */
 pub.checkin = taskCheckin => {
-  return taskMapper.findById(taskCheckin.taskId).then(task => {
-    taskCheckin.task = task;
-    return taskCheckinMapper.checkin(taskCheckin);
-  });
+  return taskCheckinMapper.countByParam({taskId: taskCheckin.taskId, userId: taskCheckin.userId})
+  .then(checkinCount => {
+    if (checkinCount == 0) {
+      return taskMapper.findById(taskCheckin.taskId)
+      .then(task => {
+        taskCheckin.task = task;
+        return taskCheckinMapper.checkin(taskCheckin);
+      });
+    } else {
+      return Promise.reject(commonError.BIZ_FAIL_ERROR("已经打卡过该练习"))
+    }
+  })
+  
 };
 
 /**
  * 获取打卡列表
  */
 pub.getCheckinList = queryParam => {
-  return taskCheckinMapper.queryCheckinList(queryParam).then(checkinList => {
-    const queryAttach = [];
-    for (let i = 0; i < checkinList.length; i++) {
-      queryAttach.push(userFileMapper.fetchById(checkinList[i].attach));
-    }
-    return Promise.all(queryAttach).then(attachList => {
-      for (let i = 0; i < checkinList.length; i++) {
-        checkinList[i].attach = attachList[i];
-      }
-      return checkinList;
-    });
-  });
+  return taskCheckinMapper.queryCheckinList(queryParam);
 };
 
 /**
@@ -113,8 +110,6 @@ pub.queryPagedCheckinList = queryParam => {
       const queryUser = [];
       for (let i = 0; i < checkinList.length; i++) {
         const checkin = checkinList[i];
-        checkin.viewerCount = new Set(_.map(checkin.viewLog, "userId")).size;
-        checkin.viewLog = undefined;
         queryUser.push(userMapper.fetchByParam({ id: checkin.userId }));
       }
       return Promise.all(queryUser).then(userList => {
@@ -166,6 +161,9 @@ pub.cancelLikeCheckin = (userId, checkin) => {
   return taskCheckinMapper.updateById(checkin.id, { likeArr: likeArr });
 };
 
+/**
+ * 统计打卡数量
+ */
 pub.countByParam = queryParam => {
   return taskCheckinMapper.countByParam(queryParam);
 };
@@ -209,20 +207,11 @@ pub.updateTask = task => {
  * 创建每日推送任务
  */
 pub.createPushTask = pushTask => {
-  return pushTaskMapper.findByParam({ pushAt: pushTask.pushAt }).then(item => {
-    if (!_.isNil(item)) {
-      return Promise.reject(
-        commonError.BIZ_FAIL_ERROR(
-          `当日已存在推送任务 pushAt: ${pushTask.pushAt}`
-        )
-      );
-    }
-    return pushTaskMapper.createPushTask(pushTask);
-  });
+  return pushTaskMapper.createPushTask(pushTask);
 };
 
 /**
- * 创建每日推送任务
+ * 获取每日推送任务
  */
 pub.getPushTaskList = queryParam => {
   return pushTaskMapper
