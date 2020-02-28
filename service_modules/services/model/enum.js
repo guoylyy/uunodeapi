@@ -2392,6 +2392,22 @@ const checkinRecordStatisticsEnum = {
 
 exports.checkinRecordStatisticsEnum = checkinRecordStatisticsEnum;
 
+/**
+ * 小程序枚举
+ */
+const weappTypeEnum = {
+  KOUYI: {
+    key: 'KOUYI',
+    name: '口译小程序'
+  },
+  BIYI: {
+    key: 'BIYI',
+    name: '笔译小程序'
+  }
+}
+
+exports.weappTypeEnum = weappTypeEnum;
+
 
 // functions
 exports.getEnumByKey = function getEnumByKey (key, EnumObj) {

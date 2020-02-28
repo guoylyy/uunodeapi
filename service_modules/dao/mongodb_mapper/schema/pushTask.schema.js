@@ -14,6 +14,7 @@ let pushTaskSchema = new Schema({
   pushAt: { type: String, required: true },
   taskId: { type: Schema.Types.ObjectId, ref: 'WeTask' },
   status: { type: String, required: true, enum: pushTaskStatusEnum},
+  weappType: { type: String, required: true, enum: _.keys(enumModel.weappTypeEnum)},
 });
 
 // create a schema named as Lesson, and collection as Lesson

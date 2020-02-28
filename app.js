@@ -95,6 +95,12 @@ if (isAndroidSharkOpen === true) {
     app.use('/appShark', appSharkAPIRouter);
 }
 
+const isWeappTwoOpen = _.get(systemConfig, 'MODULE_OPTIONS.weappTwoModule.isOpen', false);
+if (isWeappTwoOpen === true) {
+    const twoAPIRouter = require('./service_modules/apis/weapp.two.router');
+    app.use('/biyi', twoAPIRouter);
+}
+
 app.use('/static', express.static(__dirname + '/public'))
 
 // catch 404 and forward to error handler
