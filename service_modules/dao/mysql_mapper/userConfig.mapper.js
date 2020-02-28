@@ -12,7 +12,7 @@ const queryUtil = require('../util/queryUtil');
 const userConfigSchema = require('./schema/userConfig.schema');
 
 // 常量： 安全查询参数；用于限制查询时的参列表
-const QUERY_SAFE_PARAMS = ['id', 'name', 'isValid', 'configApp', 'configType'];
+const QUERY_SAFE_PARAMS = ['id', 'name', 'userId', 'isValid', 'configApp', 'configType'];
 
 const defaultSelectColumns = ['id',  'configApp', 'userId', 'configType', 'configValue', 'createdAt', 'updatedAt'];
 
