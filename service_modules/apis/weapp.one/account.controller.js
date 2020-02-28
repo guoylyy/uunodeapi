@@ -213,7 +213,7 @@ pub.updateUserPersonConfiguration = (req, res) => {
       .then(params => {
         //如果没有ID
         return userConfigService.queryUserConfigByType(
-            req.__CURRENT_USER,
+            req.__CURRENT_USER.id,
             req.params["configApp"],
             params.key
         );
