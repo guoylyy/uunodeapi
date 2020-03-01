@@ -52,13 +52,27 @@ pub.queryUserTasks = (req, res) => {
       })
       .then((results) => {
         let clazzIds = [];
+        let posts = [];
+        let keys = [];
         _.each(results, (task) => {
           clazzIds.push(task.clazzId);
+          let key = task.clazzId + '-' + task.target;
+          if(!_.includes(keys, key)){
+            posts.push(task);
+            keys.push(key);
+          }
         });
-        return Promise.all([results, clazzService.queryClazzes(null, clazzIds, null, null, null)]);
+
+        let clazzsPromise = clazzService.queryClazzes(null, clazzIds, null, null, null);
+        let clazzCountPromise = clazzAccountService.countUserJoinedPromotionClazzes(req.__CURRENT_USER.id);
+        return Promise.all([posts, clazzsPromise, clazzCountPromise]);
       })
-      .then(([tasks, clazzes]) => {
-        return apiRender.renderBaseResult(res, {'todayTasks': tasks, 'clazzList': clazzes, 'date': moment().toDate()});
+      .then(([tasks, clazzes, count]) => {
+        return apiRender.renderBaseResult(res, {'todayTasks': tasks,
+          'clazzList': clazzes,
+          'date': moment().toDate(),
+          'clazzCount':count
+        });
       })
       .catch(req.__ERROR_HANDLER); // 错误处理
 };
