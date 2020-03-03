@@ -512,6 +512,7 @@ pub.fetchCheckinWeekRank = (req, res) => {
         })
         myCheckinWeekData.user = _.pick(req.__CURRENT_USER, userViewColumns);
         return apiRender.renderBaseResult(res, {
+          updateTime: moment().format('YYYY-MM-DD'),
           checkinWeekRank: checkinWeekRank,
           myCheckinWeekData: myCheckinWeekData
         });
@@ -540,6 +541,7 @@ pub.fetchLikeCountWeekRank = (req, res) => {
         })
         myCheckinWeekData.user = _.pick(req.__CURRENT_USER, userViewColumns);
         return apiRender.renderBaseResult(res, {
+          updateTime: moment().format('YYYY-MM-DD'),
           checkinWeekRank: checkinWeekRank,
           myCheckinWeekData: myCheckinWeekData
         });
@@ -567,6 +569,7 @@ pub.fetchSchoolCheckinWeekRank = (req, res) => {
              ]) => {
         myCheckinWeekData.user = _.pick(req.__CURRENT_USER, userViewColumns);
         return apiRender.renderBaseResult(res, {
+          updateTime: moment().format('YYYY-MM-DD'),
           checkinWeekRank: checkinWeekRank,
           myCheckinWeekData: myCheckinWeekData
         });
@@ -591,6 +594,7 @@ pub.fetchSchoolLikeCountWeekRank = (req, res) => {
       .then(([checkinWeekRank, myCheckinWeekData]) => {
         myCheckinWeekData.user = _.pick(req.__CURRENT_USER, userViewColumns);
         return apiRender.renderBaseResult(res, {
+          updateTime: moment().format('YYYY-MM-DD'),
           checkinWeekRank: checkinWeekRank,
           myCheckinWeekData: myCheckinWeekData
         });

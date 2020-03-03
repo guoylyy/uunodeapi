@@ -21,7 +21,8 @@ const QUERY_SAFE_PARAMS = [
   "task.oppoLanguage",
   "task.duration",
   "task.theme",
-  "viewLog"
+  "viewLog",
+  "isPublic",
 ];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   "title",

@@ -22,7 +22,8 @@ pub.checkinSchema = Joi.object().keys({
   title: Joi.string().required(),
   practiceMode: Joi.string().valid(_.keys(enumModel.miniKYPracticeModeEnum)).required(),
   practiceTime: Joi.number().integer().positive().required(),
-  audioDuration: Joi.number().integer().positive().required()
+  audioDuration: Joi.number().integer().positive().required(),
+  isPublic: Joi.boolean().required().default(false)
 });
 
 pub.checkinPagedSchema = pagedBaseSchema.keys({
