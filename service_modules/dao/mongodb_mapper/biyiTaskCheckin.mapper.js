@@ -79,7 +79,7 @@ pub.checkin = taskCheckin => {
 /**
  * 根据id更新taskCheckin
  */
-const safeUpdateParamList = ["likeArr", "translationText", "viewLog"]; // 限制可更新的字段
+const safeUpdateParamList = ["likeArr", "translationText", "viewLog", "wordCount"]; // 限制可更新的字段
 pub.updateById = (taskCheckinId, taskCheckin) => {
   const pickedCheckinItem = mongoUtil.pickUpdateParams(
     taskCheckin,
