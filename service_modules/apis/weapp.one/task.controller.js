@@ -134,6 +134,7 @@ pub.getCheckinList = (req, res) => {
   .then((param) => {
     param.task = {};
     param.taskId = req.__TASK_ITEM.id;
+    param.isPublic = true;
     return taskService.queryPagedCheckinList(param);
   })
   .then((result) => {
