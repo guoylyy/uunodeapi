@@ -12,9 +12,7 @@ const pagedBaseSchema = require("./paged.base.schema");
 pub.pagedSchema = pagedBaseSchema.keys({
   theme: Joi.string().valid(_.keys(enumModel.taskThemeEnum)),
   language: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)),
-  oppoLanguage: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)),
-  gtDuration: Joi.number().integer().positive(),
-  ltDuration: Joi.number().integer().positive()
+  oppoLanguage: Joi.string().valid(_.keys(enumModel.taskLanguageEnum))
 });
 
 pub.checkinSchema = Joi.object().keys({
@@ -23,12 +21,11 @@ pub.checkinSchema = Joi.object().keys({
   translationText: Joi.string().required()
 });
 
-pub.checkinPagedSchema = pagedBaseSchema.keys({
-  practiceMode: Joi.string().valid(_.keys(enumModel.miniKYPracticeModeEnum))
-});
-
 pub.updateCheckinSchema = Joi.object().keys({
   translationText: Joi.string().required(),
+  wordCount: Joi.number().integer().positive().required(),
 });
+
+pub.checkinPagedSchema = pagedBaseSchema;
 
 module.exports = pub;

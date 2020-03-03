@@ -21,6 +21,8 @@ pub.getTaskList = (req, res) => {
   return schemaValidator
     .validatePromise(taskSchema.pagedSchema, req.query)
     .then(queryParam => {
+      console.log(queryParam);
+      
       queryParam.status = enumModel.taskStatusEnum.PUBLISHED.key;
       return taskService.queryTaskList(queryParam);
     })
@@ -44,16 +46,12 @@ pub.getTask = (req, res) => {
   .then(taskId => {
     return Promise.all([
       taskService.fetchById(taskId), 
-      // taskService.countByParam({taskId: taskId, userId: req.__CURRENT_USER.id}),
       userBindService.fetchUserBindByUserId(enumModel.userBindTypeEnum.WEAPP_ONE.key, req.__CURRENT_USER.id)
     ])
     .then(([
       task, 
-      // checkinCount,
       userBindItem
     ])=> {
-      // task.myCheckinCount = checkinCount;
-      console.log(userBindItem);
       task.taskGuide = (userBindItem.taskGuide == 1)
       if (!task.taskGuide) {
         userBindService.updateUserBindItem({
@@ -145,6 +143,9 @@ pub.getCheckinList = (req, res) => {
   .then((param) => {
     param.task = {};
     param.taskId = req.__TASK_ITEM.id;
+    param.userId = {
+      $ne: req.__CURRENT_USER.id
+    }
     return taskService.queryPagedCheckinList(param);
   })
   .then((result) => {

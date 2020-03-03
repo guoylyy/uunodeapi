@@ -333,4 +333,12 @@ router.delete('/weapp/lesson/:lessonId', lessonController.deleteLesson) // 删�
 const weappUserController = require('./mng/weapp/user.controller');
 router.get('/weapp/users',weappUserController.getUserList) //小程序用户列表 分页
 
+
+// 精品课
+// 1. 课程管理
+const courseController = require('./mng/course.controller');
+router.get('/course', courseController.queryCourse); // 获取课程列表
+router.put('/course/:courseId', courseController.updateCourse) // 更新课程状态
+router.post('/course', courseController.createCourse); // 新建课程
+
 module.exports = router;

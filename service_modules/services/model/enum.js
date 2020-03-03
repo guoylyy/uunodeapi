@@ -2408,6 +2408,20 @@ const weappTypeEnum = {
 
 exports.weappTypeEnum = weappTypeEnum;
 
+/**
+ * 精品课课程状态
+ */
+const courseStatusEnum = {
+  OPEN: {
+    key: 'OPEN',
+    name: '开放报名'
+  }, 
+  CLOSE: {
+    key: 'CLOSE',
+    name: '关闭'
+  }
+}
+exports.courseStatusEnum = courseStatusEnum;
 
 // functions
 exports.getEnumByKey = function getEnumByKey (key, EnumObj) {

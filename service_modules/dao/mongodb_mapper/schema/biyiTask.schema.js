@@ -33,7 +33,8 @@ let biyiTaskSchema = new Schema({
   author: {type: String},
   originText: {type: String, required: true},  // 原文
   translationText: {type: String, required: true},   // 译文
-  wordCount: Number // 单词数
+  wordCount: Number, // 单词数
+  source: {type: String, required: true},  // 出处/来源
 });
 
 // create a schema named as Lesson, and collection as Lesson
