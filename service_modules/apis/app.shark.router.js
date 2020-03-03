@@ -211,5 +211,8 @@ router.get('/clazzExit/list', clazzApis.getUserClazzExits);
 router.get('/clazzExit/:exitId', clazzApis.getClazzExistById);
 router.delete('/clazzExit/:clazzId', clazzApis.removeClazzExitById);
 
+//精品课
+router.get('/course')
+router.get('/course/:courseId')
 
 module.exports = router;
