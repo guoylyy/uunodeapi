@@ -29,8 +29,10 @@ pub.queryCourse = (req, res) => {
       return courseService.queryPaged(queryParam);
     })
     .then(result => {
+      //todo 缺少销量字段
       return apiRender.renderPageResult(
         res,
+        
         result.values,
         result.itemSize,
         result.pageSize,

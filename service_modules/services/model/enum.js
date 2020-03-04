@@ -2423,6 +2423,22 @@ const courseStatusEnum = {
 }
 exports.courseStatusEnum = courseStatusEnum;
 
+/**
+ * 精品课件类型
+ */
+const courseWareTypeEnum = {
+  OPEN: {
+    key: 'VIDEO',
+    name: '视频'
+  }, 
+  CLOSE: {
+    key: 'AUDIO',
+    name: '音频'
+  }
+}
+
+exports.courseWareTypeEnum = courseWareTypeEnum
+
 // functions
 exports.getEnumByKey = function getEnumByKey (key, EnumObj) {
   if (EnumObj[key]) {
