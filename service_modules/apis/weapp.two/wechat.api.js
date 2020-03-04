@@ -60,7 +60,7 @@ pub.authWechatLogin = (req, res) => {
   schemaValidator.validatePromise(wechatSchema.weappAuthBodySchema, req.body)
       .then((authBody) => {
         debug(authBody);
-        return wechatUser.requestWeappUserInfoThenSignupIfAbsent(authBody.code, authBody.encryptedData, authBody.iv);
+        return wechatUser.requestWeappUserInfoThenSignupIfAbsent(authBody.code, authBody.encryptedData, authBody.iv, enumModel.userBindTypeEnum.WEAPP_TWO.key);
       })
       .then((userItem) => {
         //如果是新用户，需要给与积分

@@ -1666,6 +1666,10 @@ const userBindTypeEnum = {
   'PHONE_NUMBER': {
     key: 'PHONE_NUMBER',
     name: '手机密码'
+  },
+  'WEAPP_TWO': {
+    key: 'WEAPP_TWO',
+    name: '笔译小程序'
   }
 };
 
