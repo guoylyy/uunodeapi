@@ -178,9 +178,18 @@ pub.requestUserInfoThenSignUpIfAbsent = (openId) => {
  * @param iv              小程序调用 wx.getUserInfo 方法后返回的 加密算法的初始向量
  * @returns {Promise.<TResult>}
  */
-pub.requestWeappUserInfo = (code, encryptedData, iv) => {
-  const PARSE_ERROR = { code: 801, message: '解析用户信息失败' },
-      APPID = systemConfig.WEAPP_ONE_CONFIG.APP_ID;
+pub.requestWeappUserInfo = (code, encryptedData, iv, userBindType = enumModel.userBindTypeEnum.WEAPP_ONE.key) => {
+  const PARSE_ERROR = { code: 801, message: '解析用户信息失败' };
+  const APPID = systemConfig.WEAPP_ONE_CONFIG.APP_ID;
+  const SECRET = systemConfig.WEAPP_ONE_CONFIG.SECRET;
+
+  if (_.isEqual(userBindType, enumModel.userBindTypeEnum.WEAPP_ONE.key)) {
+    APPID = systemConfig.WEAPP_ONE_CONFIG.APP_ID;
+    SECRET = systemConfig.WEAPP_ONE_CONFIG.SECRET;
+  } else if (_.isEqual(userBindType, enumModel.userBindTypeEnum.WEAPP_TWO.key)) {
+    APPID = systemConfig.WEAPP_TWO_CONFIG.APP_ID;
+    SECRET = systemConfig.WEAPP_TWO_CONFIG.SECRET;
+  }
 
   return new Promise(
       (resolve, reject) => {
@@ -189,7 +198,7 @@ pub.requestWeappUserInfo = (code, encryptedData, iv) => {
               uri: 'https://api.weixin.qq.com/sns/jscode2session',
               qs: {
                 appid: APPID,                           // 小程序唯一标识
-                secret: systemConfig.WEAPP_ONE_CONFIG.SECRET, // 小程序的 app secret
+                secret: SECRET,                         // 小程序的 app secret
                 js_code: code,                          // 登录时获取的 code
                 grant_type: 'authorization_code'        // 填写为 authorization_code
               }
@@ -232,8 +241,8 @@ pub.requestWeappUserInfo = (code, encryptedData, iv) => {
  * @param iv              小程序调用 wx.getUserInfo 方法后返回的 加密算法的初始向量
  * @returns {Promise.<TResult>}
  */
-pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
-  return pub.requestWeappUserInfo(code, encryptedData, iv)
+pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv, userBindTypeEnum = enumModel.userBindTypeEnum.WEAPP_ONE.key) => {
+  return pub.requestWeappUserInfo(code, encryptedData, iv, userBindTypeEnum)
       .then((userInfo) => {
         debug(userInfo);
 
@@ -245,7 +254,7 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
               const registerUserBindItem = (registeredUserItem) => {
                 return userBindService.createBindUser(
                     registeredUserItem.id,
-                    enumModel.userBindTypeEnum.WEAPP_ONE.key,
+                    userBindTypeEnum,
                     userInfo.openId
                     )
                     .catch((error) => {
@@ -277,7 +286,7 @@ pub.requestWeappUserInfoThenSignupIfAbsent = (code, encryptedData, iv) => {
               }
 
               // 检查是否存在第三方账户，不存在则注册之
-              userBindService.fetchUserBind(enumModel.userBindTypeEnum.WEAPP_ONE.key, userInfo.openId)
+              userBindService.fetchUserBind(userBindTypeEnum, userInfo.openId)
                   .then((userBindItem) => {
                     debug(userBindItem);
                     if (_.isNil(userBindItem)) {

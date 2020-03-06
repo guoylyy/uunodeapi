@@ -36,10 +36,10 @@ router.get('/system/enums', commonApis.getSystemEnums);
 
 // router.post('/wechat/pay', commonMiddleware.wechatXmlParser, wechatApi.wechatPaymentCallbackHandler);
 
-// const shareController = require('./weapp.two/share.controller');
+const shareController = require('./weapp.two/share.controller');
 // 分享相关接口
-// router.use('/share', twoMiddleware.tryParseAuthToken);
-// router.get('/share/task/:taskId/checkin/:checkinId', twoMiddleware.preloadTaskCheckin, shareController.getCheckin)
+router.use('/share', twoMiddleware.tryParseAuthToken);
+router.get('/share/task/:taskId/checkin/:checkinId', twoMiddleware.preloadTaskCheckin, shareController.getCheckin)
 
 
 // 任务练习相关API

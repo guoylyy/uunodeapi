@@ -1666,6 +1666,10 @@ const userBindTypeEnum = {
   'PHONE_NUMBER': {
     key: 'PHONE_NUMBER',
     name: '手机密码'
+  },
+  'WEAPP_TWO': {
+    key: 'WEAPP_TWO',
+    name: '笔译小程序'
   }
 };
 
@@ -2422,6 +2426,22 @@ const courseStatusEnum = {
   }
 }
 exports.courseStatusEnum = courseStatusEnum;
+
+/**
+ * 精品课件类型
+ */
+const courseWareTypeEnum = {
+  OPEN: {
+    key: 'VIDEO',
+    name: '视频'
+  }, 
+  CLOSE: {
+    key: 'AUDIO',
+    name: '音频'
+  }
+}
+
+exports.courseWareTypeEnum = courseWareTypeEnum
 
 // functions
 exports.getEnumByKey = function getEnumByKey (key, EnumObj) {

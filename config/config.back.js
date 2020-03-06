@@ -302,16 +302,6 @@ exports.WECHAT_WEB_CONFIG = {
 };
 
 /**
- * 笃师一对一微信APP配置
- *
- * @type {{}}
- */
-exports.WECHAT_ONE_CONFIG = {
-    'APP_ID': 'appId',
-    'SECRET': 'secret'
-};
-
-/**
  * 微信小程序 笃师一对一 配置
  * @type {{APP_ID: string, SECRET: string}}
  */
@@ -319,6 +309,15 @@ exports.WEAPP_ONE_CONFIG = {
     'APP_ID': 'wxcd313169bc34a283',
     'SECRET': '8d17154fabed014e9de83cb09e9b3438',
     'CLAZZ_ID': '592fec78f0582f3dc300ed5b'
+};
+
+/**
+ * 微信小程序 笔译小程序 配置
+ * @type {{APP_ID: string, SECRET: string}}
+ */
+exports.WEAPP_TWO_CONFIG = {
+    'APP_ID': 'wxdc412191c3703967',
+    'SECRET': '01a44e108bd4e8adc2170e87cf4f6ff1',
 };
 
 /***********************************************************************************************************************
