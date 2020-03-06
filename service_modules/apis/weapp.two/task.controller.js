@@ -44,13 +44,19 @@ pub.getTaskList = (req, res) => {
 pub.getTask = (req, res) => {
   return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
   .then(taskId => {
+    const param = {};
+    param.task = {};
+    param.taskId = taskId
+    param.userId = req.__CURRENT_USER.id;
     return Promise.all([
       taskService.fetchById(taskId), 
-      userBindService.fetchUserBindByUserId(enumModel.userBindTypeEnum.WEAPP_ONE.key, req.__CURRENT_USER.id)
+      userBindService.fetchUserBindByUserId(enumModel.userBindTypeEnum.WEAPP_ONE.key, req.__CURRENT_USER.id),
+      taskService.getCheckinList(param)
     ])
     .then(([
       task, 
-      userBindItem
+      userBindItem,
+      checkinList
     ])=> {
       task.taskGuide = (userBindItem.taskGuide == 1)
       if (!task.taskGuide) {
@@ -58,6 +64,10 @@ pub.getTask = (req, res) => {
           id: userBindItem.id,
           taskGuide: 1
         });
+      }
+      task.myCheckin = null;
+      if (!_.isEmpty(checkinList)) {
+        task.myCheckin = checkinList[0];
       }
       return task;
     });

@@ -434,16 +434,8 @@ pub.getShareCheckin = checkinId => {
     const userId = checkin.userId;
     return Promise.all([
       userMapper.fetchByParam({ id: userId }),
-      taskCheckinMapper.sumCheckinDaysByUserId(userId),
-      taskCheckinMapper.sumTodayPracticeTime(userId),
-      userFileMapper.fetchById(checkin.attach)
-    ]).then(([user, [checkinDays], [todayPracticeTime], userFile]) => {
-      (user.todayPracticeTime = !!todayPracticeTime
-        ? todayPracticeTime.practiceTime
-        : 0),
-        (user.checkinDays = !!checkinDays ? checkinDays.count : 0);
+    ]).then(([user]) => {
       checkin.user = user;
-      checkin.attach = userFile;
       return checkin;
     });
   });

@@ -569,7 +569,6 @@ pub.checkMyTaskCheckin = (req, res, next) => {
  */
 pub.tryParseAuthToken = (req, res, next) => {
   const loginRequired = (error) => {
-    debug(error);
     winston.error('小程序用户需要重新登录！！！');
     return apiRender.renderLoginRequired(res);
   };
