@@ -73,19 +73,18 @@ pub.fetchTodayTask = () => {
  * 打卡
  */
 pub.checkin = taskCheckin => {
-  return taskCheckinMapper.countByParam({taskId: taskCheckin.taskId, userId: taskCheckin.userId})
-  .then(checkinCount => {
-    if (checkinCount == 0) {
-      return taskMapper.findById(taskCheckin.taskId)
-      .then(task => {
-        taskCheckin.task = task;
-        return taskCheckinMapper.checkin(taskCheckin);
-      });
-    } else {
-      return Promise.reject(commonError.BIZ_FAIL_ERROR("已经打卡过该练习"))
-    }
-  })
-  
+  return taskCheckinMapper
+    .countByParam({ taskId: taskCheckin.taskId, userId: taskCheckin.userId })
+    .then(checkinCount => {
+      if (checkinCount == 0) {
+        return taskMapper.findById(taskCheckin.taskId).then(task => {
+          taskCheckin.task = task;
+          return taskCheckinMapper.checkin(taskCheckin);
+        });
+      } else {
+        return Promise.reject(commonError.BIZ_FAIL_ERROR("已经打卡过该练习"));
+      }
+    });
 };
 
 /**
@@ -253,7 +252,7 @@ pub.fetchTaskCheckinStatistics = userId => {
     taskCheckinMapper.sumPracticeTime(userId),
     taskCheckinMapper.sumWordCountByLanguage(userId),
     taskCheckinMapper.sumCheckinDaysByUserId(userId),
-    taskCheckinMapper.countByParam({userId: userId})
+    taskCheckinMapper.countByParam({ userId: userId })
   ]).then(
     ([
       records,
@@ -434,8 +433,10 @@ pub.getShareCheckin = checkinId => {
     const userId = checkin.userId;
     return Promise.all([
       userMapper.fetchByParam({ id: userId }),
-    ]).then(([user]) => {
+      taskMapper.findById(checkin.taskId)
+    ]).then(([user, task]) => {
       checkin.user = user;
+      checkin.task = task;
       return checkin;
     });
   });
