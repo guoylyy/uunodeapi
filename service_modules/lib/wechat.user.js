@@ -180,8 +180,8 @@ pub.requestUserInfoThenSignUpIfAbsent = (openId) => {
  */
 pub.requestWeappUserInfo = (code, encryptedData, iv, userBindType = enumModel.userBindTypeEnum.WEAPP_ONE.key) => {
   const PARSE_ERROR = { code: 801, message: '解析用户信息失败' };
-  const APPID = systemConfig.WEAPP_ONE_CONFIG.APP_ID;
-  const SECRET = systemConfig.WEAPP_ONE_CONFIG.SECRET;
+  let APPID = systemConfig.WEAPP_ONE_CONFIG.APP_ID;
+  let SECRET = systemConfig.WEAPP_ONE_CONFIG.SECRET;
 
   if (_.isEqual(userBindType, enumModel.userBindTypeEnum.WEAPP_ONE.key)) {
     APPID = systemConfig.WEAPP_ONE_CONFIG.APP_ID;
