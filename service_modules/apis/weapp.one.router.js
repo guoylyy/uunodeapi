@@ -31,7 +31,7 @@ router.post('/wechat/auth', wechatApi.authWechatLogin);
 router.get('/teachers',  clazzTeacherApis.fetchAllTeacherList);
 router.get('/teacher/:teacherId', clazzTeacherApis.fetchTeacherDetail);
 router.get('/schools',commonApis.querySchools); //搜索学校
-router.get('/attach/:attachId', commonApis.getAttach) // 获取附件
+
 
 // System相关接口
 router.get('/system/enums', commonApis.getSystemEnums);
@@ -68,6 +68,9 @@ router.use(oneMiddleware.parseAuthToken);
  * 定义req.__MODULE_LOGGER来处理模块日志
  ***********************************************************************************************************************/
 router.use(oneMiddleware.moduleLogger);
+
+// 获取用户附件 
+router.get('/userFile/:userFileId', commonApis.getUserFile);
 
 //分享打卡动作记录
 router.post('/share/task/:taskId/checkin/:checkinId', shareController.shareCheckin);
