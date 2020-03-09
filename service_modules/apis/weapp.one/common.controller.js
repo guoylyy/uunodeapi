@@ -15,6 +15,7 @@ const apiRender = require('../render/api.render');
 const commonSchema = require('../common.schema');
 const enumModel = require('../../services/model/enum');
 const schoolService = require('../../services/school.service');
+const attachService = require('../../services/attach.service');
 
 const pub = {};
 
@@ -58,4 +59,19 @@ pub.getSystemEnums = (req, res) =>{
       .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 获取attach对象包含url
+ */
+pub.getAttach = (req, res) =>{
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.attachId)
+      .then((attachId) =>{
+        console.log(attachId);
+        return attachService.fetchAttachById(attachId);
+      })
+      .then(attach => {
+        console.log(attach);
+        return apiRender.renderBaseResult(res, attach)
+      })
+      .catch(req.__ERROR_HANDLER);
+};
 module.exports = pub;
