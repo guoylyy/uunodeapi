@@ -196,6 +196,10 @@ pub.fetchUserPersonConfiguration = (req, res) => {
         );
       })
       .then(items => {
+        if(_.size(items) == 0){
+          items.push({'configApp':req.params["configApp"],'configType': 'PRACTICE_MODE', configValue:'SHADOW_SPEAK'});
+          items.push({'configApp':req.params["configApp"],'configType':'PRACTICE_PUBLIC', configValue:'true'});
+        }
         return apiRender.renderBaseResult(res, items);
       })
       .catch(req.__ERROR_HANDLER);
