@@ -39,7 +39,14 @@ let checkinSchema = new Schema({
   checkinTime: { type: Date, required: true, default: Date.now },
   remark: String,
   likeArr: [Number],
-  dislikeArr: [Number]
+  dislikeArr: [Number],
+  isFeatured: { type: Boolean, default: false}, // 精选
+  hasReviews: { type: Boolean, default: false}, // 有点评
+  reviews: [{
+    text: String,
+    audioId: { type: Schema.Types.ObjectId, ref: 'UserFile' },
+    videoId: { type: Schema.Types.ObjectId, ref: 'UserFile' },
+  }]
 });
 
 // 自定义检查

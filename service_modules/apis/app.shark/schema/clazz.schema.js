@@ -52,7 +52,10 @@ pub.clazzTaskQuerySchema = Joi.object().keys({
 });
 
 
-pub.clazzCheckinsSchema = pagedSchema;
+pub.clazzCheckinsSchema = pagedSchema.keys({
+  isFeatured: Joi.boolean(),
+  hasReviews: Joi.boolean(),
+});
 
 pub.checkinTrendPagedQuerySchema = pagedSchema;
 
@@ -74,5 +77,19 @@ pub.clazzExitSchema = Joi.object().keys({
 pub.clazzExitQuerySchema = Joi.object().keys({
   status: Joi.string().trim().max(255).required()
 });
+
+/**
+ * 教师点评
+ */
+pub.checkinReviewSchema = Joi.object().keys({
+  audioId: commonSchema.mongoIdSchema,
+  videoId: commonSchema.mongoIdSchema,
+  text: Joi.string().trim().max(255),
+})
+.or('audioId', 'videoId', 'text');
+
+pub.updateFeatured = Joi.object().keys({
+  isFeatured: Joi.boolean().required()
+})
 
 module.exports = pub;

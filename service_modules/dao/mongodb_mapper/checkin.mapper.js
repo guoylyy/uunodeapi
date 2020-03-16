@@ -11,8 +11,8 @@ const mongoUtil = require('../util/mongoUtil');
 
 const pub = {};
 
-const QUERY_SAFE_PARAM_LIST = ['clazz', '_id', 'userId', 'checkinTime'];
-const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn(['id', 'checkinTime', 'status', 'userId', 'remark', 'isPublic', 'title', 'score', 'clazz', 'checkinFiles.fileKeys', 'userScoreId', 'likeArr', 'dislikeArr']);
+const QUERY_SAFE_PARAM_LIST = ['clazz', '_id', 'userId', 'checkinTime', 'isFeatured', 'reviews', 'hasReviews'];
+const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn(['id', 'checkinTime', 'status', 'userId', 'remark', 'isPublic', 'title', 'score', 'clazz', 'checkinFiles.fileKeys', 'userScoreId', 'likeArr', 'dislikeArr', 'reviews', 'isFeatured']);
 const QUERY_SORT_BY = queryUtil.disposeSortBy([{column: 'checkinTime', isDescending: true}]);
 
 /**
@@ -53,7 +53,7 @@ pub.fetchById = (checkId) => {
  * @param checkinItem
  * @returns {Promise.<TResult>}
  */
-const safeUpdateParamList = ['checkinFiles', 'status', 'score', 'remark', 'isPublic', 'userScore', 'userScoreIds', 'likeArr', 'dislikeArr']; // 限制可更新的字段
+const safeUpdateParamList = ['checkinFiles', 'status', 'score', 'remark', 'isPublic', 'userScore', 'userScoreIds', 'likeArr', 'dislikeArr', 'reviews', 'isFeatured', 'hasReviews']; // 限制可更新的字段
 pub.updateById = (checkinId, checkinItem) => {
   const pickedCheckinItem = mongoUtil.pickUpdateParams(checkinItem, safeUpdateParamList);
 

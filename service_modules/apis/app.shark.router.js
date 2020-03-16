@@ -165,6 +165,10 @@ router.delete('/clazz/:clazzId/checkin/:checkinId/like', middleware.preloadCheck
 //给学员打卡点踩和取消踩
 router.post('/clazz/:clazzId/checkin/:checkinId/dislike', middleware.preloadCheckinItem, checkinApis.dislike);
 router.delete('/clazz/:clazzId/checkin/:checkinId/dislike', middleware.preloadCheckinItem, checkinApis.cancelDislike);
+//点评打卡
+router.post('/clazz/:clazzId/checkin/:checkinId/reviews', middleware.preloadCheckinItem, checkinApis.createReviews);
+//更新加精状态
+router.put('/clazz/:clazzId/checkin/:checkinId/featured', middleware.preloadCheckinItem, checkinApis.updateFeatured);
 
 router.use('/clazz/:clazzId/feedback', h5MiddleWare.preloadFeedbackItem);
 

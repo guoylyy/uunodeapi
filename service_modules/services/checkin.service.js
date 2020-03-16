@@ -426,7 +426,7 @@ pub.fetchClazzCheckinPagedListByKeyword = (clazzId, queryDate, keyword, pageNumb
  * @param pageSize    页面大小
  * @returns {Promise.<TResult>|Promise}
  */
-pub.fetchClazzCheckinPagedList = (clazzId, queryDate, pageNumber, pageSize) => {
+pub.fetchClazzCheckinPagedList = (clazzId, queryDate, pageNumber, pageSize, queryParam = {}) => {
   // 参数检查
   return pagedQueryParamValidator(clazzId, queryDate, pageNumber, pageSize)
       .then((isParamsValid) => {
@@ -442,22 +442,15 @@ pub.fetchClazzCheckinPagedList = (clazzId, queryDate, pageNumber, pageSize) => {
           return Promise.reject(commonError.PARAMETER_ERROR());
         }
 
-        let queryParam = {};
+        queryParam.clazz = clazzId;
         if (queryDate != null) {
           let queryDateMoment = moment(queryDate);
-          queryParam = {
-            clazz: clazzId,
-            checkinTime: {
-              $gte: queryDateMoment.startOf('day').toDate(),
-              $lte: queryDateMoment.endOf('day').toDate()
-            }
-          };
-        } else {
-          queryParam = {
-            clazz: clazzId
+          queryParam.checkinTime= {
+            $gte: queryDateMoment.startOf('day').toDate(),
+            $lte: queryDateMoment.endOf('day').toDate()
           };
         }
-
+        console.log(queryParam);
         // 禅勋班级打卡列表
         return checkinMapper.queryPageCheckinList(queryParam, pageNumber, pageSize);
       })
@@ -638,5 +631,14 @@ pub.cancelDislike = (userId, checkin) => {
   dislikeArr.pop(userId);
   return checkinMapper.updateById(checkin.id, {dislikeArr: dislikeArr})
 };
+
+/**
+ * 创建打卡点评
+ */
+pub.createReview = (checkin, review) => {
+  let reviews = checkin.reviews || [];
+  reviews.push(review);
+  return checkinMapper.updateById(checkin.id, {reviews: reviews, hasReviews: true})
+}
 
 module.exports = pub;

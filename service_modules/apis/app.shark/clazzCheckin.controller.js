@@ -168,7 +168,7 @@ pub.queryClazzCheckins = (req, res) => {
       .then((queryParam) => {
         req.__MODULE_LOGGER(`获取课程${req.__CURRENT_CLAZZ.id}打卡记录`, queryParam);
         // render数据
-        return checkinService.fetchClazzCheckinPagedList(currentClazzId, null, queryParam.pageNumber, queryParam.pageSize);
+        return checkinService.fetchClazzCheckinPagedList(currentClazzId, null, queryParam.pageNumber, queryParam.pageSize, queryParam);
       })
       .then((pagedResult) => {
         const pagedCheckinList = pagedResult.values;
@@ -503,5 +503,35 @@ pub.cancelDislike = (req, res) => {
       .catch(req.__ERROR_HANDLER);
 };
 
+/**
+ * 点评打卡
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
+ */
+pub.createReviews = (req, res) => {
+  return schemaValidator.validatePromise(clazzSchema.checkinReviewSchema, req.body)
+      .then((review) => {
+        return checkinService.createReview(req.__CURRENT_CHECKIN, review);
+      })
+      .then((result) => {
+        return apiRender.renderBaseResult(res, result);
+      })
+      .catch(req.__ERROR_HANDLER);
+}
+
+/**
+ * 更新加精状态
+ */
+pub.updateFeatured = (req, res) => {
+  schemaValidator.validatePromise(clazzSchema.updateFeatured, req.body)
+      .then((checkin) => {
+        return checkinService.updateCheckinItem(req.__CURRENT_CHECKIN.id, checkin);
+      })
+      .then(() => {
+        return apiRender.renderSuccess(res);
+      })
+      .catch(req.__ERROR_HANDLER);
+};
 
 module.exports = pub;
