@@ -369,12 +369,16 @@ pub.getCheckinSumdata = (req, res) => {
         return checkinService.listCheckins(req.__CURRENT_CLAZZ, req.__CURRENT_CLAZZ_ACCOUNT);
       })
       .then((result) => {
-        // result.clazz = apiUtil.pickClazzBasicInfo(req.__CURRENT_CLAZZ);
+        let configuration = _.pick(req.__CURRENT_CLAZZ,'configuration');
+        let eachDayBackFee = _.pick(configuration, 'eachDayBackFee', 0) | 0;
+        eachDayBackFee = eachDayBackFee/100;
+
         // render数据
         let sumData = {};
         sumData['checkinNum'] = result.scoreSum;
         sumData['joinNum'] = result.openDays;
-        sumData['backMoney'] = '0';
+        sumData['backMoney'] = eachDayBackFee * result.scoreSum;
+        sumData['eachDayBackFee'] = eachDayBackFee;
         return apiRender.renderBaseResult(res, sumData);
       })
       .catch(req.__ERROR_HANDLER); // 错误处理

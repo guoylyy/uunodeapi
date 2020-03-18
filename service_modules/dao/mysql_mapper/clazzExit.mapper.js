@@ -11,10 +11,10 @@ const clazzExitSchema = require('./schema/clazzExit.schema');
 const queryUtil = require('../util/queryUtil');
 
 // 常量： 安全查询参数；用于限制查询时的参列表
-const QUERY_SAFE_PARAMS = ['id', 'clazzId', 'userId', 'clazzAccountId', 'status', 'applyDate'];
+const QUERY_SAFE_PARAMS = ['id', 'clazzId', 'userId', 'clazzAccountId', 'status', 'applyDate', 'userReason', 'remark'];
 // 常量： 查询结果；用于在列表结果中过滤非必要参数
-const QUERY_SELECT_COLUMNS = ['id', 'clazzId', 'userId', 'status'];
-// 常量： 优惠券可更新信息
+const QUERY_SELECT_COLUMNS = ['id', 'clazzId', 'userId', 'status', 'userReason', 'remark'];
+// 常量： 可更新信息
 const SAFE_UPDATE_FIELDS = ['id', 'status', 'realUserCoins', 'userCoinId', 'remark'];
 
 const pub = {};
