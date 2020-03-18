@@ -249,7 +249,7 @@ pub.fetchClazzIntroduction = (req, res) => {
       }).then(([joinedCount, clazzIntroductionList]) => {
         const clazzItem = _.pick(
             currentClazzItem,
-            ['id', 'name', 'description', 'banner', 'smallBanner', 'teacherHead', 'bindTeacher', 'clazzType', 'author', 'status', 'taskCount']
+            ['id', 'name', 'description', 'banner', 'smallBanner', 'teacherHead', 'bindTeacher', 'clazzType', 'author', 'status', 'taskCount', 'teacherOpenIds']
             ),
             clazzConfig = _.pick(currentClazzItem.configuration, ['clazzType', 'taskCount', 'robot']),
             clazzPriceList = clazzUtil.extractClazzPriceList(currentClazzItem);
