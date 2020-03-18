@@ -137,7 +137,7 @@ pub.updateAccountSchool = (req, res) => {
         req.__MODULE_LOGGER("更新用户学校", baseInfo);
         const updatePromise = userService.updateUserItem(req.__CURRENT_USER.id, baseInfo);
         const queryLikePromise = userLikeService.fetchUserLikeFromTasks(req.__CURRENT_USER.id,
-            [enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.key], 'WECHAT_MINI_KY');
+            [enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.key], 'WECHAT_MINI_BY');
         return Promise.all([updatePromise, queryLikePromise]);
       })
       .then(([userItem, userLikes]) => {
@@ -145,7 +145,7 @@ pub.updateAccountSchool = (req, res) => {
         if (_.size(userLikes) == 0) {
           return userLikeService.createUserLike(req.__CURRENT_USER.id, enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.key,
               enumModel.userLikeTaskEnum.COMPLETEINFO_TASK.name,
-               'WECHAT_MINI_KY', 10)
+               'WECHAT_MINI_BY', 10)
               .then((userLikeItem) => {
                 return apiRender.renderBaseResult(res, {'result': true, 'pointChange': 10})
               });
@@ -238,13 +238,13 @@ pub.updateUserPersonConfiguration = (req, res) => {
         debug(items);
         //只要完成了，就可以加分
         return userLikeService.fetchUserLikeFromTasks(req.__CURRENT_USER.id,
-            [enumModel.userLikeTaskEnum.FINISHPLAN_TASK.key], 'WECHAT_MINI_KY');
+            [enumModel.userLikeTaskEnum.FINISHPLAN_TASK.key], 'WECHAT_MINI_BY');
       })
       .then((likes)=>{
         if(_.size(likes) == 0){
           return userLikeService.createUserLike(req.__CURRENT_USER.id, enumModel.userLikeTaskEnum.FINISHPLAN_TASK.key,
               enumModel.userLikeTaskEnum.FINISHPLAN_TASK.name,
-               'WECHAT_MINI_KY', 5)
+               'WECHAT_MINI_BY', 5)
               .then((userLikeItem) => {
                 return apiRender.renderBaseResult(res, {'result': true, 'pointChange': 10})
               });
@@ -267,7 +267,7 @@ pub.fetchUserLikeSum = (req, res) => {
       .then(() => {
         return userLikeService.fetchUserLikeStaticitcs(
             req.__CURRENT_USER.id,
-            "WECHAT_MINI_KY"
+            "WECHAT_MINI_BY"
         );
       })
       .then(result => {
@@ -288,7 +288,7 @@ pub.fetchUserLikes = (req, res) => {
       .then(params => {
         return userLikeService.fetchUserLikesByPageList(
             req.__CURRENT_USER.id,
-            "WECHAT_MINI_KY",
+            "WECHAT_MINI_BY",
             params.pageNumber,
             params.pageSize
         );
@@ -315,8 +315,8 @@ pub.fetchUserLikes = (req, res) => {
 pub.fetchUserLikeRules = (req, res) => {
   const rules = [
     {
-      title: "完成新手任务",
-      desc: "快去查看下方新手任务吧",
+      title: "首次完善个人信息",
+      desc: "快去完善信息吧",
       likeAddDesc: "+笔芯10"
     },
     {
@@ -344,7 +344,7 @@ pub.fetchUserLikeTasks = (req, res) => {
         return userLikeService.fetchUserLikeFromTasks(
             req.__CURRENT_USER.id,
             _.keys(tasks),
-            "WECHAT_MINI_KY"
+            "WECHAT_MINI_BY"
         );
       })
       .then(likes => {
