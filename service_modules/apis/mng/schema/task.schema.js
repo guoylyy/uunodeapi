@@ -45,6 +45,7 @@ pub.createTaskSchema = Joi.object().keys({
 
 pub.pushTaskSchema = Joi.object().keys({
   pushAt: Joi.date().required(),
+  weappType: Joi.string().valid(_.keys(enumModel.weappTypeEnum)).required()
 });
 
 module.exports = pub;
