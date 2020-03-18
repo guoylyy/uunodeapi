@@ -309,6 +309,10 @@ pub.createClazzCheckinItem = (userId, clazzId, checkinItem) => {
           checkinTime: checkinItem.date
         };
 
+        if(!_.isNil(checkinItem.taskId)){
+          newCheckinItem['taskId'] = checkinItem.taskId;
+        }
+
         return checkinMapper.create(newCheckinItem);
       });
 };

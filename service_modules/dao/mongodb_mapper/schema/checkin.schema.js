@@ -28,6 +28,7 @@ let checkinSchema = new Schema({
     fileKeys: [{ type: String, required: true, ref: 'UserFile' }]
   },
   clazz: { type: Schema.Types.ObjectId, required: true, ref: 'Clazz' },
+  taskId:{ type: Schema.Types.ObjectId, required: false, ref: 'ClazzTask' },
   score: { type: Number, required: true },
   userId: { type: Number, required: true },
   userScoreIds: [

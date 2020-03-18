@@ -147,6 +147,7 @@ pub.createClazzItem = (req, res) => {
           feedbackRound: 0,
           taskCount: 28,
           startHour: 1,
+          eachDayBackFee: 0,
           endHour: 24,
           discount: 1,
           strategyLink: "",

@@ -11,7 +11,7 @@ const mongoUtil = require('../util/mongoUtil');
 
 const pub = {};
 
-const QUERY_SAFE_PARAM_LIST = ['clazz', '_id', 'userId', 'checkinTime', 'isFeatured', 'reviews', 'hasReviews'];
+const QUERY_SAFE_PARAM_LIST = ['clazz', 'taskId', '_id', 'userId', 'checkinTime', 'isFeatured', 'reviews', 'hasReviews'];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn(['id', 'checkinTime', 'status', 'userId', 'remark', 'isPublic', 'title', 'score', 'clazz', 'checkinFiles.fileKeys', 'userScoreId', 'likeArr', 'dislikeArr', 'reviews', 'isFeatured']);
 const QUERY_SORT_BY = queryUtil.disposeSortBy([{column: 'checkinTime', isDescending: true}]);
 

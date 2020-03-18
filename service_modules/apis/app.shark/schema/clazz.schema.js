@@ -55,6 +55,7 @@ pub.clazzTaskQuerySchema = Joi.object().keys({
 pub.clazzCheckinsSchema = pagedSchema.keys({
   isFeatured: Joi.boolean(),
   hasReviews: Joi.boolean(),
+  taskId: commonSchema.mongoIdSchema,
 });
 
 pub.checkinTrendPagedQuerySchema = pagedSchema;

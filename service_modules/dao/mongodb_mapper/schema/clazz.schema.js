@@ -48,6 +48,7 @@ let clazzSchema = new Schema({
     endHour: { type: Number, required: true },
     totalFee: { type: Number, required: false },
     originFee: { type: Number, required: false },
+    eachDayBackFee:{type: Number, required: false},
     strategyLink: {type:String, required: false},
     priceList: [{
       name: { type: String },

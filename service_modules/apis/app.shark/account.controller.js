@@ -93,7 +93,7 @@ pub.getUserBaseInfo = (req, res) => {
         const currentUser = req.__CURRENT_USER;
 
         //筛选需要的属性
-        const pickedUserInfo = _.pick(currentUser, ['id', 'name', 'headImgUrl', 'sex', 'studentNumber', 'birthday']);
+        const pickedUserInfo = _.pick(currentUser, ['id', 'name', 'headImgUrl', 'sex', 'studentNumber', 'birthday', 'openId']);
         // 处理已设置别名的情况
         const realName = _.get(currentUser, ['realName']);
         if (!_.isNil(realName) && realName !== '') {

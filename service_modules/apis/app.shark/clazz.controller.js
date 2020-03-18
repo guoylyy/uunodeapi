@@ -20,6 +20,7 @@ const wechatPromotion = require('../../lib/wechat.promotion');
 const cacheWrapper = require('../../services/component/cacheWrap.component');
 
 const clazzService = require('../../services/clazz.service');
+const checkinService = require('../../services/checkin.service');
 const clazzAccountService = require('../../services/clazzAccount.service');
 const clazzPostService = require('../../services/post.service');
 const userService = require('../../services/user.service');
@@ -65,11 +66,36 @@ pub.queryUserTasks = (req, res) => {
 
         let clazzsPromise = clazzService.queryClazzes(null, clazzIds, null, null, null);
         let clazzCountPromise = clazzAccountService.countUserJoinedPromotionClazzes(req.__CURRENT_USER.id);
-        return Promise.all([posts, clazzsPromise, clazzCountPromise]);
+        let clazzCheckinTodayPromise  = checkinService.queryCheckinList(req.__CURRENT_USER.id, null, moment().startOf('day').toDate(),
+            moment().endOf('day').toDate(),null);
+        return Promise.all([posts, clazzsPromise, clazzCountPromise, clazzCheckinTodayPromise]);
       })
-      .then(([tasks, clazzes, count]) => {
+      .then(([tasks, clazzes, count, todayCheckins]) => {
+
+        let checkinClazzs = [];
+        // 获取今天已打卡的列表
+        _.each(todayCheckins, (checkin)=>{
+          let clazzId = _.pick(checkin, 'clazz', null);
+          if(!_.isNil(clazzId)){
+            checkinClazzs.push(clazzId);
+          }
+        });
+
+        winston.info('已经打卡的班级列表', checkinClazzs);
+
+        //加入是否已经打卡的选项
+        _.each(tasks, (task)=>{
+          let clazz = _.pick(task, 'clazz');
+          if(clazz in checkinClazzs){
+            task['hasFinished'] = true;
+          }else{
+            task['hasFinished'] = false;
+          }
+        });
+
         return apiRender.renderBaseResult(res, {'todayTasks': tasks,
           'clazzList': clazzes,
+          'todayCheckins': todayCheckins,
           'date': moment().toDate(),
           'clazzCount':count
         });
@@ -223,7 +249,7 @@ pub.fetchClazzIntroduction = (req, res) => {
       }).then(([joinedCount, clazzIntroductionList]) => {
         const clazzItem = _.pick(
             currentClazzItem,
-            ['id', 'name', 'description', 'banner', 'smallBanner', 'teacherHead', 'bindTeacher', 'clazzType', 'author', 'status', 'taskCount']
+            ['id', 'name', 'description', 'banner', 'smallBanner', 'teacherHead', 'bindTeacher', 'clazzType', 'author', 'status', 'taskCount', 'teacherOpenIds']
             ),
             clazzConfig = _.pick(currentClazzItem.configuration, ['clazzType', 'taskCount', 'robot']),
             clazzPriceList = clazzUtil.extractClazzPriceList(currentClazzItem);
