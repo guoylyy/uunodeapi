@@ -248,7 +248,7 @@ pub.pickCheckinInfo = (checkinItem, checkinEndHour) => {
     return null;
   }
 
-  const pickedCheckin = _.pick(checkinItem, ['id', 'title', 'isPublic', 'checkinFiles', 'status', 'score', 'checkinTime', 'remark', 'isPublic', 'userScore', 'userScoreIds', 'likeArr', 'dislikeArr']);
+  const pickedCheckin = _.pick(checkinItem, ['id', 'title', 'isPublic', 'checkinFiles', 'status', 'score', 'checkinTime', 'remark', 'isPublic', 'userScore', 'userScoreIds', 'likeArr', 'dislikeArr', 'reviews', 'isFeatured']);
 
   if (_.isNumber(checkinEndHour)) {
     const diffHour = checkinEndHour - 24;

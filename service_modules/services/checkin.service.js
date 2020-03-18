@@ -13,6 +13,7 @@ const enumModel = require('./model/enum');
 
 const userService = require('./user.service');
 const clazzAccountService = require('./clazzAccount.service');
+const userFileService = require('./userFile.service');
 
 const checkinMapper = require('../dao/mongodb_mapper/checkin.mapper');
 const userFileMapper = require('../dao/mongodb_mapper/userFile.mapper');
@@ -200,7 +201,7 @@ pub.updateCheckinFiles = (checkinItem, checkinFiles) => {
     winston.error('更新checkin条目信息失败，参数错误！！！\n\tcheckinItem: %j\n\tcheckinFiles: %j', checkinItem, checkinFiles);
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
-
+  
   const checkinMoment = moment(checkinItem.checkinTime);
   // 获取用户打卡当天所提交的文件列表
   const queryCheckinTimeDateUserFilePromise = userFileMapper.query({
@@ -224,10 +225,8 @@ pub.updateCheckinFiles = (checkinItem, checkinFiles) => {
       .then((results) => {
         let userFileList = _.flatten(results);
         debug(userFileList);
-
         let userFileIds = _.map(userFileList, 'id'),
             checkinFileKeys = checkinFiles.fileIds;
-
         if (_.difference(checkinFileKeys, userFileIds).length !== 0) {
           winston.error('更新用户打卡 %s 失败，参数错误！！！\n\t用户文件列表: %j\n\t打卡文件列表：%j', checkinItem.id, userFileIds, checkinFileKeys);
           return Promise.reject(commonError.PARAMETER_ERROR());
@@ -426,51 +425,47 @@ pub.fetchClazzCheckinPagedListByKeyword = (clazzId, queryDate, keyword, pageNumb
  * @param pageSize    页面大小
  * @returns {Promise.<TResult>|Promise}
  */
-pub.fetchClazzCheckinPagedList = (clazzId, queryDate, pageNumber, pageSize, queryParam = {}) => {
+pub.fetchClazzCheckinPagedList = async (clazzId, queryDate, pageNumber, pageSize, queryParam = {}) => {
   // 参数检查
-  return pagedQueryParamValidator(clazzId, queryDate, pageNumber, pageSize)
-      .then((isParamsValid) => {
-        if (isParamsValid !== true) {
-          winston.error(
-              '获取班级打卡列表失败，参数错误！！！ clazzId: %s, queryDate: %s, pageNumber: %s, pageSize: %s',
-              clazzId,
-              queryDate,
-              pageNumber,
-              pageSize
-          );
-
-          return Promise.reject(commonError.PARAMETER_ERROR());
+  const isParamsValid = await pagedQueryParamValidator(clazzId, queryDate, pageNumber, pageSize)
+  if (isParamsValid !== true) {
+    winston.error(
+        '获取班级打卡列表失败，参数错误！！！ clazzId: %s, queryDate: %s, pageNumber: %s, pageSize: %s',
+        clazzId,
+        queryDate,
+        pageNumber,
+        pageSize
+    );
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  queryParam.clazz = clazzId;
+  if (queryDate != null) {
+    let queryDateMoment = moment(queryDate);
+    queryParam.checkinTime= {
+      $gte: queryDateMoment.startOf('day').toDate(),
+      $lte: queryDateMoment.endOf('day').toDate()
+    };
+  }
+  // 禅勋班级打卡列表
+  let pagedCheckinListResult = await checkinMapper.queryPageCheckinList(queryParam, pageNumber, pageSize);
+  let checkinList = pagedCheckinListResult.values;
+  const userIds = _.map(checkinList, 'userId');
+  // 获取打卡学员列表
+  const userList = await userService.queryUser(null, userIds)
+  checkinList = clazzUtil.fillCheckinWithUser(checkinList, userList);
+  console.log(checkinList);
+  for (let i=0; i< checkinList.length; i++) {
+    if (!_.isNil(checkinList[i].reviews)) {
+      for (let j=0; j< checkinList[i].reviews.length; j++){
+        if (!_.isNil(checkinList[i].reviews[j].audioId)) {
+          checkinList[i].reviews[j].audio = await userFileService.fetchUserFileById(checkinList[i].reviews[j].audioId);
         }
-
-        queryParam.clazz = clazzId;
-        if (queryDate != null) {
-          let queryDateMoment = moment(queryDate);
-          queryParam.checkinTime= {
-            $gte: queryDateMoment.startOf('day').toDate(),
-            $lte: queryDateMoment.endOf('day').toDate()
-          };
-        }
-        console.log(queryParam);
-        // 禅勋班级打卡列表
-        return checkinMapper.queryPageCheckinList(queryParam, pageNumber, pageSize);
-      })
-      .then((pagedCheckinListResult) => {
-        debug(pagedCheckinListResult);
-
-        const checkinList = pagedCheckinListResult.values;
-        const userIds = _.map(checkinList, 'userId');
-
-        debug(userIds);
-
-        // 获取打卡学员列表
-        return userService.queryUser(null, userIds)
-            .then((userList) => {
-              // 匹配用户到打卡项目中
-              pagedCheckinListResult.values = clazzUtil.fillCheckinWithUser(checkinList, userList);
-
-              return pagedCheckinListResult;
-            });
-      });
+      }
+    }
+  }
+  pagedCheckinListResult.values = checkinList;
+  return pagedCheckinListResult;
+ 
 };
 
 /**

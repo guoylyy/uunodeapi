@@ -83,10 +83,10 @@ pub.clazzExitQuerySchema = Joi.object().keys({
  */
 pub.checkinReviewSchema = Joi.object().keys({
   audioId: commonSchema.mongoIdSchema,
-  videoId: commonSchema.mongoIdSchema,
+  image: Joi.string().trim().max(255),
   text: Joi.string().trim().max(255),
 })
-.or('audioId', 'videoId', 'text');
+.or('audioId', 'image', 'text');
 
 pub.updateFeatured = Joi.object().keys({
   isFeatured: Joi.boolean().required()

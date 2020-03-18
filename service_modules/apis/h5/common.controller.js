@@ -11,6 +11,7 @@ const enumModel = require('../../services/model/enum');
 const systemConfigService = require('../../services/systemConfig.service');
 
 const wordService = require('../../services/word.service');
+const userFileService = require('../../services/userFile.service');
 const pub = {};
 
 /**

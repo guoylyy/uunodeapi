@@ -125,12 +125,14 @@ pub.fetchCheckinItem = (req, res) => {
  */
 pub.updateCheckinItem = (req, res) => {
   schemaValidator.validatePromise(clazzSchema.updateCheckinBodySchema, req.body)
-      .then((checkinFiles) => {
-        debug(checkinFiles);
-
-        req.__MODULE_LOGGER(`更新打卡${req.__CURRENT_CHECKIN.id}`, checkinFiles);
-
-        return checkinService.updateCheckinFiles(req.__CURRENT_CHECKIN, checkinFiles)
+      .then((checkin) => {
+        const promiseList = [];
+        req.__MODULE_LOGGER(`更新打卡${req.__CURRENT_CHECKIN.id}`, checkin);
+        if (!_.isNil(checkin.fileIds)) {
+          promiseList.push(checkinService.updateCheckinFiles(req.__CURRENT_CHECKIN, checkin))
+        }
+        promiseList.push(checkinService.updateCheckinItem(req.__CURRENT_CHECKIN.id, checkin))
+        return Promise.all(promiseList)
       })
       .then(() => {
         return apiRender.renderSuccess(res);

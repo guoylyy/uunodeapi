@@ -24,8 +24,12 @@ pub.clazzQuerySchema = Joi.object().keys({
  * @type {*}
  */
 pub.updateCheckinBodySchema = Joi.object().keys({
-  fileIds: Joi.array().items(commonSchema.mongoIdSchema.required()).required()
-});
+  fileIds: Joi.array().items(commonSchema.mongoIdSchema.required()),
+  remark: Joi.string(),
+  isPublic: Joi.bool(),
+  isFeatured: Joi.bool(),
+})
+.xor('fileIds', 'isFeatured');
 
 /**
  * 查询打卡情况
