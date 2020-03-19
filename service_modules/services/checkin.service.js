@@ -644,4 +644,16 @@ pub.createReview = async (checkin, review) => {
   return checkinMapper.updateById(checkin.id, {reviews: reviews, hasReviews: true})
 }
 
+/**
+ * 删除打卡点评
+ */
+pub.deleteReview = async (checkin, reviewId) => {
+  const reviews = _.reject(checkin.reviews, review => review.id == reviewId)
+  return checkinMapper.updateById(checkin.id, 
+    {
+      reviews: reviews, 
+      hasReviews: reviews.length > 0
+    })
+}
+
 module.exports = pub;

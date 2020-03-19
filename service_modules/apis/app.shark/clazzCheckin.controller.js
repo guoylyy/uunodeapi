@@ -525,6 +525,25 @@ pub.createReviews = (req, res) => {
 }
 
 /**
+ * 删除点评
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
+ */
+pub.deleteReview = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.reviewId)
+      .then((reviewId) => {
+        return checkinService.deleteReview(req.__CURRENT_CHECKIN, reviewId);
+      })
+      .then((result) => {
+        return apiRender.renderBaseResult(res, result);
+      })
+      .catch(req.__ERROR_HANDLER);
+}
+
+
+
+/**
  * 更新加精状态
  */
 pub.updateFeatured = (req, res) => {
