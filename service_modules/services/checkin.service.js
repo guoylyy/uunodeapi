@@ -634,7 +634,11 @@ pub.cancelDislike = (userId, checkin) => {
 /**
  * 创建打卡点评
  */
-pub.createReview = (checkin, review) => {
+pub.createReview = async (checkin, review) => {
+  const imageUserFile = await userFileMapper.fetchById(review.image);
+  if (!_.isNil(imageUserFile)) {
+    review.image = imageUserFile.fileUrl;
+  }
   let reviews = checkin.reviews || [];
   reviews.push(review);
   return checkinMapper.updateById(checkin.id, {reviews: reviews, hasReviews: true})

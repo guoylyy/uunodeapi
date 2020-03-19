@@ -84,7 +84,7 @@ pub.clazzExitQuerySchema = Joi.object().keys({
  */
 pub.checkinReviewSchema = Joi.object().keys({
   audioId: commonSchema.mongoIdSchema,
-  image: Joi.string().trim().max(255),
+  image: commonSchema.mongoIdSchema,
   text: Joi.string().trim().max(255),
 })
 .or('audioId', 'image', 'text');
