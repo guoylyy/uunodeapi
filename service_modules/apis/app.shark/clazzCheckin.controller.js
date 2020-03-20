@@ -516,7 +516,7 @@ pub.cancelDislike = (req, res) => {
 pub.createReviews = (req, res) => {
   return schemaValidator.validatePromise(clazzSchema.checkinReviewSchema, req.body)
       .then((review) => {
-        review.user = req.__CURRENT_USER;
+        review.userId = req.__CURRENT_USER.id;
         return checkinService.createReview(req.__CURRENT_CHECKIN, review);
       })
       .then((result) => {

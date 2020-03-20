@@ -461,8 +461,13 @@ pub.fetchClazzCheckinPagedList = async (clazzId, queryDate, pageNumber, pageSize
   for (let i=0; i< checkinList.length; i++) {
     if (!_.isNil(checkinList[i].reviews)) {
       for (let j=0; j< checkinList[i].reviews.length; j++){
+        checkinList[i].reviews[j].audio = null;
+        checkinList[i].reviews[j].user = null;
         if (!_.isNil(checkinList[i].reviews[j].audioId)) {
           checkinList[i].reviews[j].audio = await userFileService.fetchUserFileById(checkinList[i].reviews[j].audioId);
+        }
+        if (!_.isNil(checkinList[i].reviews[j].userId)) {
+          checkinList[i].reviews[j].user = await userService.fetchById(checkinList[i].reviews[j].userId);
         }
       }
     }
@@ -524,7 +529,6 @@ pub.updateCheckinItem = (checkinId, checkinItem) => {
     winston.error('更新checkin条目信息失败，参数错误！！！\n\tcheckinId: %s\n\tcheckinItem: %j', checkinId, checkinItem);
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
-
   return checkinMapper.updateById(checkinId, checkinItem);
 };
 
@@ -645,6 +649,7 @@ pub.createReview = async (checkin, review) => {
   for (let j=0; j< createdCheckin.reviews.length; j++){
     if (!_.isNil(createdCheckin.reviews[j].audioId)) {
       createdCheckin.reviews[j].audio = await userFileService.fetchUserFileById(createdCheckin.reviews[j].audioId);
+      createdCheckin.reviews[j].user = await userService.fetchById(createdCheckin.reviews[j].userId || 0);
     }
   }
   return createdCheckin;

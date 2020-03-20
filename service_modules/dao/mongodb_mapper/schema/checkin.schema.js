@@ -47,30 +47,7 @@ let checkinSchema = new Schema({
     text: String,
     audioId: { type: Schema.Types.ObjectId, ref: 'UserFile' },
     image: String,
-    user: {
-      name: String,
-      headImgUrl: String,
-      openId: String,
-      unionid: String,
-      studentNumber: String,
-      invitatedBy: Number,
-      saltHashedPassword: String,
-      sex: Number,
-      city: String,
-      school: String,
-      certification: String,
-      hasFillInfo: Boolean,
-      address: String,
-      wechat: String,
-      alipay: String,
-      phoneNumber: String,
-      realName: String,
-      birthday: Date,
-      timezone: String,
-      invitations: String,
-      target: String,
-      isSubscribe: Boolean
-    }
+    userId: { type: Number, required: true},
   }]
 });
 
