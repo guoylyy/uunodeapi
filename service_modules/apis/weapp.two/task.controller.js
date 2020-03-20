@@ -3,15 +3,12 @@
 const _ = require("lodash");
 const schemaValidator = require("../schema.validator");
 const commonSchema = require("../common.schema");
-const pagedBaseSchema = require("./schema/paged.base.schema");
 const apiRender = require("../render/api.render");
-const debug = require("debug")("controller");
 const enumModel = require('../../services/model/enum');
 const taskService = require("../../services/biyiTask.service");
 const taskSchema = require("./schema/task.schema");
 const winston = require('winston');
 const pub = {};
-const userBindService = require('../../services/userBind.service')
 
 /**
  * 获取任务列表
@@ -50,21 +47,12 @@ pub.getTask = (req, res) => {
     param.userId = req.__CURRENT_USER.id;
     return Promise.all([
       taskService.fetchById(taskId), 
-      userBindService.fetchUserBindByUserId(enumModel.userBindTypeEnum.WEAPP_ONE.key, req.__CURRENT_USER.id),
       taskService.getCheckinList(param)
     ])
     .then(([
       task, 
-      userBindItem,
       checkinList
     ])=> {
-      task.taskGuide = (userBindItem.taskGuide == 1)
-      if (!task.taskGuide) {
-        userBindService.updateUserBindItem({
-          id: userBindItem.id,
-          taskGuide: 1
-        });
-      }
       task.myCheckin = null;
       if (!_.isEmpty(checkinList)) {
         task.myCheckin = checkinList[0];
