@@ -641,7 +641,13 @@ pub.createReview = async (checkin, review) => {
   }
   let reviews = checkin.reviews || [];
   reviews.push(review);
-  return checkinMapper.updateById(checkin.id, {reviews: reviews, hasReviews: true})
+  let createdCheckin = await checkinMapper.updateById(checkin.id, {reviews: reviews, hasReviews: true})
+  for (let j=0; j< createdCheckin.reviews.length; j++){
+    if (!_.isNil(createdCheckin.reviews[j].audioId)) {
+      createdCheckin.reviews[j].audio = await userFileService.fetchUserFileById(createdCheckin.reviews[j].audioId);
+    }
+  }
+  return createdCheckin;
 }
 
 /**
