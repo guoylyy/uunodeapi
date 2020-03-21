@@ -50,7 +50,7 @@ pub.createCheckinBodySchema = Joi.object().keys({
   fileIds: Joi.array().items(commonSchema.mongoIdSchema.required()).required(),
   remark: Joi.string().default(""),
   title: Joi.string().default(""),
-  taskId: Joi.string().default(""),
+  taskId: Joi.string(),
   isPublic: Joi.bool().default(false)
 });
 

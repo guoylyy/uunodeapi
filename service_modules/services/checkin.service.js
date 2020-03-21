@@ -450,7 +450,10 @@ pub.fetchClazzCheckinPagedList = async (clazzId, queryDate, pageNumber, pageSize
       $lte: queryDateMoment.endOf('day').toDate()
     };
   }
-  // 禅勋班级打卡列表
+  // 班级打卡列表
+
+  // 查看参数
+  winston.info('查询参数',queryParam);
   let pagedCheckinListResult = await checkinMapper.queryPageCheckinList(queryParam, pageNumber, pageSize);
   let checkinList = pagedCheckinListResult.values;
   const userIds = _.map(checkinList, 'userId');
