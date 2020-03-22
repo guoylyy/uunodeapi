@@ -55,6 +55,7 @@ pub.clazzTaskQuerySchema = Joi.object().keys({
 pub.clazzCheckinsSchema = pagedSchema.keys({
   isFeatured: Joi.boolean(),
   hasReviews: Joi.boolean(),
+  isPublic: Joi.boolean(),
   taskId: commonSchema.mongoIdSchema,
 });
 
@@ -84,7 +85,7 @@ pub.clazzExitQuerySchema = Joi.object().keys({
  */
 pub.checkinReviewSchema = Joi.object().keys({
   audioId: commonSchema.mongoIdSchema,
-  image: Joi.string().trim().max(255),
+  image: commonSchema.mongoIdSchema,
   text: Joi.string().trim().max(255),
 })
 .or('audioId', 'image', 'text');

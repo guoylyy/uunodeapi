@@ -46,7 +46,8 @@ let checkinSchema = new Schema({
   reviews: [{
     text: String,
     audioId: { type: Schema.Types.ObjectId, ref: 'UserFile' },
-    image: String
+    image: String,
+    userId: { type: Number, required: true},
   }]
 });
 

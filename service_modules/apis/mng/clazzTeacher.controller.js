@@ -79,7 +79,7 @@ pub.fetchPagedTeacherList = (req, res) => {
       .then((queryParam) => {
         debug(queryParam);
         if (queryParam.pageSize == 10 || queryParam == undefined) {
-          queryParam.pageSize = 30;
+          queryParam.pageSize = 50;
         }
         return clazzTeacherService.fetchPagedClazzTeachers(queryParam.pageNumber, queryParam.pageSize);
       })

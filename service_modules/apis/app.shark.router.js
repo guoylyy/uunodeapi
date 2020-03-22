@@ -167,6 +167,7 @@ router.post('/clazz/:clazzId/checkin/:checkinId/dislike', middleware.preloadChec
 router.delete('/clazz/:clazzId/checkin/:checkinId/dislike', middleware.preloadCheckinItem, checkinApis.cancelDislike);
 //点评打卡
 router.post('/clazz/:clazzId/checkin/:checkinId/reviews', middleware.preloadCheckinItem, checkinApis.createReviews);
+router.delete('/clazz/:clazzId/checkin/:checkinId/reviews/:reviewId', middleware.preloadCheckinItem, checkinApis.deleteReview);
 //更新加精状态
 // router.put('/clazz/:clazzId/checkin/:checkinId/featured', middleware.preloadCheckinItem, checkinApis.updateFeatured);
 

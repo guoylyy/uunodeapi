@@ -450,7 +450,10 @@ pub.fetchClazzCheckinPagedList = async (clazzId, queryDate, pageNumber, pageSize
       $lte: queryDateMoment.endOf('day').toDate()
     };
   }
-  // 禅勋班级打卡列表
+  // 班级打卡列表
+
+  // 查看参数
+  winston.info('查询参数',queryParam);
   let pagedCheckinListResult = await checkinMapper.queryPageCheckinList(queryParam, pageNumber, pageSize);
   let checkinList = pagedCheckinListResult.values;
   const userIds = _.map(checkinList, 'userId');
@@ -461,8 +464,13 @@ pub.fetchClazzCheckinPagedList = async (clazzId, queryDate, pageNumber, pageSize
   for (let i=0; i< checkinList.length; i++) {
     if (!_.isNil(checkinList[i].reviews)) {
       for (let j=0; j< checkinList[i].reviews.length; j++){
+        checkinList[i].reviews[j].audio = null;
+        checkinList[i].reviews[j].user = null;
         if (!_.isNil(checkinList[i].reviews[j].audioId)) {
           checkinList[i].reviews[j].audio = await userFileService.fetchUserFileById(checkinList[i].reviews[j].audioId);
+        }
+        if (!_.isNil(checkinList[i].reviews[j].userId)) {
+          checkinList[i].reviews[j].user = await userService.fetchById(checkinList[i].reviews[j].userId);
         }
       }
     }
@@ -524,7 +532,6 @@ pub.updateCheckinItem = (checkinId, checkinItem) => {
     winston.error('更新checkin条目信息失败，参数错误！！！\n\tcheckinId: %s\n\tcheckinItem: %j', checkinId, checkinItem);
     return Promise.reject(commonError.PARAMETER_ERROR());
   }
-
   return checkinMapper.updateById(checkinId, checkinItem);
 };
 
@@ -634,10 +641,33 @@ pub.cancelDislike = (userId, checkin) => {
 /**
  * 创建打卡点评
  */
-pub.createReview = (checkin, review) => {
+pub.createReview = async (checkin, review) => {
+  const imageUserFile = await userFileMapper.fetchById(review.image);
+  if (!_.isNil(imageUserFile)) {
+    review.image = imageUserFile.fileUrl;
+  }
   let reviews = checkin.reviews || [];
   reviews.push(review);
-  return checkinMapper.updateById(checkin.id, {reviews: reviews, hasReviews: true})
+  let createdCheckin = await checkinMapper.updateById(checkin.id, {reviews: reviews, hasReviews: true})
+  for (let j=0; j< createdCheckin.reviews.length; j++){
+    if (!_.isNil(createdCheckin.reviews[j].audioId)) {
+      createdCheckin.reviews[j].audio = await userFileService.fetchUserFileById(createdCheckin.reviews[j].audioId);
+      createdCheckin.reviews[j].user = await userService.fetchById(createdCheckin.reviews[j].userId || 0);
+    }
+  }
+  return createdCheckin;
+}
+
+/**
+ * 删除打卡点评
+ */
+pub.deleteReview = async (checkin, reviewId) => {
+  const reviews = _.reject(checkin.reviews, review => review.id == reviewId)
+  return checkinMapper.updateById(checkin.id, 
+    {
+      reviews: reviews, 
+      hasReviews: reviews.length > 0
+    })
 }
 
 module.exports = pub;

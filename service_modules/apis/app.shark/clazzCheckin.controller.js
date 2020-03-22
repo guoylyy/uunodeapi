@@ -516,6 +516,7 @@ pub.cancelDislike = (req, res) => {
 pub.createReviews = (req, res) => {
   return schemaValidator.validatePromise(clazzSchema.checkinReviewSchema, req.body)
       .then((review) => {
+        review.userId = req.__CURRENT_USER.id;
         return checkinService.createReview(req.__CURRENT_CHECKIN, review);
       })
       .then((result) => {
@@ -523,6 +524,25 @@ pub.createReviews = (req, res) => {
       })
       .catch(req.__ERROR_HANDLER);
 }
+
+/**
+ * 删除点评
+ * @param req
+ * @param res
+ * @return {Bluebird<void>}
+ */
+pub.deleteReview = (req, res) => {
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.reviewId)
+      .then((reviewId) => {
+        return checkinService.deleteReview(req.__CURRENT_CHECKIN, reviewId);
+      })
+      .then((result) => {
+        return apiRender.renderBaseResult(res, result);
+      })
+      .catch(req.__ERROR_HANDLER);
+}
+
+
 
 /**
  * 更新加精状态
