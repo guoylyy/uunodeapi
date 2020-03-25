@@ -73,6 +73,11 @@ pub.updateClazzConfigurationBodySchema = Joi.object().keys({
     promotionIncome: Joi.number().integer().min(0),
     firstOffer: Joi.number().integer().min(0)
   }),
+  robot: Joi.object({
+    name:Joi.string().allow(''),
+    wechat:Joi.string().allow(''),
+    cipher:Joi.string().allow('')
+  }),
   QALimit: Joi.number().integer().min(0),
   addCheckinLimit: Joi.number().integer().min(0),
   invitationRequire: Joi.number().integer().min(0),

@@ -114,7 +114,8 @@ pub.queryClazzTaskList = (req, res) => {
  */
 pub.fetchClazzTaskItem = (req, res) => {
   const currentTaskId = req.params.taskId,
-      currentClazzId = _.get(req.__CURRENT_CLAZZ, 'id', '');
+      currentClazzId = _.get(req.__CURRENT_CLAZZ, 'id', ''),
+      currentClazzTeachers = _.get(req.__CURRENT_CLAZZ.configuration, 'teacherOpenIds', []);
   debug(currentTaskId);
 
   return schemaValidator.validatePromise(clazzSchema.clazzTaskQuerySchema, req.query)
@@ -168,6 +169,8 @@ pub.fetchClazzTaskItem = (req, res) => {
       })
       .then((taskItem) => {
         taskItem['bindTeacher'] = _.get(req.__CURRENT_CLAZZ,'bindTeacher', {});
+        taskItem['teacherOpenIds'] = currentClazzTeachers; //加入教师的openIds
+
         return apiRender.renderBaseResult(res, taskItem);
       })
       .catch(req.__ERROR_HANDLER);
