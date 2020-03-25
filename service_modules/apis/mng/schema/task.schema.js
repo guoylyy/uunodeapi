@@ -17,6 +17,7 @@ pub.pagedSchema = pagedBaseSchema.keys({
   title: Joi.string(),
 });
 
+// 新建口译任务的Schema
 pub.createTaskSchema = Joi.object().keys({
   title: Joi.string().max(20).required(),
   sourceDate: Joi.date().required(),
@@ -42,6 +43,28 @@ pub.createTaskSchema = Joi.object().keys({
 })
 .with('srcVideo', 'oppoVideo')
 .with('srcAudio', 'oppoAudio');
+
+//新建笔译任务的Schema
+pub.createBiyiTaskSchema = Joi.object().keys({
+  title: Joi.string().max(20).required(),
+  pic: Joi.string(),
+  bigPic: Joi.string(),
+  theme: Joi.string().valid(_.keys(enumModel.taskThemeEnum)).required(),
+  language: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)).required(),
+  oppoLanguage: Joi.string().valid(_.keys(enumModel.taskLanguageEnum)).required(),
+  type: Joi.string().valid(_.keys(enumModel.taskTypeEnum)).required(),
+  level: Joi.string().valid(_.keys(enumModel.taskLevelEnum)).required(),
+  description: Joi.string().max(100).required(),
+  author: Joi.string().max(20),
+  status: Joi.string().valid(_.keys(enumModel.taskStatusEnum)).required(),
+  sourceDate: Joi.date().required(),
+  recommendSeconds: Joi.number().integer().positive().required(),  // 建议用时
+  originText: Joi.string().required(), // 原文
+  translationText: Joi.string().required(),   // 译文
+  wordCount: Joi.number().integer().positive().required(), // 单词数
+  source: Joi.string().required(),  // 出处/来源
+});
+
 
 pub.pushTaskSchema = Joi.object().keys({
   pushAt: Joi.date().required(),

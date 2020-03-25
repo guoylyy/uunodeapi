@@ -32,6 +32,7 @@ const couponService = require('../services/coupon.service');
 const userWithdrawService = require('../services/userWithdraw.service');
 const clazzExitService = require('../services/clazzExit.servie');
 const taskService = require('../services/task.service');
+const biyiTaskService = require('../services/biyiTask.service');
 const lessonService = require('../services/lesson.service');
 
 const enumModel = require('../services/model/enum');
@@ -606,6 +607,24 @@ pub.preloadTask = (req, res, next) => {
       return null;
     })
   }).catch(req.__ERROR_HANDLER);
+}
+
+/**
+ * 预加载biyi weapp课程任务
+ */
+pub.preloadBiyiTask = (req, res, next) => {
+  return schemaValidator.validatePromise(commonSchema.mongoIdSchema, req.params.taskId)
+      .then((taskId) => {
+        return biyiTaskService.fetchById(taskId)
+            .then(task => {
+              if (_.isNil(task)) {
+                return apiRender.renderNotFound(res);
+              }
+              req.__TASK_ITEM = task;
+              next()
+              return null;
+            })
+      }).catch(req.__ERROR_HANDLER);
 }
 
 /**

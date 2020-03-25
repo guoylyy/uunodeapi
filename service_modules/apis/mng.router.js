@@ -334,6 +334,22 @@ const weappUserController = require('./mng/weapp/user.controller');
 router.get('/weapp/users',weappUserController.getUserList) //小程序用户列表 分页
 
 
+// 5.笔译任务列表
+const biyiTaskController = require('./mng/weapp/biyitask.controller');
+router.post('/weappbiyi/task', biyiTaskController.createTask); //创建新任务
+router.get('/weappbiyi/tasks', biyiTaskController.getTaskList);//分页获取任务列表
+
+router.use('/weappbiyi/task/:taskId', weappMiddleware.preloadBiyiTask);
+router.get('/weappbiyi/task/:taskId', biyiTaskController.getTask);
+
+router.post('/weappbiyi/task/:taskId/push', biyiTaskController.pushTask); // 设置推送
+router.put('/weappbiyi/task/:taskId', biyiTaskController.updateTask); //更新任务
+router.delete('/weappbiyi/task/:taskId', biyiTaskController.deleteTask); //删除任务
+
+router.get('/weappbiyi/pushTasks', biyiTaskController.pushTaskList); // 推送列表
+router.delete('/weappbiyi/pushTask/:pushTaskId', biyiTaskController.deletePushTask); // 删除推送
+
+
 // 精品课
 // 1. 课程管理
 const courseController = require('./mng/course.controller');
