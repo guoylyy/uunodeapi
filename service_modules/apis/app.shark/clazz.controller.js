@@ -77,7 +77,7 @@ pub.queryUserTasks = (req, res) => {
         _.each(todayCheckins, (checkin)=>{
           let clazzId = _.pick(checkin, 'clazz', null);
           if(!_.isNil(clazzId)){
-            checkinClazzs.push(clazzId);
+            checkinClazzs.push(clazzId['clazz']);
           }
         });
 
@@ -85,8 +85,9 @@ pub.queryUserTasks = (req, res) => {
 
         //加入是否已经打卡的选项
         _.each(tasks, (task)=>{
-          let clazz = _.pick(task, 'clazz');
-          if(clazz in checkinClazzs){
+          let clazz = _.pick(task, 'clazzId');
+          let id = clazz['clazzId'];
+          if(_.indexOf(checkinClazzs, id) >= 0){
             task['hasFinished'] = true;
           }else{
             task['hasFinished'] = false;
