@@ -89,8 +89,8 @@ pub.updateClazzConfigurationBodySchema = Joi.object().keys({
   startHour: Joi.number().integer().min(0).max(24),
   discount: Joi.number().min(0).default(1),
   teacherOpenIds: Joi.array().items(Joi.string().max(32)).unique(),
-  totalFee: Joi.number().integer().min(0),
-  originFee: Joi.number().integer().min(0),
+  totalFee: Joi.number().integer().min(0).required(),
+  originFee: Joi.number().integer().min(0).required(),
   eachDayBackFee: Joi.number().integer().min(0),
   priceList: Joi.array().items(Joi.object().keys({
     name: Joi.string().max(32).required(),
