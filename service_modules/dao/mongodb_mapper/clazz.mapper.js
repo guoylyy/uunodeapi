@@ -14,8 +14,8 @@ const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   'name', 'description', 'status', 'banner', 'smallBanner', 'teacherHead', 'bindTeacherId', 'tags',
   'startDate', 'endDate', 'author', 'updatedAt', 'clazzType', 'isShow', 'isHot',
   'configuration.clazzType', 'configuration.taskCount', 'configuration.startHour', 'configuration.endHour', 'configuration.hasTheOneFeedback',
-  'configuration.strategyLink','configuration.promotionOffer', 'configuration.totalFee', 'configuration.originFee', 'configuration.priceList',
-    'configuration.robot', 'configuration.eachDayBackFee'
+  'configuration.strategyLink','configuration.promotionOffer', 'configuration.totalFee', 'configuration.originFee',
+  'configuration.priceList', 'configuration.robot', 'configuration.eachDayBackFee'
 ]);
 
 const QUERY_SORT_BY = queryUtil.disposeSortBy([{ column: 'updatedAt', isDescending: true }]);

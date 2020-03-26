@@ -126,14 +126,14 @@ pub.preloadClazzItem = (req, res, next) => {
 
         let bindTeacherId = clazzItem.bindTeacherId;
         let bindTeacherPromise = {};
-        if(!_.isNil(bindTeacherId)){
-          bindTeacherPromise =  clazzTeacherService.fetchClazzTeacherById(bindTeacherId);
+        if (!_.isNil(bindTeacherId)) {
+          bindTeacherPromise = clazzTeacherService.fetchClazzTeacherById(bindTeacherId);
         }
         req.__CURRENT_CLAZZ_ACCOUNT = clazzAccountItem;
-        return Promise.all([clazzItem,bindTeacherPromise]);
+        return Promise.all([clazzItem, bindTeacherPromise]);
       })
-      .then(([clazzFinalItem, clazzTeacherItem])=>{
-        clazzFinalItem['bindTeacher'] =_.pick(clazzTeacherItem, ['id','name','headImgUrl','tags','description','gender'])
+      .then(([clazzFinalItem, clazzTeacherItem]) => {
+        clazzFinalItem['bindTeacher'] = _.pick(clazzTeacherItem, ['id', 'name', 'headImgUrl', 'tags', 'description', 'gender'])
         req.__CURRENT_CLAZZ = clazzFinalItem;
 
         next();
@@ -366,7 +366,7 @@ pub.preloadFeedbackItem = (req, res, next) => {
 pub.preloadClazzActivityItem = (req, res, next) => {
   const activityId = config.ACTIVITY_CONFIG.MORNING_CALL.id,
       currentUserId = req.__CURRENT_USER.id;
-  const activityConfig = _.find(config.ACTIVITY_CONFIG, { id: activityId });
+  const activityConfig = _.find(config.ACTIVITY_CONFIG, {id: activityId});
   const activityVersion = _.get(activityConfig, 'version', null);
 
   debug(activityConfig);
@@ -398,7 +398,7 @@ pub.preloadClazzActivityItem = (req, res, next) => {
             activityAccountItem = results[2];
 
         // 如果班级不存在，则报NOT FOUND
-        if (_.isNil(clazzItem) ) {// || clazzItem.clazzType !== enumModel.clazzTypeEnum.PROMOTION.key) {
+        if (_.isNil(clazzItem)) {// || clazzItem.clazzType !== enumModel.clazzTypeEnum.PROMOTION.key) {
           winston.error('活动 %s 不存在！！！', activityId);
           return apiRender.renderNotFound(res);
         }
@@ -531,7 +531,7 @@ pub.preloadTargetUserClazzActivityAccountItem = (req, res, next) => {
           return null;
         }
 
-        const activityConfig = _.find(config.ACTIVITY_CONFIG, { id: activityId });
+        const activityConfig = _.find(config.ACTIVITY_CONFIG, {id: activityId});
         debug(activityConfig);
 
         // 获取班级账户信息
