@@ -127,7 +127,7 @@ const postTemplateWithToken = (template, token, resend, clazzId, userId, postId)
 
         return resolve(false);
       } else if (response.body && response.body.errcode != 0) {
-        winston.error('[push_alert_error]: %s', template.touser);
+        winston.error('[push_alert_error]: %s', response.body);
 
         if (resend === true) {
           // 保存日志

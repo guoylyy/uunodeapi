@@ -148,16 +148,15 @@ pub.pushPost = (clazzId, postId) => {
             postTarget = postItem.target;
 
         // 极光推送
-        // todo 长期班需处理
-        jpushComponent.pushClazzTask(
-            clazzId,
-            postType,
-            postTarget,
-            postItem.title,
-            postItem.id,
-            `${ clazzItem.name } 新的挑战开始了，快快完成任务吧。(任务完成后记得点打卡哦)\n平庸，就是失去追求卓越信念的那个瞬间。今日再接再厉！！快快点击【详情】进入今日任务开启新的征程。`
-            )
-            .catch(winston.error);
+        // jpushComponent.pushClazzTask(
+        //     clazzId,
+        //     postType,
+        //     postTarget,
+        //     postItem.title,
+        //     postItem.id,
+        //     `${ clazzItem.name } 新的挑战开始了，快快完成任务吧。(任务完成后记得点打卡哦)\n平庸，就是失去追求卓越信念的那个瞬间。今日再接再厉！！快快点击【详情】进入今日任务开启新的征程。`
+        //     )
+        //     .catch(winston.error);
 
         // todo 提取为统一方法
         switch (postType) {
