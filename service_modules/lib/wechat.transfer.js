@@ -299,8 +299,8 @@ const postRequestWithCert = (url, body, parseErrorHandler) => {
   debug(url);
   debug(body);
 
-  winston.log('Cert', WITHDRAW_CONFIG.cert);
-  winston.log('Cert_key', WITHDRAW_CONFIG.cert_key);
+  // winston.log('Cert', WITHDRAW_CONFIG.cert);
+  // winston.log('Cert_key', WITHDRAW_CONFIG.cert_key);
 
   return new Promise(
       (resolve, reject) => {
