@@ -150,15 +150,13 @@ pub.fetchClazzTaskItem = (req, res) => {
               // 设置author
               pickedTaskItem.author = _.get(req.__CURRENT_CLAZZ, 'author', taskItem.author);
               // 设置targetDate
-              pickedTaskItem.targetDate = moment(_.get(postItem, 'targetDate', taskItem.createdAt)).format('YYYY-MM-DD');
+              pickedTaskItem.targetDate = moment(_.get(postItem, 'targetDate', new Date())).format('YYYY-MM-DD');
               // 设置内容列表
-
               pickedTaskItem.introductions =_.filter(introductionList, (introduction) => {
                 if(introduction.type != enumModel.clazzTaskIntroductionTypeEnum.USER_SHARE.key){
                     return introduction;
                 }
               });
-
               // 设置素材列表
               pickedTaskItem.materials = _.map(taskItem.materials, (material) => _.pick(material, ['id', 'title', 'type', 'url']));
 
