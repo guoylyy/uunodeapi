@@ -139,13 +139,17 @@ pub.fetchClazzTaskItem = (req, res) => {
             (introductionItem) => taskUtil.parseHtmlToListPromise(introductionItem.content)
                 .then((introductionContent) => ({
                   type: introductionItem.type,
-                  content: introductionContent
+                  content: introductionItem.content
                 }))
         );
 
         return Promise.all(parseIntroductionPromiseList)
             .then((introductionList) => {
               const pickedTaskItem = _.pick(taskItem, ['id', 'title']);
+
+              // 默认是V1版本的Type
+              // 最新版本的是V2
+              pickedTaskItem.taskType = _.get(taskItem, 'taskType', 'V1');
 
               // 设置author
               pickedTaskItem.author = _.get(req.__CURRENT_CLAZZ, 'author', taskItem.author);
@@ -157,6 +161,7 @@ pub.fetchClazzTaskItem = (req, res) => {
                     return introduction;
                 }
               });
+
               // 设置素材列表
               pickedTaskItem.materials = _.map(taskItem.materials, (material) => _.pick(material, ['id', 'title', 'type', 'url']));
 

@@ -71,6 +71,7 @@ pub.changeAccountClazzBodySchema = Joi.object().keys({
 pub.editClazzTaskItemBodySchema = Joi.object().keys({
   title: Joi.string().max(64).required(),
   coverPic: Joi.string().empty(''),
+  taskType:Joi.string().default('V1'),
   shareType: Joi.string().max(64).empty(''),
   teacher:Joi.object().keys(
       {

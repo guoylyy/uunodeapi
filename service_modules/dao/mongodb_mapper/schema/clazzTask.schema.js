@@ -16,6 +16,7 @@ let introductionTypeEnum = _.keys(enumModel.clazzTaskIntroductionTypeEnum);
 let clazzTaskSchema = new Schema({
   title: { type: String, required: true },
   author: { type: String, required: true },
+  taskType: {typee: String},
   introductions: [{
     content: { type: String, trim: true },
     type: { type: String, required: true, enum: introductionTypeEnum },

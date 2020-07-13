@@ -11,10 +11,10 @@ const queryUtil = require('../util/queryUtil');
 const mongoUtil = require('../util/mongoUtil');
 
 const QUERY_SAFE_PARAMS = ['clazz', '_id', 'targetDate', 'dayNumber', 'title', 'isDelete'];
-const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn(['title', 'author', 'teacher', 'shareType', 'coverPic', 'targetDate', 'dayNumber', 'materials', 'updatedAt', 'introductionMaterialList']);
+const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn(['title', 'author','taskType', 'teacher', 'shareType', 'coverPic', 'targetDate', 'dayNumber', 'materials', 'updatedAt', 'introductionMaterialList']);
 const QUERY_ORDER_BY = queryUtil.disposeSortBy([{ column: 'updatedAt', isDescending: true }]);
 // 限制可更新的字段
-const UPDATE_SAFE_PARAM_LIST = ['title', 'author','coverPic', 'shareType', 'teacher', 'materials', 'introductions', 'introductionMaterialList'];
+const UPDATE_SAFE_PARAM_LIST = ['title', 'author','taskType', 'coverPic', 'shareType', 'teacher', 'materials', 'introductions', 'introductionMaterialList'];
 
 const pub = {};
 

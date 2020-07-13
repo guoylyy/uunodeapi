@@ -118,7 +118,7 @@ pub.fetchClazzTask = (req, res) => {
       .then((queryParam) => {
         debug(queryParam);
         // 筛选数据
-        let pickedTaskItem = _.pick(req.__CURRENT_CLAZZ_TASK, ['id', 'title', 'author','coverPic','shareType','teacher', 'dayNumber', 'targetDate', 'materials', 'introductions']);
+        let pickedTaskItem = _.pick(req.__CURRENT_CLAZZ_TASK, ['id', 'title', 'taskType', 'author','coverPic','shareType','teacher', 'dayNumber', 'targetDate', 'materials', 'introductions']);
 
         // 筛选素材
         pickedTaskItem.materials = _.map(pickedTaskItem.materials, (material) => _.pick(material, ['id', 'title', 'type', 'url', 'thumbnailUrl']));
