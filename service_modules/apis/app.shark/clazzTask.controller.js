@@ -139,7 +139,8 @@ pub.fetchClazzTaskItem = (req, res) => {
             (introductionItem) => taskUtil.parseHtmlToListPromise(introductionItem.content)
                 .then((introductionContent) => ({
                   type: introductionItem.type,
-                  content: introductionItem.content
+                  content: introductionContent,
+                  htmlContent: introductionItem.content
                 }))
         );
 
