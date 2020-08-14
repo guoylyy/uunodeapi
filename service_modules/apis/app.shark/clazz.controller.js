@@ -280,7 +280,8 @@ pub.fetchClazzPayment = (req, res) => {
         );
 
         return apiRender.renderBaseResult(res, {
-          clazz: apiUtil.pickClazzBasicInfo(currentClazzItem),                                         // 班级信息
+          clazz: apiUtil.pickClazzBasicInfo(currentClazzItem),
+          clazzConfiguration: _.pick(currentClazzItem,['configuration'],{}),                                         // 班级信息
           clazzAccount: _.pick(req.__CURRENT_CLAZZ_ACCOUNT, ['id', 'status', 'endDate'], null), // 班级账户信息
           priceList: clazzPriceList,                                                            // 账单列表
           promotionOffer: {
