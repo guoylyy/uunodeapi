@@ -94,11 +94,7 @@ pub.getUserBaseInfo = (req, res) => {
 
         //筛选需要的属性
         const pickedUserInfo = _.pick(currentUser, ['id', 'name', 'headImgUrl', 'sex', 'studentNumber', 'birthday', 'openId']);
-        // 处理已设置别名的情况
-        const realName = _.get(currentUser, ['realName']);
-        if (!_.isNil(realName) && realName !== '') {
-          pickedUserInfo.name = realName;
-        }
+        
         // 处理生日日期
         if (pickedUserInfo.birthday) {
           pickedUserInfo.birthday = moment(pickedUserInfo.birthday).format('YYYY-MM-DD');
