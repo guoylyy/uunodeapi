@@ -24,7 +24,8 @@ pub.userLoginBodySchema = Joi.object().keys({
  */
 pub.userInfoUpdateSchema = Joi.object().keys({
   sex: Joi.string().valid(_.keys(enumModel.genderEnum)),
-  headImgUrl: Joi.string().max(256)
+  headImgUrl: Joi.string().max(256),
+  name:Joi.string().max(32),
 });
 
 /**
