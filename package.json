@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "amrToMp3": "^1.0.8",
-    "bcrypt": "^3.0.5",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "bookshelf": "^0.14.2",
     "cache-manager": "^2.9.0",
