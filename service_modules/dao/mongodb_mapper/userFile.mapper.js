@@ -11,10 +11,10 @@ const queryUtil = require('../util/queryUtil');
 const mongoUtil = require('../util/mongoUtil');
 
 const QUERY_SAFE_PARAM_LIST = ['userId', 'upTime'];
-const DEFAULT_SELECT_FIELDS = queryUtil.disposeSelectColumn(['upTime', 'fileType', 'fileName', 'hasCheckined', 'fileUrl', 'fileKey']);
+const DEFAULT_SELECT_FIELDS = queryUtil.disposeSelectColumn(['upTime', 'fileType', 'fileName', 'hasCheckined', 'fileUrl', 'fileKey', 'duration']);
 const DEFAULT_SORT_BY = queryUtil.disposeSortBy([{ column: 'upTime', isDescending: true }]);
 // 限制可更新的字段
-const UPDATE_SAFE_FIELD_LIST = ['fileUrl', 'fileName', 'attach'];
+const UPDATE_SAFE_FIELD_LIST = ['fileUrl', 'fileName', 'attach', 'duration'];
 
 const pub = {};
 

@@ -23,7 +23,8 @@ let userFileSchema = new Schema({
   fileUrl: String, // 可访问url
   attach: { type: Schema.Types.ObjectId, ref: 'Attach' },
   hasCheckined: { type: Boolean, require: true },
-  userId: { type: Number, required: true }
+  userId: { type: Number, required: true },
+  duration: {type: Number, required: false}
 });
 
 // create a schema named as UserFile, and collection as UserFile

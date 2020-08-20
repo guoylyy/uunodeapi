@@ -261,7 +261,9 @@ pub.queryCheckinStatus = (req, res) => {
  */
 pub.createClazzCheckin = (req, res) => {
   let globalCheckinItem,     // 打卡条目
-      globalIsCreateCheckin; // 是否为新建打卡, false代表为补打卡
+      globalIsCreateCheckin,
+      fileId,
+      fileDuration; // 是否为新建打卡, false代表为补打卡
 
   const PREVIOUS_ADD_CHECKIN_COUNT = req.__CURRENT_CLAZZ_ACCOUNT.addCheckinCount || 0;
 
@@ -312,6 +314,14 @@ pub.createClazzCheckin = (req, res) => {
           ubandCardPromise = Promise.resolve(req.__CURRENT_CLAZZ_ACCOUNT);
         }
         const checkinListPromise = checkinService.queryCheckinList(userItem.id, clazzItem.id, startDate, endDate);
+
+        //获取列表中所有需要记录的时间的文件（目前仅仅支持一个或0个）
+        let durations = checkinItem.durations;
+        if (_.size(durations) > 0){ //目前仅仅支持一个，多个取第一个
+          fileId = durations[0].fileId;
+          fileDuration = durations[0].fileDuration;
+        }
+
         return Promise.all([checkinListPromise, ubandCardPromise]);
       })
       .then(([checkinList, cardItems]) => {
@@ -358,7 +368,14 @@ pub.createClazzCheckin = (req, res) => {
         // 打卡
         let createCheckinPromise = checkinService.createClazzCheckinItem(req.__CURRENT_USER.id, req.__CURRENT_CLAZZ.id, globalCheckinItem);
 
-        return Promise.all([createCheckinPromise, updateCheckinCountPromise, updateCardPromise])
+        // 更新文件duration
+
+        let updateDurationPromise = null;
+        if(!_.isNil(fileId)){
+          updateDurationPromise = userFileService.updateUserFileItem(fileId, {'duration': fileDuration});
+        }
+
+        return Promise.all([createCheckinPromise, updateCheckinCountPromise, updateCardPromise, updateDurationPromise])
             .catch((error) => {
               winston.error('用户 %s 打卡失败', req.__CURRENT_USER.id);
 

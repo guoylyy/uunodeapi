@@ -51,7 +51,11 @@ pub.createCheckinBodySchema = Joi.object().keys({
   remark: Joi.string().default(""),
   title: Joi.string().default(""),
   taskId: Joi.string(),
-  isPublic: Joi.bool().default(false)
+  isPublic: Joi.bool().default(false),
+  durations: Joi.array().items(Joi.object().keys({
+    fileId: commonSchema.mongoIdSchema, //打卡字段中的文件ID
+    fileDuration: Joi.number().default(0), //打卡文件的时长
+  }))
 });
 
 /**
