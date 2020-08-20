@@ -367,10 +367,8 @@ pub.createClazzCheckin = (req, res) => {
 
         // 打卡
         let createCheckinPromise = checkinService.createClazzCheckinItem(req.__CURRENT_USER.id, req.__CURRENT_CLAZZ.id, globalCheckinItem);
-
         // 更新文件duration
-
-        let updateDurationPromise = null;
+        let updateDurationPromise = Promise.resolve(null);
         if(!_.isNil(fileId)){
           updateDurationPromise = userFileService.updateUserFileItem(fileId, {'duration': fileDuration});
         }
