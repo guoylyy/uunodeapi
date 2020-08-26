@@ -129,7 +129,6 @@ router.get('/clazz/tasks', clazzApis.queryUserTasks);
 // @如果是开放的课程需要加入的人数
 // @如果是非开放的课程，不用计算
 router.get('/clazzes', clazzApis.queryClazzList);
-//router.get('/openClazzes',);
 router.get('/clazzSummary', clazzApis.clazzSummary);
 router.get('/clazzes/checkin_days', checkinApis.getUserCheckinDays);
 /***********************************************************************************************************************

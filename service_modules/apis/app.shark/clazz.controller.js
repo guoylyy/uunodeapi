@@ -113,28 +113,25 @@ pub.queryUserTasks = (req, res) => {
 pub.clazzSummary = (req, res) => {
   //1.检查用户输入
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
-      .then(() => {
-        let summary = enumModel.clazzClassifyTypeEnum;
-        return apiRender.renderBaseResult(res, summary);
-      })
-      .catch(req.__ERROR_HANDLER);
-};
-
-
-/**
- * 列出相应的班级
- *  - 根据传输的状态拉出班级
- */
-pub.openClazzes = (req, res) => {
-  //1.检查用户输入
-  return schemaValidator.validatePromise(clazzSchema.clazzClassifyQuerySchema, req.query)
       .then((queryParams) => {
-        debug(queryParams);
-
-        let countPromise = cacheWrapper.get('CLAZZ_USER_NUMBER');
-
-
-        return apiRender.renderBaseResult(res, {"clazzes": clazzes});
+        return clazzService.queryClazzes(enumModel.clazzStatusEnum.OPEN.key, null, null, null, null)
+            .then((clazzList) => {
+              let newClazzList = _.filter(clazzList, clazzUtil.checkIsClazzShow);
+              if (queryParams.isHost) {
+                newClazzList = _.filter(clazzList, clazzUtil.checkIsClazzHot);
+              }
+              return newClazzList;
+            });
+      }).then((clazzList) => {
+        let summary = enumModel.clazzClassifyTypeEnum;
+        _.each(clazzList, (clazz) => {
+          let type = clazz.classifyType;
+          if (!_.isNil(summary[type])) {
+            summary[type]['number'] = summary[type]['number'] + 1;
+            summary['ALL']['number'] = summary['ALL']['number'] + 1;
+          }
+        })
+        return apiRender.renderBaseResult(res, summary);
       })
       .catch(req.__ERROR_HANDLER);
 };
