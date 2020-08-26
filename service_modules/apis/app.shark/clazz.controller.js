@@ -58,7 +58,7 @@ pub.queryUserTasks = (req, res) => {
         _.each(results, (task) => {
           clazzIds.push(task.clazzId);
           let key = task.clazzId + '-' + task.target;
-          if(!_.includes(keys, key)){
+          if (!_.includes(keys, key)) {
             posts.push(task);
             keys.push(key);
           }
@@ -66,17 +66,17 @@ pub.queryUserTasks = (req, res) => {
 
         let clazzsPromise = clazzService.queryClazzes(null, clazzIds, null, null, null);
         let clazzCountPromise = clazzAccountService.countUserJoinedPromotionClazzes(req.__CURRENT_USER.id);
-        let clazzCheckinTodayPromise  = checkinService.queryCheckinList(req.__CURRENT_USER.id, null, moment().startOf('day').toDate(),
-            moment().endOf('day').toDate(),null);
+        let clazzCheckinTodayPromise = checkinService.queryCheckinList(req.__CURRENT_USER.id, null, moment().startOf('day').toDate(),
+            moment().endOf('day').toDate(), null);
         return Promise.all([posts, clazzsPromise, clazzCountPromise, clazzCheckinTodayPromise]);
       })
       .then(([tasks, clazzes, count, todayCheckins]) => {
 
         let checkinClazzs = [];
         // 获取今天已打卡的列表
-        _.each(todayCheckins, (checkin)=>{
+        _.each(todayCheckins, (checkin) => {
           let clazzId = _.pick(checkin, 'clazz', null);
-          if(!_.isNil(clazzId)){
+          if (!_.isNil(clazzId)) {
             checkinClazzs.push(clazzId['clazz']);
           }
         });
@@ -84,21 +84,22 @@ pub.queryUserTasks = (req, res) => {
         winston.info('已经打卡的班级列表', checkinClazzs);
 
         //加入是否已经打卡的选项
-        _.each(tasks, (task)=>{
+        _.each(tasks, (task) => {
           let clazz = _.pick(task, 'clazzId');
           let id = clazz['clazzId'];
-          if(_.indexOf(checkinClazzs, id) >= 0){
+          if (_.indexOf(checkinClazzs, id) >= 0) {
             task['hasFinished'] = true;
-          }else{
+          } else {
             task['hasFinished'] = false;
           }
         });
 
-        return apiRender.renderBaseResult(res, {'todayTasks': tasks,
+        return apiRender.renderBaseResult(res, {
+          'todayTasks': tasks,
           'clazzList': clazzes,
           'todayCheckins': todayCheckins,
           'date': moment().toDate(),
-          'clazzCount':count
+          'clazzCount': count
         });
       })
       .catch(req.__ERROR_HANDLER); // 错误处理
@@ -109,12 +110,12 @@ pub.queryUserTasks = (req, res) => {
  *  默认的状态为 OPEN
  *  通过传输分类
  */
-pub.clazzSummary = (req, res) =>{
+pub.clazzSummary = (req, res) => {
   //1.检查用户输入
   return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
       .then(() => {
         let summary = enumModel.clazzClassifyTypeEnum;
-        return apiRender.renderBaseResult(res, {"summary": summary});
+        return apiRender.renderBaseResult(res, summary);
       })
       .catch(req.__ERROR_HANDLER);
 };
@@ -124,14 +125,13 @@ pub.clazzSummary = (req, res) =>{
  * 列出相应的班级
  *  - 根据传输的状态拉出班级
  */
-pub.openClazzes = (req, res) =>{
+pub.openClazzes = (req, res) => {
   //1.检查用户输入
   return schemaValidator.validatePromise(clazzSchema.clazzClassifyQuerySchema, req.query)
       .then((queryParams) => {
         debug(queryParams);
 
         let countPromise = cacheWrapper.get('CLAZZ_USER_NUMBER');
-
 
 
         return apiRender.renderBaseResult(res, {"clazzes": clazzes});
@@ -401,7 +401,7 @@ pub.fetchClazzPayment = (req, res) => {
 
         return apiRender.renderBaseResult(res, {
           clazz: apiUtil.pickClazzBasicInfo(currentClazzItem),
-          clazzConfiguration: _.pick(currentClazzItem,['configuration'],{}),                                         // 班级信息
+          clazzConfiguration: _.pick(currentClazzItem, ['configuration'], {}),                                         // 班级信息
           clazzAccount: _.pick(req.__CURRENT_CLAZZ_ACCOUNT, ['id', 'status', 'endDate'], null), // 班级账户信息
           priceList: clazzPriceList,                                                            // 账单列表
           promotionOffer: {

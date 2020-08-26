@@ -119,7 +119,7 @@ pub.pickClazzTaskBasicInfo = (taskItem) => {
     return taskItem;
   }
 
-  return _.pick(taskItem, ['id', 'title', 'stickied', 'date', 'postType', 'coverPic', 'target', 'introductionMaterialList']);
+  return _.pick(taskItem, ['id', 'title', 'stickied', 'date', 'postType', 'coverPic', 'target', 'introductionMaterialList', 'canTry']);
 };
 
 /**
