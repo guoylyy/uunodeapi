@@ -58,7 +58,7 @@ const pub = {};
  *
  * @returns {Promise|*|Promise.<TResult>}
  */
-pub.queryClazzes = (status, clazzIdList, teacherOpenId, clazzType, clazzName) => {
+pub.queryClazzes = (status, clazzIdList, teacherOpenId, clazzType, clazzName, classifyType) => {
   debug(status);
   debug(clazzIdList);
   debug(teacherOpenId);
@@ -90,6 +90,11 @@ pub.queryClazzes = (status, clazzIdList, teacherOpenId, clazzType, clazzName) =>
   if (teacherOpenId) {
     queryParam['configuration.teacherOpenIds'] = teacherOpenId;
   }
+
+  if(classifyType){
+    queryParam['classifyType'] = classifyType;
+  }
+
   if (_.isArray(clazzType) || !_.isNil(enumModel.getEnumByKey(clazzType, enumModel.clazzTypeEnum))) {
     queryParam['clazzType'] = clazzType;
   }

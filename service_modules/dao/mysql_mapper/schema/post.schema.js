@@ -19,6 +19,7 @@ const post = baseSchema.BaseBookshelfModel.extend({
     target: Joi.string().trim().max(1024).required(),
     result: Joi.string().trim().max(65535),
     stickied: Joi.boolean().default(false),
+    canTry:Joi.boolean().default(false),
   }),
 
   updateSchema: baseSchema.baseUpdateSchema.keys({

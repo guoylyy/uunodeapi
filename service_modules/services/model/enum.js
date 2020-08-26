@@ -2441,6 +2441,33 @@ const courseWareTypeEnum = {
   }
 }
 
+
+/**
+ * 课程分类
+ */
+const clazzClassifyTypeEnum = {
+  'KOUYI':{
+    key:'KOUYI',
+    name:'口译',
+    number:0
+  },
+  'BIYI':{
+    key:'BIYI',
+    name:'笔译',
+    number:0
+  },
+  'SPEAKING':{
+    key:'SPEAKING',
+    name:'口语',
+    number:0
+  },
+  'LISTENING':{
+    key:'LISTENING',
+    name:'听力',
+    number:0
+  }
+};
+
 exports.courseWareTypeEnum = courseWareTypeEnum
 
 // functions
@@ -2451,6 +2478,9 @@ exports.getEnumByKey = function getEnumByKey (key, EnumObj) {
 
   return null;
 };
+
+//update at 2020-08-26
+exports.clazzClassifyTypeEnum = clazzClassifyTypeEnum;
 
 //update at 2019-12-23
 exports.userCertificationEnum = userCertificationEnum;

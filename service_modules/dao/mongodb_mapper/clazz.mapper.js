@@ -9,10 +9,10 @@ const debug = require('debug')('mapper');
 const clazzSchema = require('./schema/clazz.schema');
 const queryUtil = require('../util/queryUtil');
 
-const QUERY_SAFE_PARAM_LIST = ['status', '_id', 'configuration.teacherOpenIds', 'clazzType', 'startDate', 'endDate', 'name'];
+const QUERY_SAFE_PARAM_LIST = ['status', '_id', 'configuration.teacherOpenIds', 'clazzType', 'startDate', 'endDate', 'name','classifyType'];
 const QUERY_SELECT_COLUMNS = queryUtil.disposeSelectColumn([
   'name', 'description', 'status', 'banner', 'smallBanner', 'teacherHead', 'bindTeacherId', 'tags',
-  'startDate', 'endDate', 'author', 'updatedAt', 'clazzType', 'isShow', 'isHot',
+  'startDate', 'endDate', 'author', 'updatedAt', 'clazzType', 'isShow', 'isHot', 'classifyType',
   'configuration.clazzType', 'configuration.taskCount', 'configuration.startHour', 'configuration.endHour', 'configuration.hasTheOneFeedback',
   'configuration.strategyLink','configuration.promotionOffer', 'configuration.totalFee', 'configuration.originFee',
   'configuration.priceList', 'configuration.robot', 'configuration.eachDayBackFee'

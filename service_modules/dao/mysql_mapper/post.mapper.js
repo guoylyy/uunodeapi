@@ -58,7 +58,7 @@ const parseFields = (postItem) => {
 let pub = {};
 
 const QUERY_SAFE_PARAMS = ['id', 'clazzId', 'status', 'targetDate', 'title'];
-const DEFAULT_SELECT_COLUMNS = ['id', 'clazzId', 'status', 'title', 'postType', 'targetDate', 'target', 'result', 'stickied'];
+const DEFAULT_SELECT_COLUMNS = ['id', 'clazzId', 'status', 'title', 'postType', 'targetDate', 'target', 'result', 'stickied', 'canTry'];
 /**
  * 分页查询推送任务列表
  *

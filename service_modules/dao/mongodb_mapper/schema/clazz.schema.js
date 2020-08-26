@@ -66,7 +66,8 @@ let clazzSchema = new Schema({
     }
   },
   isShow: { type: Boolean, default: true },
-  isHot: { type: Boolean, default: false }
+  isHot: { type: Boolean, default: false },
+  classifyType: { type: String, required: false},
 });
 
 // create a schema named as Clazz, and collection as Clazz

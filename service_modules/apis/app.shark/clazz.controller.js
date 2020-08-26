@@ -104,6 +104,41 @@ pub.queryUserTasks = (req, res) => {
       .catch(req.__ERROR_HANDLER); // 错误处理
 };
 
+/**
+ * 列出班级的统计信息
+ *  默认的状态为 OPEN
+ *  通过传输分类
+ */
+pub.clazzSummary = (req, res) =>{
+  //1.检查用户输入
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then(() => {
+        let summary = enumModel.clazzClassifyTypeEnum;
+        return apiRender.renderBaseResult(res, {"summary": summary});
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
+
+/**
+ * 列出相应的班级
+ *  - 根据传输的状态拉出班级
+ */
+pub.openClazzes = (req, res) =>{
+  //1.检查用户输入
+  return schemaValidator.validatePromise(clazzSchema.clazzClassifyQuerySchema, req.query)
+      .then((queryParams) => {
+        debug(queryParams);
+
+        let countPromise = cacheWrapper.get('CLAZZ_USER_NUMBER');
+
+
+
+        return apiRender.renderBaseResult(res, {"clazzes": clazzes});
+      })
+      .catch(req.__ERROR_HANDLER);
+};
+
 
 /**
  * 根据班级状态分页列出课程
@@ -126,7 +161,7 @@ pub.queryClazzList = (req, res) => {
           req.__MODULE_LOGGER('获取报名课程列表', queryParams);
 
           // 如果只看开放的课程，直接返回了
-          let clazzListPromise = clazzService.queryClazzes(queryParams.status, null, null, null)
+          let clazzListPromise = clazzService.queryClazzes(queryParams.status, null, null, null, null, queryParams.classifyType)
               .then((clazzList) => {
                 let newClazzList = _.filter(clazzList, clazzUtil.checkIsClazzShow);
                 if (queryParams.isHost) {

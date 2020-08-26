@@ -18,7 +18,15 @@ const pub = {};
 pub.clazzQuerySchema = Joi.object().keys({
   status: Joi.string().trim().required().valid(_.keys(enumModel.clazzStatusEnum)),
   isCheckinable: Joi.boolean().empty('').default(false),
-  isHot: Joi.boolean().empty('').default(null)
+  isHot: Joi.boolean().empty('').default(null),
+  classifyType: Joi.string().trim().empty('').default(null),
+});
+
+/**
+ * 查看分类课程 query schema
+ */
+pub.clazzClassifyQuerySchema = Joi.object().keys({
+  classifyType:  Joi.string().required()
 });
 
 /*
