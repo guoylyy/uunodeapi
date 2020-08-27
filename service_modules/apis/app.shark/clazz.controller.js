@@ -130,8 +130,12 @@ pub.clazzSummary = (req, res) => {
             summary[type]['number'] = summary[type]['number'] + 1;
             summary['ALL']['number'] = summary['ALL']['number'] + 1;
           }
-        })
-        return apiRender.renderBaseResult(res, summary);
+        });
+        let results = [];
+        _.mapValues(summary, (value)=>{
+          results.push(value)
+        });
+        return apiRender.renderBaseResult(res, results);
       })
       .catch(req.__ERROR_HANDLER);
 };

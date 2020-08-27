@@ -33,10 +33,10 @@ router.post('/sms/auth', accountLoginApi.authWithSmsCode); //短信验证码登�
 
 const paymentCallback = require('./app.shark/payment.callback.controller');
 router.post('/wechat/payCallback', commonMiddleware.wechatXmlParser, paymentCallback.wechatPaymentCallbackHandler);
-router.post('/alipay/callback', bodyParser.urlencoded({ extended: false }), paymentCallback.alipayPaymentHandler);
+router.post('/alipay/callback', bodyParser.urlencoded({extended: false}), paymentCallback.alipayPaymentHandler);
 
 const qiniuApis = require('./app.shark/qiniu.controller');
-router.post('/qiniu/callback', bodyParser.urlencoded({ extended: false }), qiniuApis.qiniuCallbackHandler);
+router.post('/qiniu/callback', bodyParser.urlencoded({extended: false}), qiniuApis.qiniuCallbackHandler);
 
 const basicApis = require('./app.shark/basic.controller');
 router.get('/version', basicApis.fetchAppVersion);
@@ -53,7 +53,6 @@ router.put('/account/password/sms', accountRegisterApi.checkRestPasswordCode);
 router.put('/account/password', accountRegisterApi.resetAccountPassword);
 
 // 获取用户单词本的接口
-
 
 
 /***********************************************************************************************************************
@@ -117,10 +116,10 @@ router.delete('/account/ubandCoin', ubandCoinApis.paidClazzItem);
 
 const clazzApis = require('./app.shark/clazz.controller');
 const checkinApis = require('./app.shark/clazzCheckin.controller');
+const clazzTaskApis = require('./app.shark/clazzTask.controller');
 
 router.get('/advertise/banners', clazzApis.getAppActiveBanner);
 router.get('/advertise/hostClazzes', clazzApis.getHotClazzList);
-
 
 //获取当天课程的内容
 router.get('/clazz/tasks', clazzApis.queryUserTasks);
@@ -131,11 +130,14 @@ router.get('/clazz/tasks', clazzApis.queryUserTasks);
 router.get('/clazzes', clazzApis.queryClazzList);
 router.get('/clazzSummary', clazzApis.clazzSummary);
 router.get('/clazzes/checkin_days', checkinApis.getUserCheckinDays);
+
 /***********************************************************************************************************************
  * 定义req.__CURRENT_CLAZZ
  **********************************************************************************************************************/
 router.use('/clazz/:clazzId', h5MiddleWare.preloadClazzItem);
 
+//获取试听课
+router.get('/clazz/:clazzId/clazzTryTask/:taskId', clazzTaskApis.fetchClazzTaskItem);
 
 router.get('/clazz/:clazzId/strategy', h5MiddleWare.preloadClazzIntroductionItem, clazzApis.fetchClazzStrategyIntroduction);
 router.get('/clazz/:clazzId/introduction', h5MiddleWare.preloadClazzIntroductionItem, clazzApis.fetchClazzIntroduction);
@@ -149,7 +151,6 @@ router.post('/clazz/:clazzId/payment', clazzApis.preProcessClazzPayment);
 router.use('/clazz/:clazzId', h5MiddleWare.checkHasJoinClass);
 
 // 课程任务相关API
-const clazzTaskApis = require('./app.shark/clazzTask.controller');
 router.get('/clazz/:clazzId/tasks', clazzTaskApis.queryClazzTaskList);
 router.get('/clazz/:clazzId/task/:taskId', clazzTaskApis.fetchClazzTaskItem);
 
@@ -162,7 +163,7 @@ router.get('/clazz/:clazzId/luckyCheckins', checkinApis.fetchClazzLuckyCheckins)
 
 //给学员打卡点赞和取消赞
 router.post('/clazz/:clazzId/checkin/:checkinId/like', middleware.preloadCheckinItem, checkinApis.like);
-router.delete('/clazz/:clazzId/checkin/:checkinId/like', middleware.preloadCheckinItem,  checkinApis.cancelLike);
+router.delete('/clazz/:clazzId/checkin/:checkinId/like', middleware.preloadCheckinItem, checkinApis.cancelLike);
 //给学员打卡点踩和取消踩
 router.post('/clazz/:clazzId/checkin/:checkinId/dislike', middleware.preloadCheckinItem, checkinApis.dislike);
 router.delete('/clazz/:clazzId/checkin/:checkinId/dislike', middleware.preloadCheckinItem, checkinApis.cancelDislike);
