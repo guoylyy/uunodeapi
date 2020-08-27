@@ -317,7 +317,7 @@ pub.createClazzCheckin = (req, res) => {
 
         //获取列表中所有需要记录的时间的文件（目前仅仅支持一个或0个）
         let durations = checkinItem.durations;
-        if (_.size(durations) > 0){ //目前仅仅支持一个，多个取第一个
+        if (!_.isNil(durations) && _.size(durations) > 0){ //目前仅仅支持一个，多个取第一个
           fileId = durations[0].fileId;
           fileDuration = durations[0].fileDuration;
         }
