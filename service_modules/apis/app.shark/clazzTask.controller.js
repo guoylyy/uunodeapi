@@ -23,6 +23,29 @@ const taskUtil = require('../../services/util/task.util');
 const pub = {};
 
 /**
+ * 列出所有课程任务
+ * @param req
+ * @param res
+ */
+pub.queryClazzTryTasks = (req, res)=>{
+  const currentClazz = req.__CURRENT_CLAZZ;
+  return schemaValidator.validatePromise(commonSchema.emptySchema, req.query)
+      .then((queryParam) => {
+        req.__MODULE_LOGGER(`获取课程${ currentClazz }任务列表`, queryParam);
+        return clazzPostService.fetchClazzPostList(currentClazz);
+      }).then((postList)=>{
+        const stickiedGroupedPostMap = _.groupBy(postList, 'stickied');
+        debug(stickiedGroupedPostMap);
+
+        const stickiedPostList = stickiedGroupedPostMap[true];
+        const unStickiedPostList = stickiedGroupedPostMap[false];
+
+        return apiRender.renderBaseResult(res, _.extend(stickiedPostList,unStickiedPostList));
+      }).
+      catch(req.__ERROR_HANDLER); // 错误处理
+};
+
+/**
  * 列出课程任务列表
  *
  * @param req

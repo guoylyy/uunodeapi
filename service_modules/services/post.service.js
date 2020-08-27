@@ -20,6 +20,25 @@ const postMapper = require('../dao/mysql_mapper/post.mapper');
 const pub = {};
 
 /**
+ * 列出课程所有的任务
+ * @param clazzItem
+ */
+pub.fetchClazzPostList = (clazzItem) => {
+  // 参数检查
+  if (!_.isPlainObject(clazzItem)) {
+    winston.error('获取课程任务列表失败，参数错误！！！clazz: %j, clazzAccount: %j。', clazzItem, clazzAccountItem);
+    return Promise.reject(commonError.PARAMETER_ERROR());
+  }
+  const clazzId = clazzItem.id;
+  return postMapper.queryAllPosts(
+      {
+        clazzId: clazzId
+      }
+  );
+};
+
+
+/**
  * 列出学员课程任务
  *
  * @param clazzItem         clazz对象，至少有id, startDate, clazzType
@@ -57,11 +76,11 @@ pub.fetchUserClazzPostList = (clazzItem, clazzAccountItem) => {
   const queryAllClazzPostListPromise = postMapper.queryAllPosts(
       {
         clazzId: clazzId,
-        targetDate: { operator: '<=', value: nowMoment.toDate() }
+        targetDate: {operator: '<=', value: nowMoment.toDate()}
       }),
       queryClazzAccountRecordListPromise = (clazzType === enumModel.clazzTypeEnum.LONG_TERM.key)
-          ? clazzAccountRecordMapper.queryClazzAccountRecordList({ clazzAccountId: clazzAccountItem.id })
-          : Promise.resolve([{ startDate: null, endDate: null }]);
+          ? clazzAccountRecordMapper.queryClazzAccountRecordList({clazzAccountId: clazzAccountItem.id})
+          : Promise.resolve([{startDate: null, endDate: null}]);
 
   return Promise.all([queryAllClazzPostListPromise, queryClazzAccountRecordListPromise])
       .then((results) => {
@@ -103,7 +122,7 @@ pub.fetchUserTodayPostList = (userId) => {
         return postMapper.queryAllPosts(
             {
               clazzId: clazzIds,
-              targetDate: { operator: 'between', value: [todayStartDate, todayEndDate] }
+              targetDate: {operator: 'between', value: [todayStartDate, todayEndDate]}
             });
       });
 };
@@ -150,7 +169,7 @@ pub.listPagedPosts = (clazzId, pageNumber, pageSize, keyword) => {
   pageNumber = pageNumber || 1;
   pageSize = pageSize || 10;
 
-  let queryParam = { clazzId: clazzId };
+  let queryParam = {clazzId: clazzId};
   if (keyword && keyword !== '') {
     queryParam.keyword = keyword;
   }

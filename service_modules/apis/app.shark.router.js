@@ -137,7 +137,7 @@ router.get('/clazzes/checkin_days', checkinApis.getUserCheckinDays);
 router.use('/clazz/:clazzId', h5MiddleWare.preloadClazzItem);
 
 //获取试听课
-router.get('/clazz/:clazzId/clazzTryTasks', clazzTaskApis.queryClazzTaskList);
+router.get('/clazz/:clazzId/clazzTryTasks', clazzTaskApis.queryClazzTryTasks);
 router.get('/clazz/:clazzId/clazzTryTask/:taskId', clazzTaskApis.fetchClazzTaskItem);
 
 router.get('/clazz/:clazzId/strategy', h5MiddleWare.preloadClazzIntroductionItem, clazzApis.fetchClazzStrategyIntroduction);
