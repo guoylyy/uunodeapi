@@ -37,10 +37,12 @@ pub.queryClazzTryTasks = (req, res)=>{
         const stickiedGroupedPostMap = _.groupBy(postList, 'stickied');
         debug(stickiedGroupedPostMap);
 
-        const stickiedPostList = stickiedGroupedPostMap[true];
-        const unStickiedPostList = stickiedGroupedPostMap[false];
-
-        return apiRender.renderBaseResult(res, _.extend(stickiedPostList,unStickiedPostList));
+        let stickiedPostList = stickiedGroupedPostMap[true];
+        let unStickiedPostList = stickiedGroupedPostMap[false];
+        if(_.isNil(stickiedPostList)){
+          stickiedPostList = [];
+        }
+        return apiRender.renderBaseResult(res, _.extend(stickiedPostList, unStickiedPostList));
       }).
       catch(req.__ERROR_HANDLER); // 错误处理
 };
