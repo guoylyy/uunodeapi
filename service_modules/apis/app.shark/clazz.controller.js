@@ -123,7 +123,7 @@ pub.clazzSummary = (req, res) => {
               return newClazzList;
             });
       }).then((clazzList) => {
-        let summary = enumModel.clazzClassifyTypeEnum;
+        let summary = _.extend({},enumModel.clazzClassifyTypeEnum);
         _.each(clazzList, (clazz) => {
           let type = clazz.classifyType;
           if (!_.isNil(summary[type])) {
