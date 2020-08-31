@@ -27,6 +27,10 @@ let ubandCardQueryStatusEnum = {
     key: 'USED',
     name: '已使用'
   },
+  'EXPIRED': {
+    key: 'EXPIRED',
+    name: '过期的'
+  },
   'ALL':{
     key: 'ALL',
     name: '所有的'

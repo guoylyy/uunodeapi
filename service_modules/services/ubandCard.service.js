@@ -4,6 +4,7 @@ const _ = require('lodash');
 const debug = require('debug')('service');
 const winston = require('winston');
 const Promise = require('bluebird');
+const moment = require('moment');
 const enumModel = require('../../service_modules/services/model/enum');
 const queryModel = require("../../service_modules/services/model/queryEnum");
 const ubandCardMapper = require('../dao/mysql_mapper/ubandCard.mapper');
@@ -14,7 +15,7 @@ const pub = {};
  * 新建一个用户卡片
  * @param cardItem
  */
-pub.createUbandCard = (cardItem) =>{
+pub.createUbandCard = (cardItem) => {
   if (!_.isPlainObject(cardItem) || !_.isNil(cardItem.id)) {
     winston.error('创建卡片失败，参数错误！！！couponItem: %j', couponItem);
   }
@@ -28,16 +29,22 @@ pub.createUbandCard = (cardItem) =>{
  *   - 根据 status 获取
  */
 pub.queryUserAvailableCard = (userId, status) => {
-   let queryParams = {
-     'userId':userId,
-   }
-   if(status != queryModel.ubandCardQueryStatusEnum.ALL.key){
-     queryParams['status'] = status;
-   }
-   if(_.isNil(status)){
-     queryParams['status'] = queryModel.ubandCardQueryStatusEnum.AVAILABLE.key;
-   }
-   return ubandCardMapper.fetchAllByParam(queryParams);
+  let queryParams = {
+    'userId': userId,
+  };
+  if (status != queryModel.ubandCardQueryStatusEnum.ALL.key) {
+    queryParams['status'] = status;
+  }
+  if (_.isNil(status)) {
+    queryParams['status'] = queryModel.ubandCardQueryStatusEnum.AVAILABLE.key;
+  }
+  let now = moment().format('YYYY-MM-DD HH:mm:ss');
+  if (status == queryModel.couponQueryStatusEnum.EXPIRED.key) {
+    queryParams['expireDate'] = {operator: '<', value: now};
+  } else if (status == queryModel.couponQueryStatusEnum.AVAILABLE.key) {
+    queryParams['expireDate'] = {operator: '>=', value: now};
+  }
+  return ubandCardMapper.fetchAllByParam(queryParams);
 };
 
 
