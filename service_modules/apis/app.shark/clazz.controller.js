@@ -124,6 +124,11 @@ pub.clazzSummary = (req, res) => {
             });
       }).then((clazzList) => {
         let summary = Object.assign({},enumModel.clazzClassifyTypeEnum);
+
+        _.mapValues(summary, (summ)=>{
+          summ['number'] = 0;
+        });
+
         _.each(clazzList, (clazz) => {
           let type = clazz.classifyType;
           if (!_.isNil(summary[type])) {
@@ -131,9 +136,19 @@ pub.clazzSummary = (req, res) => {
               summary[type]['number'] = 0;
             }
             summary[type]['number'] = summary[type]['number'] + 1;
-            summary['ALL']['number'] = summary['ALL']['number'] + 1;
           }
         });
+
+
+        let all = 0;
+        _.mapValues(summary, (summ)=>{
+          if(summ.key != 'ALL'){
+            all = all + summ['number']
+          }
+        });
+
+        summary['ALL']['number'] = all;
+
         let results = [];
         _.mapValues(summary, (value)=>{
           results.push(value)
