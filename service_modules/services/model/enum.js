@@ -2449,7 +2449,7 @@ const courseWareTypeEnum = {
 /**
  * 课程分类
  */
-const clazzClassifyTypeEnum = {
+let clazzClassifyTypeEnum = {
   'ALL':{
     key:'ALL',
     name:'全部',
