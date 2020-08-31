@@ -38,7 +38,7 @@ pub.queryUserAvailableCard = (userId, status) => {
   if (_.isNil(status)) {
     queryParams['status'] = queryModel.ubandCardQueryStatusEnum.AVAILABLE.key;
   }
-  let now = moment().format('YYYY-MM-DD HH:mm:ss');
+  let now = moment().format('YYYY-MM-DD');
   if (status == queryModel.couponQueryStatusEnum.EXPIRED.key) {
     queryParams['expireDate'] = {operator: '<', value: now};
   } else if (status == queryModel.couponQueryStatusEnum.AVAILABLE.key) {
