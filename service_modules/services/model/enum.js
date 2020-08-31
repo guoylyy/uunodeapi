@@ -2452,28 +2452,23 @@ const courseWareTypeEnum = {
 let clazzClassifyTypeEnum = {
   'ALL':{
     key:'ALL',
-    name:'全部',
-    number: 0
+    name:'全部'
   },
   'KOUYI':{
     key:'KOUYI',
-    name:'口译',
-    number:0
+    name:'口译'
   },
   'BIYI':{
     key:'BIYI',
-    name:'笔译',
-    number:0
+    name:'笔译'
   },
   'SPEAKING':{
     key:'SPEAKING',
-    name:'口语',
-    number:0
+    name:'口语'
   },
   'LISTENING':{
     key:'LISTENING',
-    name:'听力',
-    number:0
+    name:'听力'
   }
 };
 

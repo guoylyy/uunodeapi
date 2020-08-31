@@ -127,6 +127,9 @@ pub.clazzSummary = (req, res) => {
         _.each(clazzList, (clazz) => {
           let type = clazz.classifyType;
           if (!_.isNil(summary[type])) {
+            if(!_.isNil(summary[type]['number'])){
+              summary[type]['number'] = 0;
+            }
             summary[type]['number'] = summary[type]['number'] + 1;
             summary['ALL']['number'] = summary['ALL']['number'] + 1;
           }
