@@ -256,6 +256,8 @@ pub.queryClazzList = (req, res) => {
               pickedClazz.clazzJoinType = clazzUtil.getClazzJoinType(_.get(clazz, ['configuration', 'clazzType'], []));
               pickedClazz.totalFee = _.chain(clazzUtil.extractClazzPriceList(clazz)).head().get(['totalFee'], 0).value();
 
+              pickedClazz.taskCount = _.get(_.get(clazz,'configuration'), 'taskCount');
+
               let count = countMap[clazz.id] ? countMap[clazz.id].count : 0;
               pickedClazz['studentCount'] = count;
               return pickedClazz;
