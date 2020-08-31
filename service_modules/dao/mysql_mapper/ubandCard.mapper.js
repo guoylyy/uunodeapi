@@ -10,7 +10,7 @@ const debug = require('debug')('mapper');
 const queryUtil = require('../util/queryUtil');
 const ubandCardSchema = require('./schema/ubandCard.schema');
 
-const QUERY_SAFE_PARAMS = ['id', 'userId','status'];
+const QUERY_SAFE_PARAMS = ['id', 'userId','status', 'expireDate'];
 const UPDATE_SAFE_FIELDS = ['id', 'status' , 'title', 'remark','scope'];
 const QUERY_SELECT_COLUMNS = ['id', 'userId', 'type','status','title', 'remark','scope','iconUrl','expireDate'];
 
