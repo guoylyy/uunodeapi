@@ -18,6 +18,7 @@ const userPayService = require('../../services/userPay.service');
 const alipayBase = require('./alipay.base');
 const paymentBase = require('../payment.base/payment.base')
 const paymentEndAspect = require('../payment.base/payment.end.aspect')
+const commonError = require('../../services/model/common.error');
 
 const GATEWAY = global.IS_DEVLOPMENT_ENVIRONMENT ? alipayBase.ALIPAY_DEV_GATEWAY : alipayBase.ALIPAY_GATEWAY;
 const CLAZZ_PAYING_STATUS_LIST = [enumModel.clazzJoinStatusEnum.PAYING.key, enumModel.clazzJoinStatusEnum.INVITATION.key, enumModel.clazzJoinStatusEnum.CANCELED.key];

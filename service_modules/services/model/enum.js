@@ -112,6 +112,10 @@ const clazzTypeEnum = {
   'PROMOTION': {
     name: '推广活动班',
     key: 'PROMOTION'
+  },
+  'RECORDING':{
+    name:'录播课',
+    key:'RECORDING'
   }
 };
 
