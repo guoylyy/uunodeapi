@@ -301,7 +301,7 @@ pub.fetchClazzIntroduction = (req, res) => {
             clazzItem,
             {
               priceList: clazzPriceList,
-              joinStatus: currentClazzAccountItem ? currentClazzAccountItem.status : '',
+              joinStatus: currentClazzAccountItem ? currentClazzAccountItem.status : 'PAYING',
               introduction: clazzIntroductionList,
               studentCount: joinedCount,
               title: _.get(req.__CURRENT_CLAZZ_INTRODUCTION, 'title'),
