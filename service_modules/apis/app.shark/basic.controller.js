@@ -13,6 +13,8 @@ const schemaValidator = require('../schema.validator');
 const basicSchema = require('./schema/basic.schema');
 const commonSchema = require('../common.schema');
 
+const commonError = require('../../services/model/common.error');
+
 const enumModel = require('../../services/model/enum');
 
 const systemConfigService = require('../../services/systemConfig.service');
