@@ -181,12 +181,25 @@ pub.fetchClazzTaskItem = (req, res) => {
               pickedTaskItem.author = _.get(req.__CURRENT_CLAZZ, 'author', taskItem.author);
               // 设置targetDate
               pickedTaskItem.targetDate = moment(_.get(postItem, 'targetDate', new Date())).format('YYYY-MM-DD');
+
               // 设置内容列表
+              // 拼接HTML内容
               pickedTaskItem.introductions =_.filter(introductionList, (introduction) => {
                 if(introduction.type != enumModel.clazzTaskIntroductionTypeEnum.USER_SHARE.key){
                     return introduction;
                 }
               });
+
+              let introducationHTML = "";
+              _.each(introductionList, (intro)=>{
+                let type = enumModel.clazzTaskIntroductionTypeEnum[intro.type];
+                if(!_.isNil(type)){
+                  introducationHTML = introducationHTML + "<div class=\"paragraph-title\">"+type.name + "</div>" + intro.htmlContent;
+                }else{
+                  introducationHTML = introducationHTML + intro.htmlContent;
+                }
+              });
+              pickedTaskItem.introducationHTML  = introducationHTML;
 
               // 设置素材列表
               pickedTaskItem.materials = _.map(taskItem.materials, (material) => _.pick(material, ['id', 'title', 'type', 'url']));
