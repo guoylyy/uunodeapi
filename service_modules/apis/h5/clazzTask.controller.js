@@ -16,6 +16,7 @@ const clazzTaskService = require('../../services/clazzTask.service');
 const clazzPostService = require('../../services/post.service');
 
 const wechatCustomMessage = require('../../lib/wechat.custom.message');
+const enumModel = require('../../services/model/enum');
 
 const taskUtil = require('../../services/util/task.util');
 
@@ -101,9 +102,24 @@ pub.fetchClazzTaskItem = (req, res) => {
           return introductionItem;
         });
         // 设置素材列表
-        pickedTaskItem.materials = _.map(taskItem.materials, (material) => _.pick(material, ['id', 'title', 'type', 'url']));
+        let materials = _.map(taskItem.materials, (material) => _.pick(material, ['id', 'title', 'type', 'url']));
         // 设置targetDate
         pickedTaskItem.targetDate = _.get(postItem, 'targetDate', taskItem.createdAt);
+
+        // 2020年之后的课程，音视频素材不给与下载
+        if(pickedTaskItem.targetDate > new moment('2020-01-01 00:00:00').toDate()){
+          pickedTaskItem.materials = [];
+          // 不接受视频和音频
+          _.each(materials, (material)=>{
+            if(material.type != enumModel.materialTypeEnum.AUDIO.key &&
+                material.type != enumModel.materialTypeEnum.VIDEO.key){
+              pickedTaskItem.materials.push(material);
+            }
+          });
+        }else{
+          pickedTaskItem.materials = materials;
+        }
+
         // 设置author
         pickedTaskItem.author = _.get(req.__CURRENT_CLAZZ, 'author', taskItem.author);
         // 班级信息
