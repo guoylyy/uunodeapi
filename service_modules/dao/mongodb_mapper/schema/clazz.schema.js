@@ -13,6 +13,7 @@ const enumModel = require('../../../services/model/enum');
 let clazzStatusEnum = _.keys(enumModel.clazzStatusEnum);
 let clazzTypeEnum = _.keys(enumModel.clazzTypeEnum);
 let clazzJoinTypeEnum = _.keys(enumModel.clazzJoinTypeEnum);
+let clazzClassifyTypeEnum = _.keys(enumModel.clazzClassifyTypeEnum);
 
 // create a schema
 let clazzSchema = new Schema({
@@ -20,6 +21,7 @@ let clazzSchema = new Schema({
   author: { type: String, required: true },
   status: { type: String, required: true, enum: clazzStatusEnum },
   clazzType: { type: String, required: true, enum: clazzTypeEnum },
+  classifyType: { type: String, required: true, enum: clazzClassifyTypeEnum },
   clazzKey: String,
   description: String,
   openDate: Date,
@@ -67,7 +69,6 @@ let clazzSchema = new Schema({
   },
   isShow: { type: Boolean, default: true },
   isHot: { type: Boolean, default: false },
-  classifyType: { type: String, required: false},
 });
 
 // create a schema named as Clazz, and collection as Clazz

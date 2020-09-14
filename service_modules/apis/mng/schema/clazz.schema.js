@@ -132,7 +132,8 @@ pub.clazzPostCreateSchema = Joi.object().keys({
   title: Joi.string().max(64).required(),
   taskId: commonSchema.mongoIdSchema.required(),
   targetDate: Joi.date().required(),
-  stickied: Joi.boolean().default(false)
+  stickied: Joi.boolean().default(false),
+  isTry: Joi.boolean().default(false)
 });
 
 /**

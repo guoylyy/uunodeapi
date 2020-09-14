@@ -236,7 +236,8 @@ pub.createFromClazzTask = (clazzId, postItem) => {
           postType: enumModel.postTypeEnum.CLAZZ_TASK.key,
           targetDate: postItem.targetDate,
           target: postItem.taskId,
-          stickied: postItem.stickied
+          stickied: postItem.stickied,
+          canTry: postItem.isTry
         });
       });
 };

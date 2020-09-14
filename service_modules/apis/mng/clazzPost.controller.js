@@ -27,7 +27,7 @@ pub.listPagedPosts = (req, res) => {
       })
       .then((result) => {
         // 数据筛选
-        let pickedPosts = _.map(result.values, (post) => _.pick(post, ['id', 'status', 'title', 'postType', 'targetDate', 'result']));
+        let pickedPosts = _.map(result.values, (post) => _.pick(post, ['id', 'status', 'title', 'postType', 'targetDate', 'result', 'canTry']));
         // render数据
         return apiRender.renderPageResult(res, pickedPosts, result.itemSize, result.pageSize, result.pageNumber);
       })

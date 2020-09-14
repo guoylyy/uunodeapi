@@ -40,7 +40,8 @@ pub.createClazzBodySchema = Joi.object().keys({
   tags: Joi.array().items(Joi.string()),
   teacherHead: Joi.string().uri().required(),
   bindTeacherId: commonSchema.mongoIdSchema,
-  smallBanner: Joi.string().uri().required()
+  smallBanner: Joi.string().uri().required(),
+  classifyType:Joi.string().required()
 });
 
 /**
@@ -50,6 +51,7 @@ pub.updateClazzBodySchema = Joi.object().keys({
   name: Joi.string().max(32).allow(''),
   clazzType: Joi.string().valid(_.keys(enumModel.clazzTypeEnum)),
   status: Joi.string().valid(_.keys(enumModel.clazzStatusEnum)),
+  classifyType: Joi.string().valid(_.keys(enumModel.clazzClassifyTypeEnum)),
   author: Joi.string().max(32),
   openDate: Joi.date().format('YYYY-MM-DD'),
   startDate: Joi.date().format('YYYY-MM-DD'),
