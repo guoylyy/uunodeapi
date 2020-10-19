@@ -666,6 +666,7 @@ pub.clazzPaymentHandlerFactory = (clazzType) => {
       };
     case enumModel.clazzTypeEnum.SEMESTER.key:
     case enumModel.clazzTypeEnum.LTS.key:
+    case enumModel.clazzTypeEnum.RECORDING.key:
     case enumModel.clazzTypeEnum.PROMOTION.key:
       return (clazzBill, currentClazzItem, currentUserItem, currentClazzAccountItem) => {
 
