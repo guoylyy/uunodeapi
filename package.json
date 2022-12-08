@@ -15,14 +15,14 @@
   "dependencies": {
     "amrToMp3": "^1.0.8",
     "bcrypt": "^3.0.5",
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.20.1",
     "bookshelf": "^0.14.2",
     "cache-manager": "^2.9.0",
     "cache-manager-ioredis": "^1.0.1",
     "compression": "^1.7.4",
     "crypto": "^1.0.1",
     "debug": "^4.1.1",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "express-partials": "^0.3.0",
     "form-urlencoded": "^3.0.0",
     "helmet": "^3.16.0",
@@ -55,6 +55,6 @@
     "nodemon": "^1.18.10",
     "raml2html": "4.0.5",
     "should": "^7.1.0",
-    "supertest": "^1.0.0"
+    "supertest": "^6.3.3"
   }
 }
