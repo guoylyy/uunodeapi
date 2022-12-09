@@ -22,7 +22,7 @@
     "compression": "^1.7.4",
     "crypto": "^1.0.1",
     "debug": "^4.1.1",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-partials": "^0.3.0",
     "form-urlencoded": "^3.0.0",
     "helmet": "^3.16.0",
