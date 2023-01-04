@@ -36,7 +36,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.16.5",
     "lodash": "^4.17.11",
-    "migrate-mongoose": "^3.2.2",
+    "migrate-mongoose": "^4.0.0",
     "moment": "^2.24.0",
     "mongoose": "^5.4.19",
     "morgan": "^1.9.1",
