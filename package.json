@@ -34,7 +34,7 @@
     "jpush-sdk": "^3.5.0",
     "json.date-extensions": "^1.2.2",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.16.5",
+    "knex": "^2.4.0",
     "lodash": "^4.17.11",
     "migrate-mongoose": "^3.2.2",
     "moment": "^2.24.0",
